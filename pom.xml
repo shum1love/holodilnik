@@ -56,13 +56,19 @@
         </dependency>
 
         <!-- Allure -->
+        <!-- Allure + Selenide интеграция -->
         <dependency>
             <groupId>io.qameta.allure</groupId>
             <artifactId>allure-selenide</artifactId>
-            <version>${allure.version}</version>
+            <version>2.25.0</version>  <!-- или новее, проверь maven central -->
             <scope>test</scope>
         </dependency>
-
+        <dependency>
+            <groupId>io.qameta.allure</groupId>
+            <artifactId>allure-junit5</artifactId>
+            <version>2.25.0</version>
+            <scope>test</scope>
+        </dependency>
         <!-- Logging -->
         <dependency>
             <groupId>ch.qos.logback</groupId>

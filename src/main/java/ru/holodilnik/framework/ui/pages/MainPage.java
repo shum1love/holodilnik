@@ -1,28 +1,60 @@
 package ru.holodilnik.framework.ui.pages;
 
 import com.codeborne.selenide.SelenideElement;
+import ru.holodilnik.framework.ui.pages.components.HeaderComponent;
 
-import static com.codeborne.selenide.Condition.visible;
-import static com.codeborne.selenide.Selenide.$x;
+import static com.codeborne.selenide.Selenide.$;
 
 /**
- * Главная страница holodilnik.ru
+ * Главная страница сайта holodilnik.ru.
+ *
+ * Отвечает ТОЛЬКО за:
+ * - контракт страницы
+ * - бизнес-действия, доступные пользователю с главной
+ *
+ * НЕ отвечает за:
+ * - технические клики
+ * - ассерты уровня тестов
+ * - внутреннюю структуру компонентов
  */
-public class MainPage extends BasePage {
+public final class MainPage extends BasePage<MainPage> {
 
-    private final SelenideElement headerLogo = $x("//span[@class='site-header__logo-brand']");
-    private final SelenideElement searchInput = $x("//input[@id='top_search']");
+    // Якорный элемент страницы
+    private final SelenideElement logo = $("span.site-header__logo-brand");
+
+    // В конструкторе HeaderComponent
+    private final HeaderComponent header =
+            new HeaderComponent($("header, .site-header, .header"));  // несколько вариантов на выбор
 
     public MainPage() {
         super("/");
     }
 
     @Override
-    public void isOpened() {
-        headerLogo.shouldBe(visible.because("Логотип в шапке должен быть виден"));
+    protected SelenideElement pageIdentifier() {
+        return logo;
     }
 
-    public void search(String query) {
-        searchInput.setValue(query).pressEnter();
+    /**
+     * Поиск товара через хедер.
+     */
+    public SearchResultsPage search(String query) {
+        header.search(query);
+        return new SearchResultsPage();
+    }
+
+    /**
+     * Открытие каталога через хедер.
+     */
+    /*public CatalogPage openCatalog() {
+        header.openCatalog();
+        return new CatalogPage();
+    }*/
+
+    /**
+     * Явный доступ к компоненту (использовать осознанно).
+     */
+    public HeaderComponent header() {
+        return header;
     }
 }
