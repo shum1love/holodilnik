@@ -2,11 +2,15 @@ package ru.holodilnik.framework.ui.pages;
 
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
+import io.qameta.allure.Step;
 import ru.holodilnik.framework.ui.pages.components.HeaderComponent;
 
 import static com.codeborne.selenide.CollectionCondition.sizeGreaterThanOrEqual;
 import static com.codeborne.selenide.Condition.*;
 import static com.codeborne.selenide.Selenide.*;
+
+
+
 public final class SearchResultsPage extends BasePage<SearchResultsPage> {
 
     // Якорь страницы — заголовок "Результаты поиска"
@@ -49,20 +53,20 @@ public final class SearchResultsPage extends BasePage<SearchResultsPage> {
     }
 
     @Step("Открываем первую карточку товара из результатов")
-    public ProductPage openFirstProduct() {
+    public SearchResultsPage openFirstProduct() {
         SelenideElement firstCard = productCards.first();
         // Уточни селектор ссылки на товар внутри карточки
         firstCard.$("a[href*='/product/'], a.product-link, .product-title a, a")
                 .shouldBe(visible)
                 .click();
-        return new ProductPage();
+        return this;
     }
 
     @Step("Открываем карточку товара под номером {index} (нумерация с 1)")
-    public ProductPage openProductByIndex(int index) {
+    public SearchResultsPage openProductByIndex(int index) {
         SelenideElement card = productCards.get(index - 1);
         card.$("a").shouldBe(visible).click();
-        return new ProductPage();
+        return this;
     }
 
     public HeaderComponent header() {
