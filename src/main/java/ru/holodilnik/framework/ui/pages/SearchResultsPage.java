@@ -10,19 +10,20 @@ import static com.codeborne.selenide.Condition.*;
 import static com.codeborne.selenide.Selenide.*;
 
 
-
+/**
+ * Класс описывающий страницу 'Результаты поиска по каталогу'.
+ */
 public final class SearchResultsPage extends BasePage<SearchResultsPage> {
 
-    // Якорь страницы — заголовок "Результаты поиска"
-    private final SelenideElement resultsHeading = $x("//h1[normalize-space(.)='Результаты поиска']");
+    private static final SelenideElement RESULTS_HEADING = $x("//h1[normalize-space(.)='Результаты поиска']");
 
     // Блок с количеством найденных товаров (лучше найти реальный класс/id в DevTools)
-    private final SelenideElement foundInfo = $x("//*[contains(., 'Найдено товаров:') or contains(., 'Найдено')]");
+    private static final SelenideElement FOUND_INFO = $x("//*[contains(., 'Найдено товаров:') or contains(., 'Найдено')]");
 
     // Коллекция карточек товаров — старайся заменить на CSS-класс, если есть (например .product-item, .catalog-product)
-    private final ElementsCollection productCards = $$x("//div[@id='view-row']/div");
+    private static final ElementsCollection PRODUCT_CARDS = $$x("//div[@id='view-row']/div");
 
-    private final HeaderComponent header = new HeaderComponent($("header, .site-header, .header"));
+    private static final HeaderComponent HEADER = new HeaderComponent($("header, .site-header, .header"));
 
     public SearchResultsPage() {
         super("");
@@ -30,7 +31,7 @@ public final class SearchResultsPage extends BasePage<SearchResultsPage> {
 
     @Override
     protected SelenideElement pageIdentifier() {
-        return resultsHeading;
+        return RESULTS_HEADING;
     }
 
     @Override
@@ -42,19 +43,19 @@ public final class SearchResultsPage extends BasePage<SearchResultsPage> {
 
     @Step("Проверяем, что найдено минимум {min} товаров")
     public SearchResultsPage shouldHaveAtLeastResults(int min) {
-        productCards.shouldHave(sizeGreaterThanOrEqual(min));
+        PRODUCT_CARDS.shouldHave(sizeGreaterThanOrEqual(min));
         return this;
     }
 
     @Step("Проверяем, что отображается количество найденных товаров: {expectedCount}")
     public SearchResultsPage shouldShowFoundCount(int expectedCount) {
-        foundInfo.shouldHave(text("Найдено товаров: " + expectedCount));
+        FOUND_INFO.shouldHave(text("Найдено товаров: " + expectedCount));
         return this;
     }
 
     @Step("Открываем первую карточку товара из результатов")
     public SearchResultsPage openFirstProduct() {
-        SelenideElement firstCard = productCards.first();
+        SelenideElement firstCard = PRODUCT_CARDS.first();
         // Уточни селектор ссылки на товар внутри карточки
         firstCard.$("a[href*='/product/'], a.product-link, .product-title a, a")
                 .shouldBe(visible)
@@ -64,12 +65,12 @@ public final class SearchResultsPage extends BasePage<SearchResultsPage> {
 
     @Step("Открываем карточку товара под номером {index} (нумерация с 1)")
     public SearchResultsPage openProductByIndex(int index) {
-        SelenideElement card = productCards.get(index - 1);
+        SelenideElement card = PRODUCT_CARDS.get(index - 1);
         card.$("a").shouldBe(visible).click();
         return this;
     }
 
     public HeaderComponent header() {
-        return header;
+        return HEADER;
     }
 }
