@@ -16,13 +16,8 @@ import static com.codeborne.selenide.Selenide.*;
 public final class SearchResultsPage extends BasePage<SearchResultsPage> {
 
     private static final SelenideElement RESULTS_HEADING = $x("//h1[normalize-space(.)='Результаты поиска']");
-
-    // Блок с количеством найденных товаров (лучше найти реальный класс/id в DevTools)
     private static final SelenideElement FOUND_INFO = $x("//*[contains(., 'Найдено товаров:') or contains(., 'Найдено')]");
-
-    // Коллекция карточек товаров — старайся заменить на CSS-класс, если есть (например .product-item, .catalog-product)
     private static final ElementsCollection PRODUCT_CARDS = $$x("//div[@id='view-row']/div");
-
     private static final HeaderComponent HEADER = new HeaderComponent($("header, .site-header, .header"));
 
     public SearchResultsPage() {
