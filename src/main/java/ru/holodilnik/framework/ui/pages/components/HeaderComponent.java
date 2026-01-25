@@ -29,13 +29,13 @@ public class HeaderComponent {
         this.self = container;
 
         this.logo = container.$(".site-header__logo");
-        this.catalogBtn = container.$("");
-        this.searchField = container.$("");
+        this.catalogBtn = container.$("span[data-ga-event-category='UpCatMenuView']");
+        this.searchField = container.$("input[id='top_search']");
         this.searchSubmitButton = container.$("button[data-smoke='GoSearchBtn']");
-        this.personalAccount = container.$("");
-        this.myOrders = container.$("");
-        this.favorites = container.$("");
-        this.shopingCart = container.$("");
+        this.personalAccount = container.$("div[data-user-block]");
+        this.myOrders = container.$("a[href='/usercp/history/'] > span:first-child");
+        this.favorites = container.$("a[data-ga-event-category='HeaderFavoriteClick'] > span:first-child");
+        this.shopingCart = container.$("a[data-ga-event-category='HeaderBasketClick'] > span:first-child");
     }
 
     @Step("Проверяем, что шапка отображается")
