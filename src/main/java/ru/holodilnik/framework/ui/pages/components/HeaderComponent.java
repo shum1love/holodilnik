@@ -23,7 +23,7 @@ public class HeaderComponent {
     private final SelenideElement personalAccount;
     private final SelenideElement myOrders;
     private final SelenideElement favorites;
-    private final SelenideElement shopingCart;
+    private final SelenideElement shoppingCart;
 
     public HeaderComponent(SelenideElement container) {
         this.self = container;
@@ -35,14 +35,22 @@ public class HeaderComponent {
         this.personalAccount = container.$("div[data-user-block]");
         this.myOrders = container.$("a[href='/usercp/history/'] > span:first-child");
         this.favorites = container.$("a[data-ga-event-category='HeaderFavoriteClick'] > span:first-child");
-        this.shopingCart = container.$("a[data-ga-event-category='HeaderBasketClick'] > span:first-child");
+        this.shoppingCart = container.$("a[data-ga-event-category='HeaderBasketClick'] > span:first-child");
     }
 
     @Step("Проверяем, что шапка отображается")
     public HeaderComponent shouldBeVisible() {
         self.shouldBe(visible);
+
         logo.shouldBe(visible);
+        catalogBtn.shouldBe(visible);
         searchField.shouldBe(visible);
+        searchSubmitButton.shouldBe(visible);
+        personalAccount.shouldBe(visible);
+        myOrders.shouldBe(visible);
+        favorites.shouldBe(visible);
+        shoppingCart.shouldBe(visible);
+
         return this;
     }
 
@@ -69,7 +77,7 @@ public class HeaderComponent {
 
     @Step("Открыть корзину")
     public CartPage openCart() {
-        shopingCart.shouldBe(visible).click();
+        shoppingCart.shouldBe(visible).click();
         return new CartPage().isOpened();
     }
 
@@ -81,7 +89,7 @@ public class HeaderComponent {
 
     @Step("Проверить счётчик корзины: {expectedCount}")
     public HeaderComponent cartShouldHaveCount(int expectedCount) {
-        shopingCart.$("span").shouldHave(text(String.valueOf(expectedCount)));  // если счётчик внутри
+        shoppingCart.$("span").shouldHave(text(String.valueOf(expectedCount)));  // если счётчик внутри
         return this;
     }
 }
