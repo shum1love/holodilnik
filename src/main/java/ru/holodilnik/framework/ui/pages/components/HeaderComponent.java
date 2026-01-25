@@ -56,10 +56,8 @@ public class HeaderComponent {
 
     @Step("Поиск товара: {query}")
     public SearchResultsPage search(String query) {
-        searchField.shouldBe(visible)
-                .clear()
-                .setValue(query)
-                .pressEnter();
+        searchField.shouldBe(visible).clear();
+        searchField.setValue(query).pressEnter();
         return new SearchResultsPage().isOpened();
     }
 
@@ -89,7 +87,7 @@ public class HeaderComponent {
 
     @Step("Проверить счётчик корзины: {expectedCount}")
     public HeaderComponent cartShouldHaveCount(int expectedCount) {
-        shoppingCart.$("span").shouldHave(text(String.valueOf(expectedCount)));  // если счётчик внутри
+        shoppingCart.$("span").shouldHave(text(String.valueOf(expectedCount)));
         return this;
     }
 }

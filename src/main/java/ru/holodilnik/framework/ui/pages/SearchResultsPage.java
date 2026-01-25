@@ -15,9 +15,8 @@ import static com.codeborne.selenide.Selenide.*;
  */
 public final class SearchResultsPage extends BasePage<SearchResultsPage> {
 
-    private static final SelenideElement RESULTS_HEADING = $x("//h1[normalize-space(.)='Результаты поиска']");
-    private static final SelenideElement FOUND_INFO = $x("//*[contains(., 'Найдено товаров:') or contains(., 'Найдено')]");
-    private static final ElementsCollection PRODUCT_CARDS = $$x("//div[@id='view-row']/div");
+    private static final SelenideElement RESULTS_TITLE = $("h1");
+   private static final SelenideElement FILTER_BUTTON = $("button[id='dropdownItemSorting']");
     private static final HeaderComponent HEADER = new HeaderComponent($("header, .site-header, .header"));
 
     public SearchResultsPage() {
@@ -26,13 +25,12 @@ public final class SearchResultsPage extends BasePage<SearchResultsPage> {
 
     @Override
     protected SelenideElement pageIdentifier() {
-        return RESULTS_HEADING;
+        return RESULTS_TITLE;
     }
 
     @Override
     public SearchResultsPage shouldBeOpen() {
-        super.shouldBeOpen();  // проверяет якорь + visible
-        // Можно добавить дополнительную проверку, если нужно
+        super.shouldBeOpen();
         return this;
     }
 
