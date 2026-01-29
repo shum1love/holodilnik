@@ -5,8 +5,10 @@ import com.codeborne.selenide.SelenideElement;
 import io.qameta.allure.Step;
 import ru.holodilnik.framework.ui.pages.components.HeaderComponent;
 
+import static com.codeborne.selenide.CollectionCondition.size;
 import static com.codeborne.selenide.CollectionCondition.sizeGreaterThanOrEqual;
-import static com.codeborne.selenide.Condition.*;
+import static com.codeborne.selenide.Condition.text;
+import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.$$;
 
@@ -16,29 +18,42 @@ import static com.codeborne.selenide.Selenide.$$;
 public final class SearchResultsPage extends BasePage<SearchResultsPage> {
 
     // ─── Элементы страницы ───────────────────────────────────────────
-    private static final SelenideElement RESULTS_CONTAINER = $(".search-results, .catalog-products, [data-block='products-list']");
-    private static final SelenideElement RESULTS_TITLE = RESULTS_CONTAINER.$("h1, h2, .title");  // гибче, чем просто h1
-    private static final SelenideElement FOUND_COUNT = $(".found-info, .search-results__found, [data-total-products]");
-    private static final ElementsCollection PRODUCT_CARDS = $$(".product-card, .catalog-item, .product-item, [data-product-id]");
+    // Блок параметров
+    private static final SelenideElement RESULTS_TITLE = $("h1");
+    private static final SelenideElement PARAMETER_BLOCK = $("div.filter-c__body");
+    private static final SelenideElement CATEGORY_TITLE = $$("h1").filterBy(text("Категория")).first();
+    private static final SelenideElement CATEGORY_SEARCH_FIELD = $("input[id='quick-searchcategory']");
+    private static final ElementsCollection CATEGORIES = $$("label[id*='cfilter_search_category']");
+    private static final SelenideElement PRICE_TITLE = $$("h1").filterBy(text("Цена")).first();
+    private static final SelenideElement MIN_COUNT_PRICE_BLOCK = $("input[id='min_txt_price']");
+    private static final SelenideElement MAX_COUNT_PRICE_BLOCK = $("input[id='max_txt_price']");
+    private static final SelenideElement SLIDER_COUNT_PRICE_BLOCK = $("div[id='value_price']");
+    private static final SelenideElement MANUFACTURER_TITLE = $$("h1").filterBy(text("Производитель")).first();
+    private static final SelenideElement MANUFACTURER_SEARCH_FIELD = $("input[id='quick-searchvendor']");
+    private static final ElementsCollection MANUFACTURERS_LIST = $$("label[id*='cfilter_search_vendor']");
+    private static final SelenideElement SHOW_BUTTON_PARAMETER_BLOCK = $("input[id='cfilter_btnsubmit']");
+    private static final SelenideElement CLEAR_BUTTON_PARAMETER_BLOCK = $("a[id='cfilter_btnclear']");
+    // Добавить фильтр
+    // Добавить карточки товаров
 
     private final HeaderComponent header;
 
     public SearchResultsPage() {
         super("");
-        this.header = new HeaderComponent($("header.site-header, header, .b-header"));  // ← подставь реальный контейнер хедера
+        this.header = new HeaderComponent($("header.site-header, header, .b-header"));
     }
 
     @Override
     protected SelenideElement pageIdentifier() {
-        return RESULTS_CONTAINER;  // или RESULTS_TITLE, если уверен
+        return RESULTS_CONTAINER;
     }
 
     @Override
-    public SearchResultsPage shouldBeOpened() {  // isOpened → shouldBeOpened по твоему стилю
+    public SearchResultsPage shouldBeOpened() {
         super.shouldBeOpened();
         RESULTS_CONTAINER.shouldBe(visible);
-        RESULTS_TITLE.shouldBe(visible).shouldHave(text("Поиск", "Найдено", "Результаты"));  // частичное совпадение — надёжнее
-        PRODUCT_CARDS.shouldHave(sizeGreaterThanOrEqual(1));  // базовая защита от пустой страницы
+        RESULTS_TITLE.shouldBe(visible).shouldHave(text("Поиск", "Найдено", "Результаты"));
+        PRODUCT_CARDS.shouldHave(sizeGreaterThanOrEqual(1));
         return this;
     }
 
@@ -59,27 +74,6 @@ public final class SearchResultsPage extends BasePage<SearchResultsPage> {
         return this;
     }
 
-    @Step("Открываем первую карточку товара")
-    public ProductPage openFirstProduct() {
-        SelenideElement firstCard = PRODUCT_CARDS.first();
-        firstCard.$("a.product-link, a[href*='/product/'], .product-title a, a.title")
-                .shouldBe(visible)
-                .click();
-        return new ProductPage().shouldBeOpened();
-    }
-
-    @Step("Открываем карточку товара №{index} (с 1)")
-    public ProductPage openProductByIndex(int index) {
-        if (index < 1) throw new IllegalArgumentException("Индекс должен быть >= 1");
-
-        SelenideElement card = PRODUCT_CARDS.get(index - 1);
-        card.$("a.product-link, a[href*='/product/'], .product-title a")
-                .shouldBe(visible)
-                .click();
-        return new ProductPage().shouldBeOpened();
-    }
-
-    // Можно добавить, если часто нужно
     @Step("Проверяем, что результатов поиска нет (пустая выдача)")
     public SearchResultsPage shouldHaveNoResults() {
         PRODUCT_CARDS.shouldHave(size(0));
