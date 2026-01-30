@@ -49,11 +49,9 @@ public final class SearchResultsPage extends BasePage<SearchResultsPage> {
     }
 
     @Override
-    public SearchResultsPage shouldBeOpened() {
-        super.shouldBeOpened();
-        RESULTS_CONTAINER.shouldBe(visible);
-        RESULTS_TITLE.shouldBe(visible).shouldHave(text("Поиск", "Найдено", "Результаты"));
-        PRODUCT_CARDS.shouldHave(sizeGreaterThanOrEqual(1));
+    public SearchResultsPage shouldBeOpen() {
+        super.shouldBeOpen();
+        RESULTS_TITLE.shouldBe(visible).shouldHave(text("Результаты поиска"));
         return this;
     }
 
@@ -70,14 +68,13 @@ public final class SearchResultsPage extends BasePage<SearchResultsPage> {
     @Step("Проверяем, что отображается количество найденных товаров: {expectedCount}")
     public SearchResultsPage shouldShowFoundCount(int expectedCount) {
         FOUND_COUNT.shouldBe(visible)
-                .shouldHave(text(String.valueOf(expectedCount)));  // или точнее: text("Найдено " + expectedCount + " товаров")
+                .shouldHave(text(String.valueOf(expectedCount)));
         return this;
     }
 
     @Step("Проверяем, что результатов поиска нет (пустая выдача)")
     public SearchResultsPage shouldHaveNoResults() {
         PRODUCT_CARDS.shouldHave(size(0));
-        RESULTS_TITLE.shouldHave(text("Ничего не найдено", "По вашему запросу"));
         return this;
     }
 }

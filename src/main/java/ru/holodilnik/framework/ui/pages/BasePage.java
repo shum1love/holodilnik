@@ -18,7 +18,7 @@ import static ru.holodilnik.framework.core.config.ConfigLoader.getBaseUrl;
  */
 public abstract class BasePage<T extends BasePage<T>> {
 
-    private final String url;   // private final — правильно
+    private final String url;
 
     protected BasePage(String relativePath) {
         this.url = getBaseUrl() + relativePath;
