@@ -16,15 +16,14 @@ import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selenide.executeJavaScript;
 import static com.codeborne.selenide.Selenide.screenshot;
 
-/**
+/*
  * Обёртка над SelenideElement с человеческими шагами в Allure,
- * защитой от типичных флейков и опциональной подсветкой для дебага.
+ *защитой от типичных флейков и опциональной подсветкой для дебага.
  */
+
 public class UiElement {
 
     private static final Logger log = LoggerFactory.getLogger(UiElement.class);
-
-    // Конфиг через -D...
     private static final boolean HIGHLIGHT_ENABLED = Boolean.parseBoolean(System.getProperty("ui.highlight", "false"));
     private static final boolean SCREENSHOT_ON_FAIL = Boolean.parseBoolean(System.getProperty("ui.screenshot.on.fail", "true"));
     private static final int ACTION_RETRY_COUNT = 2;

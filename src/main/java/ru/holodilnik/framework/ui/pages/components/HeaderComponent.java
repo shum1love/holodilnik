@@ -58,31 +58,7 @@ public class HeaderComponent {
     public SearchResultsPage search(String query) {
         searchField.shouldBe(visible).clear();
         searchField.setValue(query).pressEnter();
-        return new SearchResultsPage().isOpened();
-    }
-
-    @Step("Открыть каталог")
-    public CatalogMenuComponent openCatalog() {
-        catalogBtn.shouldBe(visible).click();
-        return new CatalogMenuComponent();  // если это отдельный компонент, добавь .shouldBeVisible() или isOpened()
-    }
-
-    @Step("Открыть избранное")
-    public FavoritesPage openFavorites() {
-        favorites.shouldBe(visible).click();
-        return new FavoritesPage().isOpened();
-    }
-
-    @Step("Открыть корзину")
-    public CartPage openCart() {
-        shoppingCart.shouldBe(visible).click();
-        return new CartPage().isOpened();
-    }
-
-    @Step("Открыть личный кабинет")
-    public ProfilePage openProfile() {  // добавил пример, если нужно
-        profileDropdown.shouldBe(visible).click();
-        return new ProfilePage().isOpened();
+        return new SearchResultsPage(); // fix!!!
     }
 
     @Step("Проверить счётчик корзины: {expectedCount}")
