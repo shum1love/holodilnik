@@ -5,7 +5,7 @@ import io.qameta.allure.Step;
 import ru.holodilnik.framework.ui.pages.components.HeaderComponent;
 
 import static com.codeborne.selenide.Condition.text;
-import static com.codeborne.selenide.Condition.visible;
+import static com.codeborne.selenide.Condition.visible;ц
 import static com.codeborne.selenide.Selenide.$;
 import static ru.holodilnik.framework.ui.pages.locators.SearchResultsLocators.*;
 
