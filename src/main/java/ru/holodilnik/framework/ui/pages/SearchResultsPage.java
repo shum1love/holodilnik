@@ -1,17 +1,13 @@
 package ru.holodilnik.framework.ui.pages;
 
-import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
 import io.qameta.allure.Step;
 import ru.holodilnik.framework.ui.pages.components.HeaderComponent;
-import ru.holodilnik.framework.ui.pages.locators.SearchResultsLocators;
 
-import static com.codeborne.selenide.CollectionCondition.size;
-import static com.codeborne.selenide.CollectionCondition.sizeGreaterThanOrEqual;
 import static com.codeborne.selenide.Condition.text;
 import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selenide.$;
-import static ru.holodilnik.framework.ui.pages.locators.SearchResultsLocators.*;  // ← вот магия
+import static ru.holodilnik.framework.ui.pages.locators.SearchResultsLocators.*;
 
 /**
  * Страница результатов поиска.
