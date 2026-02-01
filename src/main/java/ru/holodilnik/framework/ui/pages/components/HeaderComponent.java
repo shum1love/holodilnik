@@ -58,7 +58,7 @@ public class HeaderComponent {
     public SearchResultsPage search(String query) {
         searchField.shouldBe(visible).clear();
         searchField.setValue(query).pressEnter();
-        return new SearchResultsPage(); // fix!!!
+        return new SearchResultsPage().shouldBeOpen();
     }
 
     @Step("Проверить счётчик корзины: {expectedCount}")

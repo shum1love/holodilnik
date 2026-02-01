@@ -20,6 +20,10 @@ public class AddingItemCartTest {
     @Test
     @DisplayName("Пользователь может добавить товар в корзину с главной страницы")
     public void addingItemCartTest() {
-        main.open();
+        main
+                .open()
+                .search("машина")
+                .selectCategory("Стиральные машины ")
+        ;
     }
 }

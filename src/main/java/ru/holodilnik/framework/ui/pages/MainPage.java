@@ -11,11 +11,6 @@ import static com.codeborne.selenide.Selenide.$;
  * Отвечает ТОЛЬКО за:
  * - контракт страницы
  * - бизнес-действия, доступные пользователю с главной
- *
- * НЕ отвечает за:
- * - технические клики
- * - ассерты уровня тестов
- * - внутреннюю структуру компонентов
  */
 public final class MainPage extends BasePage<MainPage> {
 
@@ -24,7 +19,7 @@ public final class MainPage extends BasePage<MainPage> {
 
     // В конструкторе HeaderComponent
     private final HeaderComponent header =
-            new HeaderComponent($("header, .site-header, .header"));  // несколько вариантов на выбор
+            new HeaderComponent($("header, .site-header, .header"));
 
     public MainPage() {
         super("/");

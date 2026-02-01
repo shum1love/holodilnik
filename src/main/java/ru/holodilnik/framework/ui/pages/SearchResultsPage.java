@@ -15,12 +15,6 @@ public final class SearchResultsPage extends BasePage<SearchResultsPage> {
 
     // ─── Elements ───────────────────────────────────────────
 
-    private final UiElement resultsTitle =
-            ui("Заголовок страницы результатов", $$("h1").first());
-
-    private final UiElement clearFiltersButton =
-            ui("Очистить фильтры", $$("a[id='cfilter_btnclear']").first());
-
     private final HeaderComponent header =
             new HeaderComponent($("header.site-header, header, .b-header"));
 
@@ -36,31 +30,32 @@ public final class SearchResultsPage extends BasePage<SearchResultsPage> {
 
     @Override
     protected SelenideElement pageIdentifier() {
-        // BasePage пока живёт в старом мире — отдаём raw element
-        return resultsTitle.getElement();
+        return title.getElement();
     }
 
     @Override
     public SearchResultsPage shouldBeOpen() {
         super.shouldBeOpen();
-        resultsTitle
+        title
                 .shouldBeVisible()
-                .shouldContainText("Категория");
+                .shouldContainText("Результаты поиска");
         return this;
     }
 
     // ─── Business actions ─────────────────────────────────
 
-    public HeaderComponent header() {
-        return header;
-    }
-
-    @Step("Выбираем категорию '{categoryName}'")
+    @Step("Выбрать категорию '{categoryName}'")
     public SearchResultsPage selectCategory(String categoryName) {
         categoryItems
                 .findBy(text(categoryName))
                 .shouldBe(visible)
                 .click();
+        return this;
+    }
+
+    @Step("Нажать кнопку 'Показать'")
+    public SearchResultsPage clickShowButton() {
+        showButton.click();
         return this;
     }
 
@@ -72,7 +67,7 @@ public final class SearchResultsPage extends BasePage<SearchResultsPage> {
 
     @Step("Проверяем пустую выдачу")
     public SearchResultsPage shouldHaveNoResults() {
-        resultsTitle.shouldContainText("Ничего не найдено");
+        title.shouldContainText("Ничего не найдено");
         return this;
     }
 

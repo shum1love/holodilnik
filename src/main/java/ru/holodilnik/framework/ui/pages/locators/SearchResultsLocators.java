@@ -36,7 +36,7 @@ public final class SearchResultsLocators {
     public static final ElementsCollection manufacturerItems = $$("label[id*='cfilter_search_vendor']");
 
     // Кнопки
-    public static final UiElement applyFiltersButton = ui("Применить фильтры", $("input[id='cfilter_btnsubmit']"));
+    public static final UiElement showButton = ui("Применить фильтры", $("input[id='cfilter_btnsubmit']"));
     public static final UiElement clearFiltersButton = ui("Очистить фильтры", $("a[id='cfilter_btnclear']"));
 
     private static UiElement ui(String name, SelenideElement element) {
