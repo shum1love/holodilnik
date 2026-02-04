@@ -2,10 +2,8 @@ package ru.holodilnik.framework.ui.pages.components;
 
 import com.codeborne.selenide.SelenideElement;
 import io.qameta.allure.Step;
+import ru.holodilnik.framework.ui.elements.UiElement;
 import ru.holodilnik.framework.ui.pages.SearchResultsPage;
-
-import static com.codeborne.selenide.Condition.text;
-import static com.codeborne.selenide.Condition.visible;
 
 /**
  * Компонент шапки сайта (header).
@@ -13,57 +11,59 @@ import static com.codeborne.selenide.Condition.visible;
  */
 public class HeaderComponent {
 
-    private final SelenideElement self;
+    private final UiElement self;  // Если нужно проверять весь контейнер как UiElement
 
-    // Элементы внутри шапки
-    private final SelenideElement logo;
-    private final SelenideElement catalogBtn;
-    private final SelenideElement searchField;
-    private final SelenideElement searchSubmitButton;
-    private final SelenideElement personalAccount;
-    private final SelenideElement myOrders;
-    private final SelenideElement favorites;
-    private final SelenideElement shoppingCart;
+    // Элементы внутри шапки как UiElement
+    private final UiElement logo;
+    private final UiElement catalogBtn;
+    private final UiElement searchField;
+    private final UiElement searchSubmitButton;
+    private final UiElement personalAccount;
+    private final UiElement myOrders;
+    private final UiElement favorites;
+    private final UiElement shoppingCart;
 
     public HeaderComponent(SelenideElement container) {
-        this.self = container;
+        this.self = new UiElement("Шапка сайта", container);
 
-        this.logo = container.$(".site-header__logo");
-        this.catalogBtn = container.$("span[data-ga-event-category='UpCatMenuView']");
-        this.searchField = container.$("input[id='top_search']");
-        this.searchSubmitButton = container.$("button[data-smoke='GoSearchBtn']");
-        this.personalAccount = container.$("div[data-user-block]");
-        this.myOrders = container.$("a[href='/usercp/history/'] > span:first-child");
-        this.favorites = container.$("a[data-ga-event-category='HeaderFavoriteClick'] > span:first-child");
-        this.shoppingCart = container.$("a[data-ga-event-category='HeaderBasketClick'] > span:first-child");
+        this.logo = new UiElement("Логотип", container.$(".site-header__logo"));
+        this.catalogBtn = new UiElement("Кнопка каталога", container.$("span[data-ga-event-category='UpCatMenuView']"));
+        this.searchField = new UiElement("Поле поиска", container.$("input[id='top_search']"));
+        this.searchSubmitButton = new UiElement("Кнопка поиска", container.$("button[data-smoke='GoSearchBtn']"));
+        this.personalAccount = new UiElement("Личный кабинет", container.$("div[data-user-block]"));
+        this.myOrders = new UiElement("Мои заказы", container.$("a[href='/usercp/history/'] > span:first-child"));
+        this.favorites = new UiElement("Избранное", container.$("a[data-ga-event-category='HeaderFavoriteClick'] > span:first-child"));
+        this.shoppingCart = new UiElement("Корзина", container.$("a[data-ga-event-category='HeaderBasketClick'] > span:first-child"));
     }
 
     @Step("Проверяем, что шапка отображается")
     public HeaderComponent shouldBeVisible() {
-        self.shouldBe(visible);
+        self.shouldBeVisible();
 
-        logo.shouldBe(visible);
-        catalogBtn.shouldBe(visible);
-        searchField.shouldBe(visible);
-        searchSubmitButton.shouldBe(visible);
-        personalAccount.shouldBe(visible);
-        myOrders.shouldBe(visible);
-        favorites.shouldBe(visible);
-        shoppingCart.shouldBe(visible);
+        logo.shouldBeVisible();
+        catalogBtn.shouldBeVisible();
+        searchField.shouldBeVisible();
+        searchSubmitButton.shouldBeVisible();
+        personalAccount.shouldBeVisible();
+        myOrders.shouldBeVisible();
+        favorites.shouldBeVisible();
+        shoppingCart.shouldBeVisible();
 
         return this;
     }
 
     @Step("Поиск товара: {query}")
     public SearchResultsPage search(String query) {
-        searchField.shouldBe(visible).clear();
-        searchField.setValue(query).pressEnter();
+        searchField.clearAndType(query);
+        searchSubmitButton.click();
         return new SearchResultsPage().shouldBeOpen();
     }
 
     @Step("Проверить счётчик корзины: {expectedCount}")
     public HeaderComponent cartShouldHaveCount(int expectedCount) {
-        shoppingCart.$("span").shouldHave(text(String.valueOf(expectedCount)));
+        // Для счётчика создаём отдельный UiElement на основе shoppingCart
+        UiElement cartCounter = new UiElement("Счётчик корзины", shoppingCart.getElement().$("span"));
+        cartCounter.shouldContainText(String.valueOf(expectedCount));  // Или shouldHaveExactText, если нужно строгое совпадение
         return this;
     }
 }

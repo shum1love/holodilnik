@@ -24,6 +24,7 @@ public class AddingItemCartTest {
                 .open()
                 .search("машина")
                 .selectCategory("Стиральные машины ")
+        // TODO:
         ;
     }
 }

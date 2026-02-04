@@ -26,7 +26,6 @@ public abstract class BasePage<T extends BasePage<T>> {
 
     /**
      * Всегда открывает страницу И проверяет, что она открыта.
-     * Если проверка не нужна — используй Selenide.open(...) напрямую в тесте.
      */
     @SuppressWarnings("unchecked")
     public T open() {

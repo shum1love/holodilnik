@@ -11,33 +11,69 @@ import static com.codeborne.selenide.Selenide.$$;
 /**
  * Локаторы страницы результатов поиска.
  * Всё в одном месте, с человеческими именами.
+ * Элементы создаются лениво — при каждом обращении.
  */
 public final class SearchResultsLocators {
 
-    private SearchResultsLocators() {}
+    private SearchResultsLocators() {
+        // запрет создания экземпляра
+    }
 
-    public static final UiElement title = ui("Заголовок страницы результатов", $$("h1").first());
+    public static UiElement title() {
+        return ui("Заголовок страницы результатов", $$("h1").first());
+    }
 
-    public static final UiElement parameterBlock = ui("Блок фильтров", $("div.filter-c__body"));
+    public static UiElement parameterBlock() {
+        return ui("Блок фильтров", $("div.filter-c__body"));
+    }
 
     // Категория
-    public static final UiElement categorySectionTitle = ui("Фильтр «Категория»", $$("span").filterBy(text("Категория")).first());
-    public static final UiElement categoryQuickSearch = ui("Поиск по категориям", $("input[id='quick-searchcategory']"));
-    public static final ElementsCollection categoryItems = $$("label[id*='cfilter_search_category']");
+    public static UiElement categorySectionTitle() {
+        return ui("Фильтр «Категория»", $$("span").filterBy(text("Категория")).first());
+    }
+
+    public static UiElement categoryQuickSearch() {
+        return ui("Поиск по категориям", $("input[id='quick-searchcategory']"));
+    }
+
+    public static ElementsCollection categoryItems() {
+        return $$("label[id*='cfilter_search_category']");
+    }
 
     // Цена
-    public static final UiElement priceSectionTitle = ui("Фильтр «Цена»", $$("span").filterBy(text("Цена")).first());
-    public static final UiElement minPriceInput = ui("Минимальная цена", $("input[id='min_txt_price']"));
-    public static final UiElement maxPriceInput = ui("Максимальная цена", $("input[id='max_txt_price']"));
-    public static final UiElement priceSliderValue = ui("Диапазон цен", $("div[id='value_price']"));
+    public static UiElement priceSectionTitle() {
+        return ui("Фильтр «Цена»", $$("span").filterBy(text("Цена")).first());
+    }
+
+    public static UiElement minPriceInput() {
+        return ui("Минимальная цена", $("input[id='min_txt_price']"));
+    }
+
+    public static UiElement maxPriceInput() {
+        return ui("Максимальная цена", $("input[id='max_txt_price']"));
+    }
+
+    public static UiElement priceSliderValue() {
+        return ui("Диапазон цен", $("div[id='value_price']"));
+    }
 
     // Производитель
-    public static final UiElement manufacturerQuickSearch = ui("Поиск по производителям", $("input[id='quick-searchvendor']"));
-    public static final ElementsCollection manufacturerItems = $$("label[id*='cfilter_search_vendor']");
+    public static UiElement manufacturerQuickSearch() {
+        return ui("Поиск по производителям", $("input[id='quick-searchvendor']"));
+    }
+
+    public static ElementsCollection manufacturerItems() {
+        return $$("label[id*='cfilter_search_vendor']");
+    }
 
     // Кнопки
-    public static final UiElement showButton = ui("Применить фильтры", $("input[id='cfilter_btnsubmit']"));
-    public static final UiElement clearFiltersButton = ui("Очистить фильтры", $("a[id='cfilter_btnclear']"));
+    public static UiElement showButton() {
+        return ui("Применить фильтры", $("input[id='cfilter_btnsubmit']"));
+    }
+
+    public static UiElement clearFiltersButton() {
+        return ui("Очистить фильтры", $("a[id='cfilter_btnclear']"));
+    }
 
     private static UiElement ui(String name, SelenideElement element) {
         return new UiElement(name, element);

@@ -1,6 +1,5 @@
 package ru.holodilnik.framework.ui.pages;
 
-import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
 import io.qameta.allure.Step;
 import ru.holodilnik.framework.ui.elements.UiElement;
@@ -8,8 +7,8 @@ import ru.holodilnik.framework.ui.pages.components.HeaderComponent;
 
 import static com.codeborne.selenide.Condition.text;
 import static com.codeborne.selenide.Condition.visible;
-import static com.codeborne.selenide.Selenide.$$;
 import static com.codeborne.selenide.Selenide.$;
+import static ru.holodilnik.framework.ui.pages.locators.SearchResultsLocators.*;
 
 public final class SearchResultsPage extends BasePage<SearchResultsPage> {
 
@@ -17,10 +16,6 @@ public final class SearchResultsPage extends BasePage<SearchResultsPage> {
 
     private final HeaderComponent header =
             new HeaderComponent($("header.site-header, header, .b-header"));
-
-    // Коллекция — без UiElement, это нормально
-    private final ElementsCollection categoryItems =
-            $$("label[id*='cfilter_search_category']");
 
     // ─── BasePage ──────────────────────────────────────────
 
@@ -30,13 +25,13 @@ public final class SearchResultsPage extends BasePage<SearchResultsPage> {
 
     @Override
     protected SelenideElement pageIdentifier() {
-        return title.getElement();
+        return title().getElement();
     }
 
     @Override
     public SearchResultsPage shouldBeOpen() {
         super.shouldBeOpen();
-        title
+        title()
                 .shouldBeVisible()
                 .shouldContainText("Результаты поиска");
         return this;
@@ -46,7 +41,7 @@ public final class SearchResultsPage extends BasePage<SearchResultsPage> {
 
     @Step("Выбрать категорию '{categoryName}'")
     public SearchResultsPage selectCategory(String categoryName) {
-        categoryItems
+        categoryItems()
                 .findBy(text(categoryName))
                 .shouldBe(visible)
                 .click();
@@ -55,19 +50,19 @@ public final class SearchResultsPage extends BasePage<SearchResultsPage> {
 
     @Step("Нажать кнопку 'Показать'")
     public SearchResultsPage clickShowButton() {
-        showButton.click();
+        showButton().click();
         return this;
     }
 
     @Step("Очищаем все фильтры")
     public SearchResultsPage clearAllFilters() {
-        clearFiltersButton.click();
+        clearFiltersButton().click();
         return this;
     }
 
     @Step("Проверяем пустую выдачу")
     public SearchResultsPage shouldHaveNoResults() {
-        title.shouldContainText("Ничего не найдено");
+        title().shouldContainText("Ничего не найдено");
         return this;
     }
 
