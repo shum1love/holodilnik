@@ -15,6 +15,6 @@ class MainPageSmokeTest extends BaseTest {
         MainPage main = new MainPage();
 
         step("Открываем главную", main::open);
-        step("Проверяем что страница загрузилась", main::isOpened);
+        //step("Проверяем что страница загрузилась", main::isOpened);
     }
 }

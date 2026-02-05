@@ -1,11 +1,10 @@
 package ru.holodilnik.framework.ui.pages;
 
 import com.codeborne.selenide.Selenide;
-import com.codeborne.selenide.SelenideElement;
 import com.codeborne.selenide.WebDriverConditions;
 import com.codeborne.selenide.WebDriverRunner;
+import ru.holodilnik.framework.ui.elements.UiElement;
 
-import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selenide.webdriver;
 import static ru.holodilnik.framework.core.config.ConfigLoader.getBaseUrl;
 
@@ -38,7 +37,7 @@ public abstract class BasePage<T extends BasePage<T>> {
     /**
      * Контракт: каждая страница определяет свой "якорь"
      */
-    protected abstract SelenideElement pageIdentifier();
+    protected abstract UiElement pageAnchor();
 
     /**
      * Явная проверка открытия страницы.
@@ -46,15 +45,8 @@ public abstract class BasePage<T extends BasePage<T>> {
      */
     @SuppressWarnings("unchecked")
     public T shouldBeOpen() {
-        pageIdentifier().shouldBe(visible);
+        pageAnchor().shouldBeVisible();
         return (T) this;
-    }
-
-    /**
-     * Проверка без падения (для условной логики в тестах — редко)
-     */
-    public boolean isOpened() {
-        return pageIdentifier().is(visible);
     }
 
     // Навигация — без автоматической проверки (ответственность перекладывается на вызывающий код)

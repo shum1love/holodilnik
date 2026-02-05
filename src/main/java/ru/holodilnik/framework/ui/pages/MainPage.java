@@ -1,50 +1,34 @@
 package ru.holodilnik.framework.ui.pages;
 
 import com.codeborne.selenide.SelenideElement;
+import io.qameta.allure.Step;
+import ru.holodilnik.framework.ui.elements.UiElement;
 import ru.holodilnik.framework.ui.pages.components.HeaderComponent;
 
 import static com.codeborne.selenide.Selenide.$;
+import static ru.holodilnik.framework.ui.pages.locators.MainPageLocators.*;
 
 /**
- * Главная страница сайта holodilnik.ru.
- *
- * Отвечает ТОЛЬКО за:
- * - контракт страницы
- * - бизнес-действия, доступные пользователю с главной
+ * Главная страница сайта holodilnik.ru
  */
 public final class MainPage extends BasePage<MainPage> {
-
-    // Якорный элемент страницы
-    private final SelenideElement logo = $("span.site-header__logo-brand");
-
-    // В конструкторе HeaderComponent
-    private final HeaderComponent header =
-            new HeaderComponent($("header, .site-header, .header"));
+    private final HeaderComponent header;
 
     public MainPage() {
         super("/");
+        this.header = new HeaderComponent($("site-header__body"));
     }
 
     @Override
-    protected SelenideElement pageIdentifier() {
-        return logo;
+    protected UiElement pageAnchor() {
+        return logo();
     }
 
-    /**
-     * Поиск товара через хедер.
-     */
-    public SearchResultsPage search(String query) {
-        header.search(query);
-        return new SearchResultsPage();
+    @Step("Проверить видимость хедера и всех его элементов")
+    public MainPage checkHeaderVisible(){
+        header.shouldBeVisible();
+        return this;
     }
-
-    /**
-     * Открытие каталога через хедер.
-     */
-    /*public CatalogPage openCatalog() {
-        header.openCatalog();
-        return new CatalogPage();
-    }*/
 
     /**
      * Явный доступ к компоненту (использовать осознанно).

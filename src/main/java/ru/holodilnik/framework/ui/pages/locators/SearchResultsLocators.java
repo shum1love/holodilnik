@@ -9,15 +9,9 @@ import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.$$;
 
 /**
- * Локаторы страницы результатов поиска.
- * Всё в одном месте, с человеческими именами.
- * Элементы создаются лениво — при каждом обращении.
+ * Локаторы страницы "Результаты поиска".
  */
 public final class SearchResultsLocators {
-
-    private SearchResultsLocators() {
-        // запрет создания экземпляра
-    }
 
     public static UiElement title() {
         return ui("Заголовок страницы результатов", $$("h1").first());
@@ -77,5 +71,9 @@ public final class SearchResultsLocators {
 
     private static UiElement ui(String name, SelenideElement element) {
         return new UiElement(name, element);
+    }
+
+    private SearchResultsLocators() {
+        throw new AssertionError("Этот класс — только статические методы, экземпляры создавать нельзя");
     }
 }

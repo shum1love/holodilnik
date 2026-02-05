@@ -121,7 +121,7 @@ public class UiElement {
         return this;
     }
 
-    public SelenideElement getElement() {
+    public UiElement getElement() {
         return element;
     }
 
