@@ -39,6 +39,11 @@ public final class SearchResultsPage extends BasePage<SearchResultsPage> {
 
     // ─── Business actions ─────────────────────────────────
 
+    @Step("Проверить, что отображается блок фильтров")
+    public SearchResultsPage checkParameterBlock(){
+        parameterBlock().shouldBeVisible();
+        return this;
+    }
     @Step("Выбрать категорию '{categoryName}'")
     public SearchResultsPage selectCategory(String categoryName) {
         categoryItems()

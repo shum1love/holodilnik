@@ -30,6 +30,7 @@ public abstract class BasePage<T extends BasePage<T>> {
     @SuppressWarnings("unchecked")
     public T open() {
         Selenide.open(url);
+        WebDriverRunner.getWebDriver().manage().window().maximize();
         shouldBeOpen();
         return (T) this;
     }
