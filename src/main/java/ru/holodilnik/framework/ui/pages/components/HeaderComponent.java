@@ -50,18 +50,17 @@ public class HeaderComponent {
         return this;
     }
 
-    @Step("Поиск товара: {query}")
+    @Step("Ввести значение {value} в поле 'Поиск по каталогу'")
+    public SearchResultsPage inputValueSearchField(final String value) {
+        searchField.clearAndType(value);
+        searchSubmitButton.click();
+        return new SearchResultsPage();
+    }
+
+    /*@Step("Поиск товара: {query}")
     public SearchResultsPage search(String query) {
         searchField.clearAndType(query);
         searchSubmitButton.click();
         return new SearchResultsPage().shouldBeOpen();
-    }
-
-    @Step("Проверить счётчик корзины: {expectedCount}")
-    public HeaderComponent cartShouldHaveCount(int expectedCount) {
-        // Для счётчика создаём отдельный UiElement на основе shoppingCart
-        UiElement cartCounter = new UiElement("Счётчик корзины", shoppingCart.getElement().$("span"));
-        cartCounter.shouldContainText(String.valueOf(expectedCount));  // Или shouldHaveExactText, если нужно строгое совпадение
-        return this;
-    }
+    }*/
 }

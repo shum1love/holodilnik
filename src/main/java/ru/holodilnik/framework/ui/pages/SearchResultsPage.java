@@ -2,7 +2,6 @@ package ru.holodilnik.framework.ui.pages;
 
 import com.codeborne.selenide.SelenideElement;
 import io.qameta.allure.Step;
-import ru.holodilnik.framework.ui.elements.UiElement;
 import ru.holodilnik.framework.ui.pages.components.HeaderComponent;
 import ru.holodilnik.framework.ui.pages.locators.SearchResultsLocators;
 
@@ -12,8 +11,7 @@ import static com.codeborne.selenide.Selenide.$;
 
 public final class SearchResultsPage extends BasePage<SearchResultsPage> {
 
-    private final HeaderComponent header =
-            new HeaderComponent($("header.site-header, header, .b-header"));
+    private final HeaderComponent header = new HeaderComponent($("header.site-header, header, .b-header"));
 
     public SearchResultsPage() {
         super("");

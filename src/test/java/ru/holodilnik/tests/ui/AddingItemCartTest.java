@@ -23,7 +23,8 @@ public class AddingItemCartTest {
         main.open()
                 // TODO: check main page
                 // TODO: check header
-                .search("машина")
+                .checkHeaderVisible()
+                .inputValueSearchField("машина")
                 .checkParameterBlock()
                 // TODO: check results button
                 .selectCategory("Стиральные машины ")

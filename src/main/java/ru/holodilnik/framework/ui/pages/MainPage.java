@@ -29,8 +29,13 @@ public final class MainPage extends BasePage<MainPage> {
         return this;
     }
 
+    @Step("Ввести значение {value} в поле 'Поиск по каталогу'")
+    public SearchResultsPage inputValueSearchField(final String value) {
+        return header.inputValueSearchField(value);
+    }
+
     /**
-     * Явный доступ к компоненту (использовать осознанно).
+     * Явный доступ к компоненту.
      */
     public HeaderComponent header() {
         return header;
