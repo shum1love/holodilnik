@@ -5,6 +5,8 @@ import io.qameta.allure.Step;
 import ru.holodilnik.framework.ui.pages.components.HeaderComponent;
 import ru.holodilnik.framework.ui.pages.locators.SearchResultsLocators;
 
+import static com.codeborne.selenide.CollectionCondition.sizeGreaterThan;
+import static com.codeborne.selenide.CollectionCondition.sizeGreaterThanOrEqual;
 import static com.codeborne.selenide.Condition.text;
 import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selenide.$;
@@ -60,9 +62,27 @@ public final class SearchResultsPage extends BasePage<SearchResultsPage> {
         return this;
     }
 
-    @Step("Проверяем пустую выдачу")
-    public SearchResultsPage shouldHaveNoResults() {
-        SearchResultsLocators.title().shouldContainText("Ничего не найдено");
+    @Step("Проверить, что отображается несколько карточек товаров")
+    public SearchResultsPage checkProductCardsArePresent() {
+        SearchResultsLocators.productCards()
+                .shouldHave(sizeGreaterThan(10));
+        return this;
+    }
+
+    @Step("Добавить {number}-ю карточку товара в корзину")
+    public SearchResultsPage addProductCard(final int number) {
+        SearchResultsLocators
+                .addToCartButtons()
+                .shouldHave(sizeGreaterThanOrEqual(number))
+                .get(number - 1)
+                .click();
+
+        return this;
+    }
+
+    @Step("Счётчик корзины показывает {expectedCount} товаров")
+    public SearchResultsPage cartCountShouldBe(int expectedCount) {
+        header.cartCountShouldBe(expectedCount);
         return this;
     }
 }

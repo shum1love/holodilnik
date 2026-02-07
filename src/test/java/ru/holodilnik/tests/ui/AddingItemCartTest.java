@@ -22,14 +22,14 @@ public class AddingItemCartTest {
     public void addingItemCartTest() {
         main.open()
                 // TODO: check main page
-                // TODO: check header
                 .checkHeaderVisible()
                 .inputValueSearchField("машина")
                 .checkParameterBlock()
-                // TODO: check results button
                 .selectCategory("Стиральные машины ")
                 .clickShowButton()
-        // TODO:
+                .checkProductCardsArePresent()
+                .addProductCard(1)
+                .cartCountShouldBe(1)
         ;
     }
 }

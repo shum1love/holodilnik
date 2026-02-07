@@ -17,11 +17,11 @@ public final class SearchResultsLocators {
         return ui("Заголовок страницы результатов", $$("h1").first());
     }
 
+    // parameterBlock
     public static UiElement parameterBlock() {
         return ui("Блок фильтров", $("div.filter-c__body"));
     }
 
-    // Категория
     public static UiElement categorySectionTitle() {
         return ui("Фильтр «Категория»", $$("span").filterBy(text("Категория")).first());
     }
@@ -34,7 +34,6 @@ public final class SearchResultsLocators {
         return $$("label[id*='cfilter_search_category']");
     }
 
-    // Цена
     public static UiElement priceSectionTitle() {
         return ui("Фильтр «Цена»", $$("span").filterBy(text("Цена")).first());
     }
@@ -51,7 +50,6 @@ public final class SearchResultsLocators {
         return ui("Диапазон цен", $("div[id='value_price']"));
     }
 
-    // Производитель
     public static UiElement manufacturerQuickSearch() {
         return ui("Поиск по производителям", $("input[id='quick-searchvendor']"));
     }
@@ -60,13 +58,21 @@ public final class SearchResultsLocators {
         return $$("label[id*='cfilter_search_vendor']");
     }
 
-    // Кнопки
     public static UiElement showButton() {
         return ui("Применить фильтры", $("input[id='cfilter_btnsubmit']"));
     }
 
     public static UiElement clearFiltersButton() {
         return ui("Очистить фильтры", $("a[id='cfilter_btnclear']"));
+    }
+
+    // Блок поиска результатов
+    public static ElementsCollection productCards() {
+        return $$(".goods-tile.preview-product");
+    }
+
+    public static ElementsCollection addToCartButtons() {
+        return $$("a[data-smoke='AddToCartListing']");
     }
 
     private static UiElement ui(String name, SelenideElement element) {

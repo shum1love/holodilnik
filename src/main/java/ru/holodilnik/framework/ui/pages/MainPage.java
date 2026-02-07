@@ -15,7 +15,7 @@ public final class MainPage extends BasePage<MainPage> {
 
     public MainPage() {
         super("/");
-        this.header = new HeaderComponent($("site-header__body"));
+        this.header = new HeaderComponent($(".site-header__main"));
     }
 
     @Override
