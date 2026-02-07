@@ -4,7 +4,7 @@ import com.codeborne.selenide.SelenideElement;
 import io.qameta.allure.Step;
 import ru.holodilnik.framework.ui.elements.UiElement;
 import ru.holodilnik.framework.ui.pages.components.HeaderComponent;
-import ru.holodilnik.framework.ui.pages.locators.SearchResultsLocators;  // ← обычный импорт
+import ru.holodilnik.framework.ui.pages.locators.SearchResultsLocators;
 
 import static com.codeborne.selenide.Condition.text;
 import static com.codeborne.selenide.Condition.visible;
@@ -20,8 +20,8 @@ public final class SearchResultsPage extends BasePage<SearchResultsPage> {
     }
 
     @Override
-    protected UiElement pageAnchor() {
-        return SearchResultsLocators.title().getElement();
+    protected SelenideElement pageIdentifier() {
+        return SearchResultsLocators.title().getSelenideElement();
     }
 
     @Override

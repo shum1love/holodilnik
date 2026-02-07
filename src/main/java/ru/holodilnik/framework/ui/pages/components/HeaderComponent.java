@@ -11,9 +11,7 @@ import ru.holodilnik.framework.ui.pages.SearchResultsPage;
  */
 public class HeaderComponent {
 
-    private final UiElement self;  // Если нужно проверять весь контейнер как UiElement
-
-    // Элементы внутри шапки как UiElement
+    private final UiElement self;
     private final UiElement logo;
     private final UiElement catalogBtn;
     private final UiElement searchField;

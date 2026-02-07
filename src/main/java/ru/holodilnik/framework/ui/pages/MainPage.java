@@ -6,7 +6,7 @@ import ru.holodilnik.framework.ui.elements.UiElement;
 import ru.holodilnik.framework.ui.pages.components.HeaderComponent;
 
 import static com.codeborne.selenide.Selenide.$;
-import static ru.holodilnik.framework.ui.pages.locators.MainPageLocators.*;
+import static ru.holodilnik.framework.ui.pages.locators.MainPageLocators.logo;
 
 /**
  * Главная страница сайта holodilnik.ru
@@ -20,12 +20,12 @@ public final class MainPage extends BasePage<MainPage> {
     }
 
     @Override
-    protected UiElement pageAnchor() {
+    protected SelenideElement pageIdentifier() {
         return logo();
     }
 
     @Step("Проверить видимость хедера и всех его элементов")
-    public MainPage checkHeaderVisible(){
+    public MainPage checkHeaderVisible() {
         header.shouldBeVisible();
         return this;
     }
