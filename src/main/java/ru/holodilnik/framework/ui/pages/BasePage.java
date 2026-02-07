@@ -11,10 +11,6 @@ import static ru.holodilnik.framework.core.config.ConfigLoader.getBaseUrl;
 
 /**
  * Базовый контракт для Page Objects.
- * Отвечает ТОЛЬКО за:
- * - знание своего URL
- * - открытие страницы
- * - проверку факта открытия (по якорному элементу)
  */
 public abstract class BasePage<T extends BasePage<T>> {
 
@@ -41,8 +37,7 @@ public abstract class BasePage<T extends BasePage<T>> {
     protected abstract SelenideElement pageIdentifier();
 
     /**
-     * Явная проверка открытия страницы.
-     * Вызывается из open() и может вызываться отдельно.
+     * Проверка открытия страницы.
      */
     @SuppressWarnings("unchecked")
     public T shouldBeOpen() {
@@ -50,26 +45,36 @@ public abstract class BasePage<T extends BasePage<T>> {
         return (T) this;
     }
 
-    // Навигация — без автоматической проверки (ответственность перекладывается на вызывающий код)
+    /**
+     * Перезагрузить страницу.
+     */
     @SuppressWarnings("unchecked")
     public T refresh() {
         Selenide.refresh();
         return (T) this;
     }
 
+    /**
+     * Вернуться назад.
+     */
     @SuppressWarnings("unchecked")
     public T back() {
         Selenide.back();
         return (T) this;
     }
 
-    // Проверка URL — правильно через WebDriverConditions
+    /**
+     * Проверка url.
+     */
     @SuppressWarnings("unchecked")
     public T shouldHaveUrl(String expected) {
         webdriver().shouldHave(WebDriverConditions.url(expected));
         return (T) this;
     }
 
+    /**
+     * Возвращает текущий URL страницы, открытой в браузере.
+     */
     public String getCurrentUrl() {
         return WebDriverRunner.getWebDriver().getCurrentUrl();
     }
