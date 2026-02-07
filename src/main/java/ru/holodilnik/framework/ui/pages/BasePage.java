@@ -4,7 +4,6 @@ import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.SelenideElement;
 import com.codeborne.selenide.WebDriverConditions;
 import com.codeborne.selenide.WebDriverRunner;
-import ru.holodilnik.framework.ui.elements.UiElement;
 
 import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selenide.webdriver;
@@ -47,7 +46,7 @@ public abstract class BasePage<T extends BasePage<T>> {
      */
     @SuppressWarnings("unchecked")
     public T shouldBeOpen() {
-        pageIdentifier().shouldBe(visible);                // ← упрощаем
+        pageIdentifier().shouldBe(visible);
         return (T) this;
     }
 

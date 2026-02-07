@@ -2,11 +2,10 @@ package ru.holodilnik.framework.ui.pages;
 
 import com.codeborne.selenide.SelenideElement;
 import io.qameta.allure.Step;
-import ru.holodilnik.framework.ui.elements.UiElement;
 import ru.holodilnik.framework.ui.pages.components.HeaderComponent;
+import ru.holodilnik.framework.ui.pages.locators.MainPageLocators;
 
 import static com.codeborne.selenide.Selenide.$;
-import static ru.holodilnik.framework.ui.pages.locators.MainPageLocators.logo;
 
 /**
  * Главная страница сайта holodilnik.ru
@@ -21,7 +20,7 @@ public final class MainPage extends BasePage<MainPage> {
 
     @Override
     protected SelenideElement pageIdentifier() {
-        return logo();
+        return MainPageLocators.logo().getSelenideElement();
     }
 
     @Step("Проверить видимость хедера и всех его элементов")
