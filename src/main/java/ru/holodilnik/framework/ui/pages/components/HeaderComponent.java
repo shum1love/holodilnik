@@ -4,6 +4,7 @@ import com.codeborne.selenide.SelenideElement;
 import io.qameta.allure.Step;
 import ru.holodilnik.framework.ui.elements.UiElement;
 import ru.holodilnik.framework.ui.pages.SearchResultsPage;
+import ru.holodilnik.framework.ui.pages.ShoppingCardPage;
 
 import static com.codeborne.selenide.Selectors.withText;
 
@@ -66,4 +67,12 @@ public class HeaderComponent {
         cartCount.shouldHaveExactText(String.valueOf(expectedCount));
         return this;
     }
+
+    @Step("Перейти в раздел 'Коризна'")
+    public ShoppingCardPage goToShoppingCarte(){
+       /* if(shopingcart.isDisplayed()){
+            shopingcard.hover().click();*/
+      }
+}
+
 }
