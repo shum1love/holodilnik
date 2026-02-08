@@ -68,11 +68,10 @@ public class HeaderComponent {
         return this;
     }
 
-    @Step("Перейти в раздел 'Коризна'")
-    public ShoppingCardPage goToShoppingCarte(){
-       /* if(shopingcart.isDisplayed()){
-            shopingcard.hover().click();*/
-      }
-}
+    @Step("Перейти в раздел 'Корзина'")
+    public ShoppingCardPage goToShoppingCart() {
+        shoppingCart.click();
+        return new ShoppingCardPage().shouldBeOpen();
+    }
 
 }
