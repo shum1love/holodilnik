@@ -15,9 +15,10 @@ pipeline {
                         mvn clean test \
                             -Dtest=**/*Test \
                             -Djunit.jupiter.tags=Smoke \
-                            -Dselenide.remote=http://localhost:4444/wd/hub \
+                            -Dselenide.remote=http://selenoid:4444/wd/hub \
                             -Dselenide.browser=chrome \
-                            -Dselenide.timeout=15000
+                            -Dselenide.timeout=15000 \
+                            -Dselenide.headless=true
                     '''
                 }
             }
