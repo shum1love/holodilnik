@@ -12,11 +12,10 @@ pipeline {
             steps {
                 checkout scm
                 sh 'ls -la'
-                sh 'pwd'
             }
         }
 
-        stage('Запуск Smoke') {
+        stage('Smoke') {
             steps {
                 sh '''
                     mvn clean test \
