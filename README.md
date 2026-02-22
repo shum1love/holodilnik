@@ -177,6 +177,14 @@ mvn clean test -Dselenide.remote=http://selenoid:4444/wd/hub
 
 ---
 
+## 🤖 Jenkins (локальный запуск и триггеры)
+
+Готовый пайплайн для Jenkins находится в `ci/Jenkinsfile`.
+
+Пошаговая инструкция по локальному поднятию Jenkins, настройке cron/SCM-trigger и разделению тестов на несколько job: `docs/jenkins-local-setup.md`.
+
+---
+
 ## 📊 Allure‑отчёты
 
 ### Генерация отчёта

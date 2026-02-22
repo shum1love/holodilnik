@@ -1,0 +1,42 @@
+pipeline {
+  agent any
+
+  options {
+    timestamps()
+    disableConcurrentBuilds()
+  }
+
+  parameters {
+    choice(name: 'TEST_TAG', choices: ['Smoke', 'Cart', 'UI'], description: 'JUnit5 tag expression for this job')
+  }
+
+  triggers {
+    cron('H 8 * * 1-5')
+    pollSCM('H/10 * * * *')
+  }
+
+  environment {
+    MAVEN_OPTS = '-Dmaven.repo.local=.m2/repository'
+  }
+
+  stages {
+    stage('Checkout') {
+      steps {
+        checkout scm
+      }
+    }
+
+    stage('Run tagged tests') {
+      steps {
+        sh 'mvn -B -Dtest=*Test -Djunit.jupiter.tags=${TEST_TAG} test'
+      }
+    }
+  }
+
+  post {
+    always {
+      archiveArtifacts artifacts: 'target/surefire-reports/**', allowEmptyArchive: true
+      junit testResults: 'target/surefire-reports/*.xml', allowEmptyResults: true
+    }
+  }
+}
