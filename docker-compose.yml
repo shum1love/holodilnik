@@ -1,4 +1,3 @@
-version: '3.8'
 services:
   jenkins:
     image: jenkins/jenkins:lts-jdk17
@@ -23,3 +22,5 @@ services:
 
 networks:
   test-net:
+volumes:
+  jenkins-data:
