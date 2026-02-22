@@ -18,7 +18,9 @@ pipeline {
                             -Dselenide.remote=http://selenoid:4444/wd/hub \
                             -Dselenide.browser=chrome \
                             -Dselenide.timeout=15000 \
-                            -Dselenide.headless=true
+                            -Dselenide.headless=true \
+                            -Dselenide.browserSize=1920x1080 \
+                            -Dselenide.chromeoptions.args=--no-sandbox,--disable-dev-shm-usage,--disable-gpu,--disable-software-rasterizer
                     '''
                 }
             }
