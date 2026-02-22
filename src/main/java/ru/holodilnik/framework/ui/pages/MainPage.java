@@ -23,6 +23,12 @@ public final class MainPage extends BasePage<MainPage> {
         return MainPageLocators.logo().getSelenideElement();
     }
 
+    @Step("Проверить видимость основных элементов главной страницы")
+    public MainPage clickSearchButton(){
+        // TODO: Дописать метод
+        return this;
+   }
+
     @Step("Проверить видимость хедера и всех его элементов")
     public MainPage checkHeaderVisible() {
         header.shouldBeVisible();

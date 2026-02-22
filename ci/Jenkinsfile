@@ -1,42 +1,38 @@
 pipeline {
-  agent any
-
-  options {
-    timestamps()
-    disableConcurrentBuilds()
-  }
-
-  parameters {
-    choice(name: 'TEST_TAG', choices: ['Smoke', 'Cart', 'UI'], description: 'JUnit5 tag expression for this job')
-  }
-
-  triggers {
-    cron('H 8 * * 1-5')
-    pollSCM('H/10 * * * *')
-  }
-
-  environment {
-    MAVEN_OPTS = '-Dmaven.repo.local=.m2/repository'
-  }
-
-  stages {
-    stage('Checkout') {
-      steps {
-        checkout scm
-      }
+    agent {
+        docker {
+            image 'maven:3.9.9-eclipse-temurin-17'
+            args '-v /var/run/docker.sock:/var/run/docker.sock'
+            reuseNode true
+        }
     }
 
-    stage('Run tagged tests') {
-      steps {
-        sh 'mvn -B -Dtest=*Test -Djunit.jupiter.tags=${TEST_TAG} test'
-      }
-    }
-  }
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+                sh 'ls -la'
+                sh 'pwd'
+            }
+        }
 
-  post {
-    always {
-      archiveArtifacts artifacts: 'target/surefire-reports/**', allowEmptyArchive: true
-      junit testResults: 'target/surefire-reports/*.xml', allowEmptyResults: true
+        stage('Запуск Smoke') {
+            steps {
+                sh '''
+                    mvn clean test \
+                        -Dtest=**/*Test \
+                        -Djunit.jupiter.tags=Smoke \
+                        -Dselenide.headless=true \
+                        -Dselenide.browser=chrome \
+                        -Dselenide.timeout=15000
+                '''
+            }
+        }
     }
-  }
+
+    post {
+        always {
+            junit allowEmptyResults: true, testResults: '**/target/surefire-reports/*.xml'
+        }
+    }
 }
