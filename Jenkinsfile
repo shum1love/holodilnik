@@ -1,30 +1,25 @@
 pipeline {
-    agent {
-        docker {
-            image 'maven:3.9.9-eclipse-temurin-17'
-            args '-v /var/run/docker.sock:/var/run/docker.sock'
-            reuseNode true
-        }
-    }
+    agent any
 
     stages {
         stage('Checkout') {
             steps {
                 checkout scm
-                sh 'ls -la'
             }
         }
 
         stage('Smoke') {
             steps {
-                sh '''
-                    mvn clean test \
-                        -Dtest=**/*Test \
-                        -Djunit.jupiter.tags=Smoke \
-                        -Dselenide.headless=true \
-                        -Dselenide.browser=chrome \
-                        -Dselenide.timeout=15000
-                '''
+                withMaven(jdk: 'jdk17', maven: 'maven3') {
+                    sh '''
+                        mvn clean test \
+                            -Dtest=**/*Test \
+                            -Djunit.jupiter.tags=Smoke \
+                            -Dselenide.headless=true \
+                            -Dselenide.browser=chrome \
+                            -Dselenide.timeout=15000
+                    '''
+                }
             }
         }
     }
