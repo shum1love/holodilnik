@@ -95,16 +95,14 @@ docker logs --tail 200 jenkins-local
 
 В проекте тесты уже размечены JUnit5 тегами (`Smoke`, `Cart`, `UI`).
 
-Сделайте 3 pipeline job из одного `Jenkinsfile`, но с разными значениями параметра `TEST_TAG`:
+Текущий `Jenkinsfile` специально упрощён и запускает только smoke-набор (`TEST_TAG=Smoke`).
+Это самый стабильный вариант для ежедневного прогона.
 
-1. `ui-smoke` → `TEST_TAG=Smoke`
-2. `ui-cart` → `TEST_TAG=Cart`
-3. `ui-full` → `TEST_TAG=UI`
+Если позже понадобится разделение на несколько job (`Smoke`, `Cart`, `UI`),
+лучше делать это отдельными Jenkinsfile/ветками, а не усложнять основной smoke-пайплайн.
 
-`Jenkinsfile` уже принимает параметры:
-- `TEST_TAG`
-- `SELENOID_REMOTE`
-- `BROWSER_VERSION` (опционально, можно оставить пустым)
+`Jenkinsfile` запускает тесты через удалённый Selenoid `http://selenoid:4444/wd/hub`
+и использует браузерную версию по умолчанию из Selenoid.
 
 ## 6) Настроить триггер
 
@@ -132,34 +130,26 @@ mvn -B -Dtest=*Test -Djunit.jupiter.tags=UI test
 ```
 
 Если видите ошибку вида:
-`No such image: selenoid/vnc:chrome_126.0`
+`No such image: ...`
 
-Это означает, что Selenoid пытается поднять несуществующий браузерный image.
-Решение:
+Это означает, что на Docker-host не скачан нужный образ браузера для Selenoid.
 
 ```bash
-# посмотреть активную конфигурацию браузеров
+# посмотреть, какую версию/образ ждёт текущий browsers.json
 cat selenoid-config/browsers.json
 
-# перезапустить Selenoid после правок
+# скачать нужный образ (пример для default=latest)
+docker pull selenoid/chrome:latest
+
+# перезапустить Selenoid после правок/скачивания
 docker compose up -d selenoid
 
-# (опционально) заранее скачать image
-docker pull selenoid/chrome:latest
+# проверить статус и доступные браузеры
+curl -s http://localhost:4444/status
 ```
 
-При необходимости фиксированной версии укажите `BROWSER_VERSION` в Jenkins job
-(например `126.0`) и убедитесь, что эта версия есть в `selenoid-config/browsers.json`.
-
-Важно: если в Jenkins-консоли видите команду с пустыми значениями
-`-Djunit.jupiter.tags=` и/или `-Dselenide.remote=`, значит параметры job передались пустыми.
-В актуальном `Jenkinsfile` это обработано fallback-значениями:
-- `TEST_TAG=Smoke`
-- `SELENOID_REMOTE=http://selenoid:4444/wd/hub`
-
-Если после этого ошибка про `chromedriver` и `storage.googleapis.com` всё равно появляется,
-значит тест пошёл локально (не через Selenoid) — проверьте, что `SELENOID_REMOTE` доступен
-из Jenkins-контейнера и сервис `selenoid` поднят в той же docker-сети.
+Важно: в упрощённом Jenkinsfile версия браузера **не фиксируется** —
+это исключает падения из-за несовпадения `browserVersion` и фактически доступных образов в Selenoid.
 
 Если в окружении ограничен доступ к Maven Central, Jenkins не скачает зависимости.
 В таком случае нужен доступ к `https://repo.maven.apache.org/maven2` или прокси-репозиторий (Nexus/Artifactory).
