@@ -1,27 +1,37 @@
+version: '3.8'
+
 services:
   jenkins:
     image: jenkins/jenkins:lts-jdk21
+    container_name: jenkins
     ports:
       - "8080:8080"
       - "50000:50000"
     volumes:
       - jenkins-data:/var/jenkins_home
-    networks:
-      - test-net
+    restart: unless-stopped
 
-  services:
-    selenoid:
-      image: aerokube/selenoid:latest-release
-      ports:
-        - "4444:4444"
-      volumes:
-        - /var/run/docker.sock:/var/run/docker.sock
-        - ./selenoid-config:/root/.aerokube/selenoid
-      command: -conf /root/.aerokube/selenoid/browsers.json -limit 10 -container-network test-net
-      networks:
-        - test-net
+  selenoid:
+    image: aerokube/selenoid:latest-release
+    container_name: selenoid
+    ports:
+      - "4444:4444"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      - "./selenoid-config:/root/.aerokube/selenoid"
+    command: >
+      -conf /root/.aerokube/selenoid/browsers.json
+      -limit 10
+      -container-network bridge
+    restart: unless-stopped
+    # Если хочешь видеть логи подробнее — раскомментируй:
+    # logging:
+    #   driver: "json-file"
+    #   options:
+    #     max-size: "10m"
+    #     max-file: "3"
 
-networks:
-  test-net:
 volumes:
   jenkins-data:
+
+# networks: УБРАЛ НАХУЙ — пусть всё будет в дефолтной сети compose
