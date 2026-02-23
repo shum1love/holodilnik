@@ -101,11 +101,10 @@ docker logs --tail 200 jenkins-local
 2. `ui-cart` → `TEST_TAG=Cart`
 3. `ui-full` → `TEST_TAG=UI`
 
-Каждая job будет запускать:
-
-```bash
-mvn -B -Dtest=*Test -Djunit.jupiter.tags=${TEST_TAG} test
-```
+`Jenkinsfile` уже принимает параметры:
+- `TEST_TAG`
+- `SELENOID_REMOTE`
+- `BROWSER_VERSION` (опционально, можно оставить пустым)
 
 ## 6) Настроить триггер
 
@@ -131,6 +130,26 @@ mvn -B -Dtest=*Test -Djunit.jupiter.tags=Smoke test
 mvn -B -Dtest=*Test -Djunit.jupiter.tags=Cart test
 mvn -B -Dtest=*Test -Djunit.jupiter.tags=UI test
 ```
+
+Если видите ошибку вида:
+`No such image: selenoid/vnc:chrome_126.0`
+
+Это означает, что Selenoid пытается поднять несуществующий браузерный image.
+Решение:
+
+```bash
+# посмотреть активную конфигурацию браузеров
+cat selenoid-config/browsers.json
+
+# перезапустить Selenoid после правок
+docker compose up -d selenoid
+
+# (опционально) заранее скачать image
+docker pull selenoid/chrome:latest
+```
+
+При необходимости фиксированной версии укажите `BROWSER_VERSION` в Jenkins job
+(например `126.0`) и убедитесь, что эта версия есть в `selenoid-config/browsers.json`.
 
 Если в окружении ограничен доступ к Maven Central, Jenkins не скачает зависимости.
 В таком случае нужен доступ к `https://repo.maven.apache.org/maven2` или прокси-репозиторий (Nexus/Artifactory).
