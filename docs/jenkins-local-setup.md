@@ -33,7 +33,47 @@ docker exec jenkins-local cat /var/jenkins_home/secrets/initialAdminPassword
 - **JUnit**
 - (опционально) **Allure Jenkins Plugin**
 
-## 2) Добавить toolchain в Jenkins
+## 2) Как заново зайти в Jenkins
+
+Если Jenkins уже был поднят ранее, но доступ «потерялся», используйте этот порядок:
+
+1. Убедитесь, что контейнер запущен:
+
+```bash
+docker ps --filter name=jenkins-local
+```
+
+2. Если контейнер остановлен — поднимите его:
+
+```bash
+docker start jenkins-local
+```
+
+3. Откройте Jenkins в браузере:
+- `http://localhost:8080`
+
+4. Если забыли пароль администратора:
+- Вариант A (первый вход после установки):
+
+```bash
+docker exec jenkins-local cat /var/jenkins_home/secrets/initialAdminPassword
+```
+
+- Вариант B (сброс пользователя через emergency flow):
+  - остановите контейнер,
+  - добавьте в `/var/jenkins_home/init.groovy.d/` скрипт создания админа,
+  - запустите контейнер и войдите новым пользователем,
+  - удалите временный groovy-скрипт.
+
+5. Если не открывается UI:
+- проверьте, что порт не занят: `lsof -i :8080`;
+- проверьте логи Jenkins:
+
+```bash
+docker logs --tail 200 jenkins-local
+```
+
+## 3) Добавить toolchain в Jenkins
 
 В Jenkins:
 `Manage Jenkins -> Tools`
@@ -41,21 +81,21 @@ docker exec jenkins-local cat /var/jenkins_home/secrets/initialAdminPassword
 - JDK 17
 - Maven 3.9+
 
-## 3) Подключить репозиторий
+## 4) Подключить репозиторий
 
 Вариант A (проще):
 - Создайте **Pipeline** job
 - В `Pipeline script from SCM` укажите этот репозиторий
-- `Script Path`: `ci/Jenkinsfile`
+- `Script Path`: `Jenkinsfile`
 
 Вариант B (если хотите без SCM):
-- вставьте содержимое `ci/Jenkinsfile` напрямую в UI job.
+- вставьте содержимое `Jenkinsfile` напрямую в UI job.
 
-## 4) Разделить тесты на несколько job
+## 5) Разделить тесты на несколько job
 
 В проекте тесты уже размечены JUnit5 тегами (`Smoke`, `Cart`, `UI`).
 
-Сделайте 3 pipeline job из одного `ci/Jenkinsfile`, но с разными значениями параметра `TEST_TAG`:
+Сделайте 3 pipeline job из одного `Jenkinsfile`, но с разными значениями параметра `TEST_TAG`:
 
 1. `ui-smoke` → `TEST_TAG=Smoke`
 2. `ui-cart` → `TEST_TAG=Cart`
@@ -67,22 +107,22 @@ docker exec jenkins-local cat /var/jenkins_home/secrets/initialAdminPassword
 mvn -B -Dtest=*Test -Djunit.jupiter.tags=${TEST_TAG} test
 ```
 
-## 5) Настроить триггер
+## 6) Настроить триггер
 
-В `ci/Jenkinsfile` уже включены 2 типа триггера:
+Рекомендуемые типы триггеров для job:
 
-- `cron('H 8 * * 1-5')` — запуск по расписанию в будни
-- `pollSCM('H/10 * * * *')` — проверка коммитов каждые ~10 минут
+- `Build periodically`: `H 8 * * 1-5` (запуск по расписанию в будни)
+- `Poll SCM`: `H/10 * * * *` (проверка коммитов каждые ~10 минут)
 
 Если нужен webhook-trigger (по push в ветку), подключите webhook Git-провайдера на Jenkins job или используйте Multibranch Pipeline.
 
-## 6) Рекомендуемая схема веток/триггеров
+## 7) Рекомендуемая схема веток/триггеров
 
 - `ui-smoke`: на каждый commit в feature/main
 - `ui-cart`: по расписанию или nightly
 - `ui-full`: nightly + перед релизом
 
-## 7) Диагностика
+## 8) Диагностика
 
 Проверить, что тесты с тегом находятся локально:
 
