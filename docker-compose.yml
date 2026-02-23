@@ -24,14 +24,6 @@ services:
       -limit 10
       -container-network bridge
     restart: unless-stopped
-    # Если хочешь видеть логи подробнее — раскомментируй:
-    # logging:
-    #   driver: "json-file"
-    #   options:
-    #     max-size: "10m"
-    #     max-file: "3"
 
 volumes:
   jenkins-data:
-
-# networks: УБРАЛ НАХУЙ — пусть всё будет в дефолтной сети compose
