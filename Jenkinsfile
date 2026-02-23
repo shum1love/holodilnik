@@ -14,13 +14,14 @@ pipeline {
                         set -e
                         echo "Using TEST_TAG=${TEST_TAG}"
                         echo "Using SELENOID_REMOTE=${SELENOID_REMOTE}"
-                        echo "Using Selenoid default browser version"
+                        echo "Using Chrome 128.0"
 
                         mvn -B clean test \
                           -Dtest=**/*Test \
                           -Djunit.jupiter.tags=${TEST_TAG} \
                           -Dselenide.remote=${SELENOID_REMOTE} \
                           -Dselenide.browser=chrome \
+                          -Dselenide.browserVersion=128.0 \
                           -Dselenide.timeout=15000 \
                           -Dselenide.headless=true \
                           -Dselenide.browserSize=1920x1080 \
