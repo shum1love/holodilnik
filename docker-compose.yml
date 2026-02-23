@@ -19,7 +19,6 @@ services:
     command: >
       -conf /root/.aerokube/selenoid/browsers.json
       -limit 10
-      -pull-policy always
       -container-network bridge
 
 volumes:
