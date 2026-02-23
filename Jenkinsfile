@@ -13,7 +13,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git url: 'https://github.com/твой_юзер/твой_репо.git',
+                git url: 'https://github.com/shum1love/holodilnik.git',
                     branch: 'main'
             }
         }
