@@ -9,16 +9,17 @@ services:
     networks:
       - test-net
 
-  selenoid:
-    image: aerokube/selenoid:latest-release
-    ports:
-      - "4444:4444"
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - ./selenoid-config:/root/.aerokube/selenoid
-    command: -conf /root/.aerokube/selenoid/browsers.json -limit 10 **-container-network bridge**
-    networks:
-      - test-net
+  services:
+    selenoid:
+      image: aerokube/selenoid:latest-release
+      ports:
+        - "4444:4444"
+      volumes:
+        - /var/run/docker.sock:/var/run/docker.sock
+        - ./selenoid-config:/root/.aerokube/selenoid
+      command: -conf /root/.aerokube/selenoid/browsers.json -limit 10 -container-network test-net
+      networks:
+        - test-net
 
 networks:
   test-net:
