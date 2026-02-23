@@ -16,7 +16,7 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ./selenoid-config:/root/.aerokube/selenoid
-    command: -conf /root/.aerokube/selenoid/browsers.json -limit 10
+    command: -conf /root/.aerokube/selenoid/browsers.json -limit 10 **-container-network bridge**
     networks:
       - test-net
 
