@@ -11,25 +11,33 @@ pipeline {
         stage('Smoke') {
             steps {
                 withMaven(jdk: 'jdk17', maven: 'maven3') {
-                    sh '''
-                        set -e
+                    script {
+                        def testTag = params.TEST_TAG?.trim() ? params.TEST_TAG.trim() : 'Smoke'
+                        def selenoidRemote = params.SELENOID_REMOTE?.trim() ? params.SELENOID_REMOTE.trim() : 'http://selenoid:4444/wd/hub'
+                        def browserVersionArg = params.BROWSER_VERSION?.trim() ? "-Dselenide.browserVersion=${params.BROWSER_VERSION.trim()}" : ''
 
-                        MVN_BROWSER_VERSION_ARG=""
-                        if [ -n "${BROWSER_VERSION}" ]; then
-                          MVN_BROWSER_VERSION_ARG="-Dselenide.browserVersion=${BROWSER_VERSION}"
-                        fi
+                        sh """
+                            set -e
+                            echo "Using TEST_TAG=${testTag}"
+                            echo "Using SELENOID_REMOTE=${selenoidRemote}"
+                            if [ -n "${browserVersionArg}" ]; then
+                              echo "Using browser version from parameter"
+                            else
+                              echo "Using Selenoid default browser version"
+                            fi
 
-                        mvn clean test \
-                            -Dtest=**/*Test \
-                            -Djunit.jupiter.tags=${TEST_TAG} \
-                            -Dselenide.remote=${SELENOID_REMOTE} \
-                            -Dselenide.browser=chrome \
-                            ${MVN_BROWSER_VERSION_ARG} \
-                            -Dselenide.timeout=15000 \
-                            -Dselenide.headless=true \
-                            -Dselenide.browserSize=1920x1080 \
-                            -Dselenide.chromeoptions.args=--no-sandbox,--disable-dev-shm-usage,--disable-gpu,--disable-software-rasterizer
-                    '''
+                            mvn clean test \
+                                -Dtest=**/*Test \
+                                -Djunit.jupiter.tags=${testTag} \
+                                -Dselenide.remote=${selenoidRemote} \
+                                -Dselenide.browser=chrome \
+                                ${browserVersionArg} \
+                                -Dselenide.timeout=15000 \
+                                -Dselenide.headless=true \
+                                -Dselenide.browserSize=1920x1080 \
+                                -Dselenide.chromeoptions.args=--no-sandbox,--disable-dev-shm-usage,--disable-gpu,--disable-software-rasterizer
+                        """
+                    }
                 }
             }
         }

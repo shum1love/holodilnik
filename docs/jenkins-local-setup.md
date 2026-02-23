@@ -151,5 +151,15 @@ docker pull selenoid/chrome:latest
 При необходимости фиксированной версии укажите `BROWSER_VERSION` в Jenkins job
 (например `126.0`) и убедитесь, что эта версия есть в `selenoid-config/browsers.json`.
 
+Важно: если в Jenkins-консоли видите команду с пустыми значениями
+`-Djunit.jupiter.tags=` и/или `-Dselenide.remote=`, значит параметры job передались пустыми.
+В актуальном `Jenkinsfile` это обработано fallback-значениями:
+- `TEST_TAG=Smoke`
+- `SELENOID_REMOTE=http://selenoid:4444/wd/hub`
+
+Если после этого ошибка про `chromedriver` и `storage.googleapis.com` всё равно появляется,
+значит тест пошёл локально (не через Selenoid) — проверьте, что `SELENOID_REMOTE` доступен
+из Jenkins-контейнера и сервис `selenoid` поднят в той же docker-сети.
+
 Если в окружении ограничен доступ к Maven Central, Jenkins не скачает зависимости.
 В таком случае нужен доступ к `https://repo.maven.apache.org/maven2` или прокси-репозиторий (Nexus/Artifactory).
