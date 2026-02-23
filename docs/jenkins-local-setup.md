@@ -95,14 +95,14 @@ docker logs --tail 200 jenkins-local
 
 В проекте тесты уже размечены JUnit5 тегами (`Smoke`, `Cart`, `UI`).
 
-Сделайте 3 pipeline job из одного `Jenkinsfile`, но с разными значениями параметра `TEST_TAG`:
+Текущий `Jenkinsfile` специально упрощён и запускает только smoke-набор (`TEST_TAG=Smoke`).
+Это самый стабильный вариант для ежедневного прогона.
 
-1. `ui-smoke` → `TEST_TAG=Smoke`
-2. `ui-cart` → `TEST_TAG=Cart`
-3. `ui-full` → `TEST_TAG=UI`
+Если позже понадобится разделение на несколько job (`Smoke`, `Cart`, `UI`),
+лучше делать это отдельными Jenkinsfile/ветками, а не усложнять основной smoke-пайплайн.
 
-`Jenkinsfile` максимально упрощён: запускает только smoke-набор (`TEST_TAG=Smoke`)
-в удалённом Chrome `126.0` через `http://selenoid:4444/wd/hub`.
+`Jenkinsfile` запускает тесты через удалённый Selenoid `http://selenoid:4444/wd/hub`
+и использует браузерную версию по умолчанию из Selenoid.
 
 ## 6) Настроить триггер
 
@@ -130,23 +130,26 @@ mvn -B -Dtest=*Test -Djunit.jupiter.tags=UI test
 ```
 
 Если видите ошибку вида:
-`No such image: selenoid/vnc:chrome_126.0`
+`No such image: ...`
 
 Это означает, что на Docker-host не скачан нужный образ браузера для Selenoid.
 
 ```bash
-# скачать ровно тот образ, который ждёт текущий browsers.json
-docker pull selenoid/vnc:chrome_126.0
+# посмотреть, какую версию/образ ждёт текущий browsers.json
+cat selenoid-config/browsers.json
+
+# скачать нужный образ (пример для default=latest)
+docker pull selenoid/chrome:latest
 
 # перезапустить Selenoid после правок/скачивания
 docker compose up -d selenoid
 
-# проверить, что Selenoid видит версию 126.0
+# проверить статус и доступные браузеры
 curl -s http://localhost:4444/status
 ```
 
-Важно: в упрощённом Jenkinsfile версия браузера зафиксирована в pipeline (`126.0`),
-чтобы исключить ошибки из-за пустых/сломанных параметров job.
+Важно: в упрощённом Jenkinsfile версия браузера **не фиксируется** —
+это исключает падения из-за несовпадения `browserVersion` и фактически доступных образов в Selenoid.
 
 Если в окружении ограничен доступ к Maven Central, Jenkins не скачает зависимости.
 В таком случае нужен доступ к `https://repo.maven.apache.org/maven2` или прокси-репозиторий (Nexus/Artifactory).
