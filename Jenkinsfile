@@ -69,14 +69,13 @@ pipeline {
         }
     }
 
-
     post {
         always {
             sh '''
               if [ -d allure-results ]; then
                 mvn -B allure:report
               else
-                echo "allure-results directory not found, skipping static report generation"
+                echo "allure-results не найден, пропускаем отчёт"
               fi
             '''
 
@@ -84,39 +83,41 @@ pipeline {
 
             script {
                 if (fileExists('allure-results')) {
-                    allure([
-                        results: [[path: 'allure-results']]
-                    ])
-                }
-
-                if (fileExists('allure-report/index.html')) {
-                    echo "Allure HTML report: ${env.BUILD_URL}artifact/allure-report/index.html"
+                    allure([results: [[path: 'allure-results']]])
                 }
             }
         }
 
         success {
-            sh '''
-              if [ -n "${TELEGRAM_BOT_TOKEN}" ] && [ -n "${TELEGRAM_CHAT_ID}" ]; then
-                curl -sS -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
-                  -d chat_id="${TELEGRAM_CHAT_ID}" \
-                  --data-urlencode text="✅ ${JOB_NAME} #${BUILD_NUMBER} passed\n${BUILD_URL}" >/dev/null
-              else
-                echo "Telegram vars are not set. Skipping success notification."
-              fi
-            '''
+            withCredentials([
+                string(credentialsId: 'telegram-bot-token', variable: 'TOKEN'),
+                string(credentialsId: 'telegram-chat-id', variable: 'CHAT')
+            ]) {
+                sh '''
+                    curl -s -X POST "https://api.telegram.org/bot${TOKEN}/sendMessage" \
+                        -d chat_id="${CHAT}" \
+                        -d parse_mode="HTML" \
+                        -d text="<b>✅ ${JOB_NAME} #${BUILD_NUMBER}</b> зелёный
+<a href=\"${BUILD_URL}allure/\">Allure отчёт</a> | <a href=\"${BUILD_URL}\">Build</a>" \
+                        || echo 'Успех не улетел в Telegram (curl вернул ошибку)'
+                '''
+            }
         }
 
         failure {
-            sh '''
-              if [ -n "${TELEGRAM_BOT_TOKEN}" ] && [ -n "${TELEGRAM_CHAT_ID}" ]; then
-                curl -sS -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
-                  -d chat_id="${TELEGRAM_CHAT_ID}" \
-                  --data-urlencode text="❌ ${JOB_NAME} #${BUILD_NUMBER} failed\n${BUILD_URL}" >/dev/null
-              else
-                echo "Telegram vars are not set. Skipping failure notification."
-              fi
-            '''
+            withCredentials([
+                string(credentialsId: 'telegram-bot-token', variable: 'TOKEN'),
+                string(credentialsId: 'telegram-chat-id', variable: 'CHAT')
+            ]) {
+                sh '''
+                    curl -s -X POST "https://api.telegram.org/bot${TOKEN}/sendMessage" \
+                        -d chat_id="${CHAT}" \
+                        -d parse_mode="HTML" \
+                        -d text="<b>❌ ${JOB_NAME} #${BUILD_NUMBER}</b> упал
+<a href=\"${BUILD_URL}consoleFull\">Консоль полностью</a> | <a href=\"${BUILD_URL}\">Build</a>" \
+                        || echo 'Фейл не улетел в Telegram (curl вернул ошибку)'
+                '''
+            }
         }
     }
 }
