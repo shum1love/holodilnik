@@ -86,22 +86,27 @@ EOT
                     fi
 
                     if [ -f "${ALLURE_REPORT}/widgets/summary.json" ]; then
-                        summary_get() {
-                            key="$1"
-                            file="$2"
-                            # Все \ удвоены → Groovy их пропустит в shell как одиночные
-                            value=$(sed -n "s/.*\\"${key}\\"[[:space:]]*:.*\\([0-9][0-9]*\\).*/\\1/p" "$file" | head -n1)
-                            [ -n "$value" ] || value=0
-                            printf '%s' "$value"
+                        # Используем awk вместо sed — гораздо меньше проблем с экранированием
+                        get_stat() {
+                            local key="$1"
+                            local file="$2"
+                            awk -v k="$key" '
+                                $0 ~ "\"" k "\"[[:space:]]+:" {
+                                    match($0, /[0-9]+/)
+                                    if (RSTART > 0) print substr($0, RSTART, RLENGTH)
+                                    exit
+                                }
+                            ' "$file" || echo "0"
                         }
 
                         SUMMARY_FILE="${ALLURE_REPORT}/widgets/summary.json"
+
                         {
-                            echo "ALLURE_TOTAL=$(summary_get total "$SUMMARY_FILE")"
-                            echo "ALLURE_PASSED=$(summary_get passed "$SUMMARY_FILE")"
-                            echo "ALLURE_FAILED=$(summary_get failed "$SUMMARY_FILE")"
-                            echo "ALLURE_BROKEN=$(summary_get broken "$SUMMARY_FILE")"
-                            echo "ALLURE_SKIPPED=$(summary_get skipped "$SUMMARY_FILE")"
+                            echo "ALLURE_TOTAL=$(get_stat total "$SUMMARY_FILE")"
+                            echo "ALLURE_PASSED=$(get_stat passed "$SUMMARY_FILE")"
+                            echo "ALLURE_FAILED=$(get_stat failed "$SUMMARY_FILE")"
+                            echo "ALLURE_BROKEN=$(get_stat broken "$SUMMARY_FILE")"
+                            echo "ALLURE_SKIPPED=$(get_stat skipped "$SUMMARY_FILE")"
                         } > .allure-summary.env
                     fi
                 fi
