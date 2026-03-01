@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     parameters {
-        string(name: 'SELENOID_URL', defaultValue: '', description: 'Remote WebDriver URL (optional). Leave empty for auto-detect')
+        string(name: 'SELENOID_URL', defaultValue: 'http://host.docker.internal:4444/wd/hub', description: 'Remote WebDriver URL (optional). Pre-filled for Docker Desktop; leave as-is or clear for auto-detect')
     }
 
     tools {

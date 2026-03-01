@@ -4,6 +4,27 @@
 
 ## 1) Поднять Jenkins локально
 
+Рекомендуемый вариант для этого репозитория — поднимать Jenkins и Selenoid из `docker-compose.yml`:
+
+```bash
+docker compose up -d
+```
+
+Проверка:
+
+```bash
+docker ps --filter name=jenkins-local
+docker ps --filter name=selenoid
+curl -s http://localhost:4444/status
+```
+
+`docker-compose.yml` уже содержит:
+- `restart: unless-stopped` для Jenkins и Selenoid (автоподъём после перезапуска Docker Desktop);
+- общую сеть `test-net`;
+- Selenoid с `-container-network test-net` (чтобы браузерные контейнеры стартовали в той же сети и не было `does not respond in 30s`).
+
+Ниже оставлен альтернативный ручной запуск Jenkins в одном контейнере.
+
 ```bash
 docker volume create jenkins_home
 
@@ -182,6 +203,13 @@ docker logs --tail 200 selenoid
 
 
 ## 9) Как понять, какой `SELENOID_URL` указывать
+
+По умолчанию в `Jenkinsfile` параметр `SELENOID_URL` уже предзаполнен значением
+`http://host.docker.internal:4444/wd/hub`, поэтому при ручном запуске job его обычно не нужно менять.
+
+Если хотите полностью убрать ручной ввод в конкретной job:
+- оставьте параметр по умолчанию как есть и просто запускайте Build;
+- либо удалите параметр в UI job и используйте pipeline из SCM (тогда возьмётся значение из `Jenkinsfile`).
 
 Если запускаете job вручную и не уверены в URL, оставьте параметр `SELENOID_URL` пустым — `Jenkinsfile` попробует автоопределение в таком порядке:
 

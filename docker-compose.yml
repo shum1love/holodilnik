@@ -9,7 +9,30 @@ services:
       - "50000:50000"
     volumes:
       - jenkins_home:/var/jenkins_home
+    networks:
+      - test-net
     environment:
       - JAVA_OPTS=-Djenkins.install.runSetupWizard=false
+
+  selenoid:
+    image: aerokube/selenoid:latest-release
+    container_name: selenoid
+    restart: unless-stopped
+    ports:
+      - "4444:4444"
+    command:
+      - "-container-network"
+      - "test-net"
+      - "-limit"
+      - "4"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./selenoid-config:/etc/selenoid:ro
+    networks:
+      - test-net
+
+networks:
+  test-net:
+    name: test-net
 volumes:
   jenkins_home:
