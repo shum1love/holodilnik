@@ -151,5 +151,31 @@ curl -s http://localhost:4444/status
 Важно: в упрощённом Jenkinsfile версия браузера **не фиксируется** —
 это исключает падения из-за несовпадения `browserVersion` и фактически доступных образов в Selenoid.
 
+Если видите ошибку вида:
+`SessionNotCreatedException: ... wait: http://172.x.x.x:4444/ does not respond in 30s`
+
+Это означает, что Jenkins достучался до Selenoid, но Selenoid не смог поднять браузерный контейнер,
+либо Jenkins использует неверный URL удалённого WebDriver.
+
+Проверьте по шагам:
+
+```bash
+# 1) Selenoid доступен и отвечает статусом
+curl -s http://localhost:4444/status
+
+# 2) Нужный браузерный образ скачан
+docker images | grep selenoid/chrome
+
+# 3) Контейнер Selenoid запущен без падений
+docker ps --filter name=selenoid
+docker logs --tail 200 selenoid
+```
+
+Для Docker Desktop (Windows/macOS) в Jenkins обычно удобнее использовать URL:
+`http://host.docker.internal:4444/wd/hub`.
+
+Если Jenkins и Selenoid находятся в одной Docker-сети, можно использовать:
+`http://selenoid:4444/wd/hub`.
+
 Если в окружении ограничен доступ к Maven Central, Jenkins не скачает зависимости.
 В таком случае нужен доступ к `https://repo.maven.apache.org/maven2` или прокси-репозиторий (Nexus/Artifactory).
