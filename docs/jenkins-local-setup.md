@@ -224,3 +224,15 @@ docker exec -it jenkins-local sh -lc 'for u in \
 ```
 
 Рабочий URL для пайплайна — тот, где `/status` отвечает JSON-ом со списком браузеров.
+
+## 10) Allure и Telegram
+
+Если тесты проходят, а в Jenkins нет Allure-отчёта — проверьте путь к результатам.
+В проекте используется `target/allure-results`, поэтому в `Jenkinsfile` публикация должна идти именно из `target/allure-results`.
+
+Для Telegram в pipeline используются credentials:
+
+- `telegram-bot-token`
+- `telegram-chat-id`
+
+Ссылку на билд лучше формировать через `RUN_DISPLAY_URL` (fallback на `BUILD_URL`), чтобы в сообщениях не приходил `null`.
