@@ -89,20 +89,18 @@ pipeline {
         }
 
         success {
-            withCredentials([
-                string(credentialsId: 'telegram-bot-token', variable: 'TOKEN'),
-                string(credentialsId: 'telegram-chat-id', variable: 'CHAT')
-            ]) {
-                sh '''
-                    curl -s -X POST "https://api.telegram.org/bot${TOKEN}/sendMessage" \
-                        -d chat_id="${CHAT}" \
-                        -d parse_mode="HTML" \
-                        -d text="<b>✅ ${JOB_NAME} #${BUILD_NUMBER}</b> зелёный
-<a href=\"${BUILD_URL}allure/\">Allure отчёт</a> | <a href=\"${BUILD_URL}\">Build</a>" \
-                        || echo 'Успех не улетел в Telegram (curl вернул ошибку)'
-                '''
+                withCredentials([
+                    string(credentialsId: 'telegram-bot-token', variable: 'TOKEN'),
+                    string(credentialsId: 'telegram-chat-id', variable: 'CHAT')
+                ]) {
+                    sh """
+                    curl -s -X POST https://api.telegram.org/bot${TOKEN}/sendMessage \
+                      -d chat_id=${CHAT} \
+                      -d parse_mode=HTML \
+                      -d text="<b>✅ ${env.JOB_NAME} #${env.BUILD_NUMBER}</b> зелёный%0A<a href=\\"${env.BUILD_URL}allure/\\">Allure отчёт</a> | <a href=\\"${env.BUILD_URL}\\">Build</a>"
+                    """
+                }
             }
-        }
 
         failure {
             withCredentials([
