@@ -86,16 +86,22 @@ EOT
                     fi
 
                     if [ -f "${ALLURE_REPORT}/widgets/summary.json" ]; then
-                        python3 - <<'PY' > .allure-summary.env
-import json
-from pathlib import Path
-s = json.loads(Path('allure-report/widgets/summary.json').read_text(encoding='utf-8')).get('statistic', {})
-print(f"ALLURE_TOTAL={s.get('total', 0)}")
-print(f"ALLURE_PASSED={s.get('passed', 0)}")
-print(f"ALLURE_FAILED={s.get('failed', 0)}")
-print(f"ALLURE_BROKEN={s.get('broken', 0)}")
-print(f"ALLURE_SKIPPED={s.get('skipped', 0)}")
-PY
+                        summary_get() {
+                            key="$1"
+                            file="$2"
+                            value=$(sed -n "s/.*\"${key}\"[[:space:]]*:[[:space:]]*\([0-9][0-9]*\).*/\1/p" "$file" | head -n1)
+                            [ -n "$value" ] || value=0
+                            printf '%s' "$value"
+                        }
+
+                        SUMMARY_FILE="${ALLURE_REPORT}/widgets/summary.json"
+                        {
+                            echo "ALLURE_TOTAL=$(summary_get total \"$SUMMARY_FILE\")"
+                            echo "ALLURE_PASSED=$(summary_get passed \"$SUMMARY_FILE\")"
+                            echo "ALLURE_FAILED=$(summary_get failed \"$SUMMARY_FILE\")"
+                            echo "ALLURE_BROKEN=$(summary_get broken \"$SUMMARY_FILE\")"
+                            echo "ALLURE_SKIPPED=$(summary_get skipped \"$SUMMARY_FILE\")"
+                        } > .allure-summary.env
                     fi
                 fi
             '''
@@ -123,14 +129,13 @@ PY
                 sh '''
                     set +x
                     BASE_URL="${RUN_DISPLAY_URL:-${BUILD_URL:-${JOB_URL}${BUILD_NUMBER}/}}"
-                    MSG="<b>✅ ${JOB_NAME} #${BUILD_NUMBER}</b>%0A"
-                    MSG="${MSG}Алюр отчёт: <a href=\"${BASE_URL}allure/\">ссылка</a>%0A"
-                    MSG="${MSG}passed: <b>${ALLURE_PASSED:-0}</b>, failed: <b>${ALLURE_FAILED:-0}</b>, broken: <b>${ALLURE_BROKEN:-0}</b>, skipped: <b>${ALLURE_SKIPPED:-0}</b>%0A"
-                    MSG="${MSG}<a href=\"${BASE_URL}\">Build</a>"
+                    MSG="✅ ${JOB_NAME} #${BUILD_NUMBER}%0A"
+                    MSG="${MSG}Алюр отчёт: ${BASE_URL}allure/%0A"
+                    MSG="${MSG}passed: ${ALLURE_PASSED:-0}, failed: ${ALLURE_FAILED:-0}, broken: ${ALLURE_BROKEN:-0}, skipped: ${ALLURE_SKIPPED:-0}%0A"
+                    MSG="${MSG}Build: ${BASE_URL}"
 
                     HTTP_CODE=$(curl -sS -o /tmp/tg-response.txt -w "%{http_code}" -X POST "https://api.telegram.org/bot${TOKEN}/sendMessage" \
                         -d chat_id="${CHAT}" \
-                        -d parse_mode="HTML" \
                         -d disable_web_page_preview=true \
                         --data-urlencode "text=${MSG}" || true)
 
@@ -147,14 +152,13 @@ PY
                 sh '''
                     set +x
                     BASE_URL="${RUN_DISPLAY_URL:-${BUILD_URL:-${JOB_URL}${BUILD_NUMBER}/}}"
-                    MSG="<b>❌ ${JOB_NAME} #${BUILD_NUMBER}</b>%0A"
-                    MSG="${MSG}Алюр отчёт: <a href=\"${BASE_URL}allure/\">ссылка</a>%0A"
-                    MSG="${MSG}passed: <b>${ALLURE_PASSED:-0}</b>, failed: <b>${ALLURE_FAILED:-0}</b>, broken: <b>${ALLURE_BROKEN:-0}</b>, skipped: <b>${ALLURE_SKIPPED:-0}</b>%0A"
-                    MSG="${MSG}<a href=\"${BASE_URL}consoleFull\">Console</a>"
+                    MSG="❌ ${JOB_NAME} #${BUILD_NUMBER}%0A"
+                    MSG="${MSG}Алюр отчёт: ${BASE_URL}allure/%0A"
+                    MSG="${MSG}passed: ${ALLURE_PASSED:-0}, failed: ${ALLURE_FAILED:-0}, broken: ${ALLURE_BROKEN:-0}, skipped: ${ALLURE_SKIPPED:-0}%0A"
+                    MSG="${MSG}Console: ${BASE_URL}consoleFull"
 
                     HTTP_CODE=$(curl -sS -o /tmp/tg-response.txt -w "%{http_code}" -X POST "https://api.telegram.org/bot${TOKEN}/sendMessage" \
                         -d chat_id="${CHAT}" \
-                        -d parse_mode="HTML" \
                         -d disable_web_page_preview=true \
                         --data-urlencode "text=${MSG}" || true)
 
