@@ -12,8 +12,9 @@ pipeline {
     }
 
     environment {
-        ALLURE_RESULTS = 'target/allure-results'
-        ALLURE_REPORT  = 'allure-report'
+        ALLURE_RESULTS_DIR = 'target/allure-results'
+        ALLURE_RESULTS_MVN = 'allure-results'
+        ALLURE_REPORT      = 'allure-report'
     }
 
     stages {
@@ -57,17 +58,17 @@ pipeline {
     post {
         always {
             sh '''
-                if [ -d "${ALLURE_RESULTS}" ]; then
+                if [ -d "${ALLURE_RESULTS_DIR}" ]; then
                     rm -rf "${ALLURE_REPORT}"
 
-                    cat > "${ALLURE_RESULTS}/environment.properties" <<EOT
+                    cat > "${ALLURE_RESULTS_DIR}/environment.properties" <<EOT
 Jenkins.Job=${JOB_NAME}
 Jenkins.BuildNumber=${BUILD_NUMBER}
 Jenkins.Branch=${GIT_BRANCH}
 Jenkins.Commit=${GIT_COMMIT}
 EOT
 
-                    cat > "${ALLURE_RESULTS}/executor.json" <<EOT
+                    cat > "${ALLURE_RESULTS_DIR}/executor.json" <<EOT
 {
   "name": "Jenkins",
   "type": "jenkins",
@@ -78,7 +79,7 @@ EOT
 EOT
 
                     if ! mvn -B allure:report \
-                        -Dallure.results.directory=${ALLURE_RESULTS} \
+                        -Dallure.results.directory=${ALLURE_RESULTS_MVN} \
                         -Dallure.report.directory=${ALLURE_REPORT}
                     then
                         echo "WARN: Allure report generation failed, keeping pipeline status from test stages"
@@ -108,8 +109,8 @@ PY
                         env[k] = v
                     }
                 }
-                if (fileExists('target/allure-results')) {
-                    allure([results: [[path: 'target/allure-results']]])
+                if (fileExists(env.ALLURE_RESULTS_DIR)) {
+                    allure([results: [[path: env.ALLURE_RESULTS_DIR]]])
                 }
             }
         }
@@ -123,14 +124,17 @@ PY
                     set +x
                     BASE_URL="${RUN_DISPLAY_URL:-${BUILD_URL:-${JOB_URL}${BUILD_NUMBER}/}}"
                     MSG="<b>✅ ${JOB_NAME} #${BUILD_NUMBER}</b>%0A"
+                    MSG="${MSG}Алюр отчёт: <a href=\"${BASE_URL}allure/\">ссылка</a>%0A"
                     MSG="${MSG}passed: <b>${ALLURE_PASSED:-0}</b>, failed: <b>${ALLURE_FAILED:-0}</b>, broken: <b>${ALLURE_BROKEN:-0}</b>, skipped: <b>${ALLURE_SKIPPED:-0}</b>%0A"
-                    MSG="${MSG}<a href=\"${BASE_URL}allure/\">Allure</a> | <a href=\"${BASE_URL}\">Build</a>"
+                    MSG="${MSG}<a href=\"${BASE_URL}\">Build</a>"
 
-                    curl -sS -X POST "https://api.telegram.org/bot${TOKEN}/sendMessage" \
+                    HTTP_CODE=$(curl -sS -o /tmp/tg-response.txt -w "%{http_code}" -X POST "https://api.telegram.org/bot${TOKEN}/sendMessage" \
                         -d chat_id="${CHAT}" \
                         -d parse_mode="HTML" \
                         -d disable_web_page_preview=true \
-                        --data-urlencode "text=${MSG}" >/dev/null || true
+                        --data-urlencode "text=${MSG}" || true)
+
+                    [ "${HTTP_CODE}" = "200" ] || echo "WARN: Telegram notify failed, HTTP=${HTTP_CODE}, response=$(cat /tmp/tg-response.txt)"
                 '''
             }
         }
@@ -144,14 +148,17 @@ PY
                     set +x
                     BASE_URL="${RUN_DISPLAY_URL:-${BUILD_URL:-${JOB_URL}${BUILD_NUMBER}/}}"
                     MSG="<b>❌ ${JOB_NAME} #${BUILD_NUMBER}</b>%0A"
+                    MSG="${MSG}Алюр отчёт: <a href=\"${BASE_URL}allure/\">ссылка</a>%0A"
                     MSG="${MSG}passed: <b>${ALLURE_PASSED:-0}</b>, failed: <b>${ALLURE_FAILED:-0}</b>, broken: <b>${ALLURE_BROKEN:-0}</b>, skipped: <b>${ALLURE_SKIPPED:-0}</b>%0A"
-                    MSG="${MSG}<a href=\"${BASE_URL}allure/\">Allure</a> | <a href=\"${BASE_URL}consoleFull\">Console</a>"
+                    MSG="${MSG}<a href=\"${BASE_URL}consoleFull\">Console</a>"
 
-                    curl -sS -X POST "https://api.telegram.org/bot${TOKEN}/sendMessage" \
+                    HTTP_CODE=$(curl -sS -o /tmp/tg-response.txt -w "%{http_code}" -X POST "https://api.telegram.org/bot${TOKEN}/sendMessage" \
                         -d chat_id="${CHAT}" \
                         -d parse_mode="HTML" \
                         -d disable_web_page_preview=true \
-                        --data-urlencode "text=${MSG}" >/dev/null || true
+                        --data-urlencode "text=${MSG}" || true)
+
+                    [ "${HTTP_CODE}" = "200" ] || echo "WARN: Telegram notify failed, HTTP=${HTTP_CODE}, response=$(cat /tmp/tg-response.txt)"
                 '''
             }
         }
