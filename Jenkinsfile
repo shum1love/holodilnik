@@ -89,18 +89,19 @@ EOT
                         summary_get() {
                             key="$1"
                             file="$2"
-                            value=$(sed -n "s/.*\"${key}\"[[:space:]]*:[[:space:]]*\([0-9][0-9]*\).*/\1/p" "$file" | head -n1)
+                            # dollar-slashy строка — позволяет использовать \ без удвоения
+                            value=$(/bin/sed -n $/s/.*"${key}"[[:space:]]*:[[:space:]]*\\([0-9][0-9]*\\).*/\\1/p/$ "$file" | head -n1)
                             [ -n "$value" ] || value=0
                             printf '%s' "$value"
                         }
 
                         SUMMARY_FILE="${ALLURE_REPORT}/widgets/summary.json"
                         {
-                            echo "ALLURE_TOTAL=$(summary_get total \"$SUMMARY_FILE\")"
-                            echo "ALLURE_PASSED=$(summary_get passed \"$SUMMARY_FILE\")"
-                            echo "ALLURE_FAILED=$(summary_get failed \"$SUMMARY_FILE\")"
-                            echo "ALLURE_BROKEN=$(summary_get broken \"$SUMMARY_FILE\")"
-                            echo "ALLURE_SKIPPED=$(summary_get skipped \"$SUMMARY_FILE\")"
+                            echo "ALLURE_TOTAL=$(summary_get total "$SUMMARY_FILE")"
+                            echo "ALLURE_PASSED=$(summary_get passed "$SUMMARY_FILE")"
+                            echo "ALLURE_FAILED=$(summary_get failed "$SUMMARY_FILE")"
+                            echo "ALLURE_BROKEN=$(summary_get broken "$SUMMARY_FILE")"
+                            echo "ALLURE_SKIPPED=$(summary_get skipped "$SUMMARY_FILE")"
                         } > .allure-summary.env
                     fi
                 fi
