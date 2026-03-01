@@ -13,7 +13,7 @@ pipeline {
 
     environment {
         ALLURE_RESULTS = 'target/allure-results'
-        ALLURE_REPORT = 'target/allure-report'
+        ALLURE_REPORT  = 'allure-report'
     }
 
     stages {
@@ -26,20 +26,20 @@ pipeline {
         stage('Check Selenoid') {
             steps {
                 sh '''
-                  detect_selenoid_url() {
-                    [ -n "${SELENOID_URL}" ] && { echo "${SELENOID_URL}"; return 0; }
-                    for candidate in \
-                      http://host.docker.internal:4444/wd/hub \
-                      http://selenoid:4444/wd/hub \
-                      http://localhost:4444/wd/hub
-                    do
-                      curl -fsS --max-time 3 "${candidate%/wd/hub}/status" >/dev/null && { echo "${candidate}"; return 0; }
-                    done
-                    return 1
-                  }
+                    detect_selenoid_url() {
+                        [ -n "${SELENOID_URL}" ] && { echo "${SELENOID_URL}"; return 0; }
+                        for candidate in \
+                            http://host.docker.internal:4444/wd/hub \
+                            http://selenoid:4444/wd/hub \
+                            http://localhost:4444/wd/hub
+                        do
+                            curl -fsS --max-time 3 "${candidate%/wd/hub}/status" >/dev/null && { echo "${candidate}"; return 0; }
+                        done
+                        return 1
+                    }
 
-                  SELENOID_URL_EFFECTIVE="$(detect_selenoid_url)" || exit 1
-                  echo "SELENOID_URL_EFFECTIVE=${SELENOID_URL_EFFECTIVE}" > .selenoid.env
+                    SELENOID_URL_EFFECTIVE="$(detect_selenoid_url)" || exit 1
+                    echo "SELENOID_URL_EFFECTIVE=${SELENOID_URL_EFFECTIVE}" > .selenoid.env
                 '''
             }
         }
@@ -47,8 +47,8 @@ pipeline {
         stage('Run UI Tests') {
             steps {
                 sh '''
-                  . ./.selenoid.env
-                  mvn -B clean test -Dgroups=UI -Dselenide.remote=${SELENOID_URL_EFFECTIVE}
+                    . ./.selenoid.env
+                    mvn -B clean test -Dgroups=UI -Dselenide.remote=${SELENOID_URL_EFFECTIVE}
                 '''
             }
         }
@@ -57,15 +57,17 @@ pipeline {
     post {
         always {
             sh '''
-              if [ -d "${ALLURE_RESULTS}" ]; then
-                cat > "${ALLURE_RESULTS}/environment.properties" <<EOT
+                if [ -d "${ALLURE_RESULTS}" ]; then
+                    rm -rf "${ALLURE_REPORT}"
+
+                    cat > "${ALLURE_RESULTS}/environment.properties" <<EOT
 Jenkins.Job=${JOB_NAME}
 Jenkins.BuildNumber=${BUILD_NUMBER}
 Jenkins.Branch=${GIT_BRANCH}
 Jenkins.Commit=${GIT_COMMIT}
 EOT
 
-                cat > "${ALLURE_RESULTS}/executor.json" <<EOT
+                    cat > "${ALLURE_RESULTS}/executor.json" <<EOT
 {
   "name": "Jenkins",
   "type": "jenkins",
@@ -75,26 +77,29 @@ EOT
 }
 EOT
 
-                mvn -B allure:report \
-                  -Dallure.results.directory=${ALLURE_RESULTS#target/} \
-                  -Dallure.report.directory=${ALLURE_REPORT#target/}
+                    if ! mvn -B allure:report \
+                        -Dallure.results.directory=${ALLURE_RESULTS} \
+                        -Dallure.report.directory=${ALLURE_REPORT}
+                    then
+                        echo "WARN: Allure report generation failed, keeping pipeline status from test stages"
+                    fi
 
-                if [ -f "${ALLURE_REPORT}/widgets/summary.json" ]; then
-                  python3 - <<'PY' > .allure-summary.env
+                    if [ -f "${ALLURE_REPORT}/widgets/summary.json" ]; then
+                        python3 - <<'PY' > .allure-summary.env
 import json
 from pathlib import Path
-s = json.loads(Path('target/allure-report/widgets/summary.json').read_text(encoding='utf-8')).get('statistic', {})
+s = json.loads(Path('allure-report/widgets/summary.json').read_text(encoding='utf-8')).get('statistic', {})
 print(f"ALLURE_TOTAL={s.get('total', 0)}")
 print(f"ALLURE_PASSED={s.get('passed', 0)}")
 print(f"ALLURE_FAILED={s.get('failed', 0)}")
 print(f"ALLURE_BROKEN={s.get('broken', 0)}")
 print(f"ALLURE_SKIPPED={s.get('skipped', 0)}")
 PY
+                    fi
                 fi
-              fi
             '''
 
-            archiveArtifacts artifacts: 'target/allure-results/**,target/allure-report/**,.allure-summary.env', allowEmptyArchive: true
+            archiveArtifacts artifacts: 'target/allure-results/**,allure-report/**,.allure-summary.env', allowEmptyArchive: true
 
             script {
                 if (fileExists('.allure-summary.env')) {
@@ -122,10 +127,10 @@ PY
                     MSG="${MSG}<a href=\"${BASE_URL}allure/\">Allure</a> | <a href=\"${BASE_URL}\">Build</a>"
 
                     curl -sS -X POST "https://api.telegram.org/bot${TOKEN}/sendMessage" \
-                      -d chat_id="${CHAT}" \
-                      -d parse_mode="HTML" \
-                      -d disable_web_page_preview=true \
-                      --data-urlencode "text=${MSG}" >/dev/null || true
+                        -d chat_id="${CHAT}" \
+                        -d parse_mode="HTML" \
+                        -d disable_web_page_preview=true \
+                        --data-urlencode "text=${MSG}" >/dev/null || true
                 '''
             }
         }
@@ -143,10 +148,10 @@ PY
                     MSG="${MSG}<a href=\"${BASE_URL}allure/\">Allure</a> | <a href=\"${BASE_URL}consoleFull\">Console</a>"
 
                     curl -sS -X POST "https://api.telegram.org/bot${TOKEN}/sendMessage" \
-                      -d chat_id="${CHAT}" \
-                      -d parse_mode="HTML" \
-                      -d disable_web_page_preview=true \
-                      --data-urlencode "text=${MSG}" >/dev/null || true
+                        -d chat_id="${CHAT}" \
+                        -d parse_mode="HTML" \
+                        -d disable_web_page_preview=true \
+                        --data-urlencode "text=${MSG}" >/dev/null || true
                 '''
             }
         }
