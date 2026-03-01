@@ -7,11 +7,18 @@ pipeline {
         allure 'allure'
     }
 
-    triggers {
-        cron('H 2 * * *')
-    }
-
     stages {
+        stage('Init Job Properties') {
+            steps {
+                script {
+                    // Ensure legacy job parameters are removed so Jenkins no longer asks for SELENOID_URL.
+                    properties([
+                        pipelineTriggers([cron('H 2 * * *')])
+                    ])
+                }
+            }
+        }
+
         stage('Checkout') {
             steps {
                 git url: 'https://github.com/shum1love/holodilnik.git',
@@ -23,8 +30,8 @@ pipeline {
             steps {
                 sh '''
                   detect_selenoid_url() {
-                    if [ -n "${SELENOID_URL}" ]; then
-                      echo "${SELENOID_URL}"
+                    if [ -n "${SELENOID_URL_OVERRIDE}" ]; then
+                      echo "${SELENOID_URL_OVERRIDE}"
                       return 0
                     fi
 
@@ -45,7 +52,7 @@ pipeline {
 
                   SELENOID_URL_EFFECTIVE="$(detect_selenoid_url)" || {
                     echo "Cannot detect reachable Selenoid endpoint."
-                    echo "Try setting SELENOID_URL environment variable manually, e.g. http://host.docker.internal:4444/wd/hub"
+                    echo "Try setting SELENOID_URL_OVERRIDE environment variable manually, e.g. http://host.docker.internal:4444/wd/hub"
                     exit 1
                   }
 
