@@ -20,7 +20,7 @@ pipeline {
         }
         stage('Run UI Tests') {
             steps {
-                sh 'mvn clean test -Dgroups=ui'
+                sh 'mvn clean test -Dgroups=UI'
             }
         }
     }
