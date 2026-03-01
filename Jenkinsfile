@@ -11,6 +11,10 @@ pipeline {
         cron('H 2 * * *')
     }
 
+    environment {
+        SELENOID_URL = 'http://selenoid:4444/wd/hub'
+    }
+
     stages {
         stage('Checkout') {
             steps {
@@ -18,9 +22,10 @@ pipeline {
                     branch: 'main'
             }
         }
+
         stage('Run UI Tests') {
             steps {
-                sh 'mvn clean test -Dgroups=UI'
+                sh 'mvn clean test -Dgroups=UI -Dselenide.remote=${SELENOID_URL}'
             }
         }
     }
