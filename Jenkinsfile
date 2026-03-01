@@ -1,10 +1,6 @@
 pipeline {
     agent any
 
-    parameters {
-        string(name: 'SELENOID_URL', defaultValue: 'http://host.docker.internal:4444/wd/hub', description: 'Remote WebDriver URL (optional). Pre-filled for Docker Desktop; leave as-is or clear for auto-detect')
-    }
-
     tools {
         jdk 'jdk17'
         maven 'maven3'
@@ -49,7 +45,7 @@ pipeline {
 
                   SELENOID_URL_EFFECTIVE="$(detect_selenoid_url)" || {
                     echo "Cannot detect reachable Selenoid endpoint."
-                    echo "Try setting SELENOID_URL manually, e.g. http://host.docker.internal:4444/wd/hub"
+                    echo "Try setting SELENOID_URL environment variable manually, e.g. http://host.docker.internal:4444/wd/hub"
                     exit 1
                   }
 
