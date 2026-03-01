@@ -89,8 +89,8 @@ EOT
                         summary_get() {
                             key="$1"
                             file="$2"
-                            # dollar-slashy строка — позволяет использовать \ без удвоения
-                            value=$(/bin/sed -n $/s/.*"${key}"[[:space:]]*:[[:space:]]*\\([0-9][0-9]*\\).*/\\1/p/$ "$file" | head -n1)
+                            # Все \ удвоены → Groovy их пропустит в shell как одиночные
+                            value=$(sed -n "s/.*\\"${key}\\"[[:space:]]*:.*\\([0-9][0-9]*\\).*/\\1/p" "$file" | head -n1)
                             [ -n "$value" ] || value=0
                             printf '%s' "$value"
                         }
