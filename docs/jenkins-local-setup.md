@@ -179,3 +179,24 @@ docker logs --tail 200 selenoid
 
 Если в окружении ограничен доступ к Maven Central, Jenkins не скачает зависимости.
 В таком случае нужен доступ к `https://repo.maven.apache.org/maven2` или прокси-репозиторий (Nexus/Artifactory).
+
+
+## 9) Как понять, какой `SELENOID_URL` указывать
+
+Если запускаете job вручную и не уверены в URL, оставьте параметр `SELENOID_URL` пустым — `Jenkinsfile` попробует автоопределение в таком порядке:
+
+1. `http://host.docker.internal:4444/wd/hub`
+2. `http://selenoid:4444/wd/hub`
+3. `http://localhost:4444/wd/hub`
+
+Проверить вручную можно из Jenkins-контейнера:
+
+```bash
+docker exec -it jenkins-local sh -lc 'for u in \
+  http://host.docker.internal:4444/status \
+  http://selenoid:4444/status \
+  http://localhost:4444/status; do \
+  echo "Checking $u"; curl -fsS --max-time 3 "$u" && break; done'
+```
+
+Рабочий URL для пайплайна — тот, где `/status` отвечает JSON-ом со списком браузеров.
