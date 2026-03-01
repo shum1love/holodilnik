@@ -76,8 +76,8 @@ EOT
 EOT
 
                 mvn -B allure:report \
-                  -Dallure.results.directory=${ALLURE_RESULTS} \
-                  -Dallure.report.directory=${ALLURE_REPORT}
+                  -Dallure.results.directory=${ALLURE_RESULTS#target/} \
+                  -Dallure.report.directory=${ALLURE_REPORT#target/}
 
                 if [ -f "${ALLURE_REPORT}/widgets/summary.json" ]; then
                   python3 - <<'PY' > .allure-summary.env
@@ -118,8 +118,8 @@ PY
                     set +x
                     BASE_URL="${RUN_DISPLAY_URL:-${BUILD_URL:-${JOB_URL}${BUILD_NUMBER}/}}"
                     MSG="<b>✅ ${JOB_NAME} #${BUILD_NUMBER}</b>%0A"
-                    MSG+="passed: <b>${ALLURE_PASSED:-0}</b>, failed: <b>${ALLURE_FAILED:-0}</b>, broken: <b>${ALLURE_BROKEN:-0}</b>, skipped: <b>${ALLURE_SKIPPED:-0}</b>%0A"
-                    MSG+="<a href=\"${BASE_URL}allure/\">Allure</a> | <a href=\"${BASE_URL}\">Build</a>"
+                    MSG="${MSG}passed: <b>${ALLURE_PASSED:-0}</b>, failed: <b>${ALLURE_FAILED:-0}</b>, broken: <b>${ALLURE_BROKEN:-0}</b>, skipped: <b>${ALLURE_SKIPPED:-0}</b>%0A"
+                    MSG="${MSG}<a href=\"${BASE_URL}allure/\">Allure</a> | <a href=\"${BASE_URL}\">Build</a>"
 
                     curl -sS -X POST "https://api.telegram.org/bot${TOKEN}/sendMessage" \
                       -d chat_id="${CHAT}" \
@@ -139,8 +139,8 @@ PY
                     set +x
                     BASE_URL="${RUN_DISPLAY_URL:-${BUILD_URL:-${JOB_URL}${BUILD_NUMBER}/}}"
                     MSG="<b>❌ ${JOB_NAME} #${BUILD_NUMBER}</b>%0A"
-                    MSG+="passed: <b>${ALLURE_PASSED:-0}</b>, failed: <b>${ALLURE_FAILED:-0}</b>, broken: <b>${ALLURE_BROKEN:-0}</b>, skipped: <b>${ALLURE_SKIPPED:-0}</b>%0A"
-                    MSG+="<a href=\"${BASE_URL}allure/\">Allure</a> | <a href=\"${BASE_URL}consoleFull\">Console</a>"
+                    MSG="${MSG}passed: <b>${ALLURE_PASSED:-0}</b>, failed: <b>${ALLURE_FAILED:-0}</b>, broken: <b>${ALLURE_BROKEN:-0}</b>, skipped: <b>${ALLURE_SKIPPED:-0}</b>%0A"
+                    MSG="${MSG}<a href=\"${BASE_URL}allure/\">Allure</a> | <a href=\"${BASE_URL}consoleFull\">Console</a>"
 
                     curl -sS -X POST "https://api.telegram.org/bot${TOKEN}/sendMessage" \
                       -d chat_id="${CHAT}" \
