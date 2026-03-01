@@ -10,29 +10,20 @@
     <artifactId>ui-tests</artifactId>
     <version>1.0-SNAPSHOT</version>
 
-    <!-- =========================
-         Properties
-         ========================= -->
     <properties>
-        <!-- Java -->
         <java.version>17</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <!-- Libraries -->
         <selenide.version>7.13.0</selenide.version>
         <junit.version>5.10.1</junit.version>
         <allure.version>2.32.0</allure.version>
         <logback.version>1.4.14</logback.version>
 
-        <!-- Plugins -->
         <maven.compiler.version>3.11.0</maven.compiler.version>
         <maven.surefire.version>3.2.5</maven.surefire.version>
         <allure.maven.version>2.15.2</allure.maven.version>
     </properties>
 
-    <!-- =========================
-         Dependency Management
-         ========================= -->
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -45,26 +36,19 @@
         </dependencies>
     </dependencyManagement>
 
-    <!-- =========================
-         Dependencies
-         ========================= -->
     <dependencies>
-
-        <!-- Selenide (используется в main-коде) -->
         <dependency>
             <groupId>com.codeborne</groupId>
             <artifactId>selenide</artifactId>
             <version>${selenide.version}</version>
         </dependency>
 
-        <!-- JUnit 5 -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
             <scope>test</scope>
         </dependency>
 
-        <!-- Allure -->
         <dependency>
             <groupId>io.qameta.allure</groupId>
             <artifactId>allure-junit5</artifactId>
@@ -82,25 +66,19 @@
         <dependency>
             <groupId>io.qameta.allure</groupId>
             <artifactId>allure-java-commons</artifactId>
-            <version>2.32.0</version>
+            <version>${allure.version}</version>
         </dependency>
 
-        <!-- Logging (для тестов) -->
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
             <version>${logback.version}</version>
             <scope>test</scope>
         </dependency>
-
     </dependencies>
 
-    <!-- =========================
-         Build
-         ========================= -->
     <build>
         <plugins>
-
             <!-- Compiler -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -111,13 +89,23 @@
                 </configuration>
             </plugin>
 
-            <!-- Surefire (JUnit 5) -->
+            <!-- Surefire -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>${maven.surefire.version}</version>
                 <configuration>
                     <useModulePath>false</useModulePath>
+                    <!-- Allure JUnit 5 listener -->
+                    <properties>
+                        <property>
+                            <name>listener</name>
+                            <value>io.qameta.allure.junit5.AllureJunit5</value>
+                        </property>
+                    </properties>
+                    <systemPropertyVariables>
+                        <allure.results.directory>${project.build.directory}/allure-results</allure.results.directory>
+                    </systemPropertyVariables>
                 </configuration>
             </plugin>
 
@@ -130,15 +118,10 @@
                     <reportVersion>${allure.version}</reportVersion>
                 </configuration>
             </plugin>
-
         </plugins>
     </build>
 
-    <!-- =========================
-         Profiles
-         ========================= -->
     <profiles>
-
         <profile>
             <id>local</id>
             <properties>
@@ -154,7 +137,6 @@
                 <remote>true</remote>
             </properties>
         </profile>
-
     </profiles>
 
 </project>
