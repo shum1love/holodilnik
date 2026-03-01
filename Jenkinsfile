@@ -26,8 +26,9 @@ pipeline {
         stage('Check Selenoid') {
             steps {
                 sh '''
-                  echo "Using Selenoid URL: ${SELENOID_URL}"
-                  SELENOID_STATUS_URL="${SELENOID_URL%/wd/hub}/status"
+                  SELENOID_URL_EFFECTIVE="${SELENOID_URL:-http://host.docker.internal:4444/wd/hub}"
+                  echo "Using Selenoid URL: ${SELENOID_URL_EFFECTIVE}"
+                  SELENOID_STATUS_URL="${SELENOID_URL_EFFECTIVE%/wd/hub}/status"
                   echo "Checking Selenoid status at: ${SELENOID_STATUS_URL}"
                   curl -fsS "${SELENOID_STATUS_URL}"
                 '''
@@ -36,7 +37,10 @@ pipeline {
 
         stage('Run UI Tests') {
             steps {
-                sh 'mvn clean test -Dgroups=UI -Dselenide.remote=${SELENOID_URL}'
+                sh '''
+                  SELENOID_URL_EFFECTIVE="${SELENOID_URL:-http://host.docker.internal:4444/wd/hub}"
+                  mvn clean test -Dgroups=UI -Dselenide.remote=${SELENOID_URL_EFFECTIVE}
+                '''
             }
         }
     }
