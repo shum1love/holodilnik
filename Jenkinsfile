@@ -36,12 +36,14 @@ pipeline {
         }
 
         stage('Publish Allure Report') {
-                    steps {
-                         allure([
-                             results: [[path: 'target/allure-results']]
-                        ])
-                    }
-                }
+            steps {
+                allure([
+                    includeProperties: false,
+                    jdk: 'jdk17',
+                    results: 'target/allure-results'
+                ])
+            }
+        }
     }
 
     post {
