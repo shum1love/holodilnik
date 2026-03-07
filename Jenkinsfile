@@ -37,11 +37,9 @@ pipeline {
 
         stage('Publish Allure Report') {
                     steps {
-                        allure results: [[path: 'target/allure-results']]
-                        // или более безопасный вариант:
-                        // allure([
-                        //     results: [[path: 'target/allure-results']]
-                        // ])
+                         allure([
+                             results: [[path: 'target/allure-results']]
+                        ])
                     }
                 }
     }
