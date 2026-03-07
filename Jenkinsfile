@@ -12,7 +12,7 @@ pipeline {
 
         stage('Checkout') {
             steps {
-                git 'https://github.com/shum1love/holodilnik.git'
+                git branch: 'main', url: 'https://github.com/shum1love/holodilnik.git'
             }
         }
 
@@ -44,9 +44,9 @@ pipeline {
             steps {
                 sh '''
                 $ALLURE_HOME/bin/allure generate \
-                  target/allure-results \
-                  -o allure-report \
-                  --clean
+                target/allure-results \
+                -o allure-report \
+                --clean
                 '''
             }
         }
@@ -71,6 +71,11 @@ pipeline {
 
             script {
 
+                if (!fileExists('target/surefire-reports')) {
+                    echo "No test results found"
+                    return
+                }
+
                 def stats = sh(
                         script: """
                         awk '
@@ -94,7 +99,9 @@ pipeline {
                 def passed = total - failures - errors - skipped
                 def rate = total > 0 ? (passed * 100 / total) : 0
 
-                def statusEmoji = currentBuild.currentResult == "SUCCESS" ? "УСПЕХ! ✅" : "ПАДЕНИЕ! ❌"
+                def statusEmoji = currentBuild.currentResult == "SUCCESS"
+                        ? "УСПЕХ! ✅"
+                        : "ПАДЕНИЕ! ❌"
 
                 def message = """
 🚀 ${env.JOB_NAME} #${env.BUILD_NUMBER} — ${statusEmoji}
@@ -114,8 +121,8 @@ ${env.BUILD_URL}
 """
 
                 withCredentials([
-                        string(credentialsId: 'telegram-token', variable: 'TOKEN'),
-                        string(credentialsId: 'telegram-chat', variable: 'CHAT')
+                        string(credentialsId: 'telegram-bot-token', variable: 'TOKEN'),
+                        string(credentialsId: 'telegram-chat-id', variable: 'CHAT')
                 ]) {
                     sh """
                     curl -s -X POST https://api.telegram.org/bot\$TOKEN/sendMessage \
