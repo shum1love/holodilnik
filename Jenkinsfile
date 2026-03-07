@@ -54,7 +54,7 @@ pipeline {
 
                 // Добавляем описание билда с ссылкой на Allure
                 script {
-                    def allureLink = "${BUILD_URL}allure/"
+                    def allureLink = "${env.BUILD_URL}allure/"
                     currentBuild.description = "<a href='${allureLink}'>Алюр отчёт</a>"
                 }
             }
