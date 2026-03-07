@@ -13,6 +13,7 @@ pipeline {
 
     environment {
         ALLURE_RESULTS = 'target/allure-results'
+        ALLURE_REPORT = 'allure-report'
     }
 
     stages {
@@ -47,8 +48,33 @@ pipeline {
             steps {
                 sh '''
                 . ./selenoid.env
-                mvn clean test -Dgroups=UI -Dselenide.remote=$SELENOID
+                mvn -B clean test -Dgroups=UI -Dselenide.remote=$SELENOID
                 '''
+            }
+        }
+
+        stage('Generate Allure Report') {
+            steps {
+                sh '''
+                if [ -d "$ALLURE_RESULTS" ]; then
+                    allure generate $ALLURE_RESULTS -o $ALLURE_REPORT --clean
+                else
+                    echo "No allure results"
+                fi
+                '''
+            }
+        }
+
+        stage('Publish Allure') {
+            steps {
+                publishHTML([
+                    allowMissing: true,
+                    alwaysLinkToLastBuild: true,
+                    keepAll: true,
+                    reportDir: 'allure-report',
+                    reportFiles: 'index.html',
+                    reportName: 'Allure Report'
+                ])
             }
         }
     }
@@ -104,12 +130,6 @@ pipeline {
 ⏭ Skipped: ${skipped}
 """
             }
-
-            allure([
-                includeProperties: false,
-                jdk: '',
-                results: [[path: 'target/allure-results']]
-            ])
         }
 
         success {
@@ -130,27 +150,21 @@ def telegramNotify(status) {
     ]) {
 
         sh """
-        PASS=${PASS_RATE}
-        TOTAL=${TEST_TOTAL}
-        FAILED=${TEST_FAILED}
-        SKIPPED=${TEST_SKIPPED}
-
         MSG="
 ${status}
 
 📦 ${JOB_NAME} #${BUILD_NUMBER}
 
-📈 Pass rate: ${PASS}% (${TEST_PASSED}/${TOTAL})
-❌ Failed: ${FAILED}
-⏭ Skipped: ${SKIPPED}
+📈 Pass rate: ${PASS_RATE}% (${TEST_PASSED}/${TEST_TOTAL})
+❌ Failed: ${TEST_FAILED}
+⏭ Skipped: ${TEST_SKIPPED}
 
-📊 ${BUILD_URL}allure
+📊 ${BUILD_URL}Allure_20Report/
 🖥 ${BUILD_URL}console
 "
 
         curl -s -X POST https://api.telegram.org/bot\$TOKEN/sendMessage \
         -d chat_id=\$CHAT \
-        -d parse_mode=HTML \
         --data-urlencode text="\$MSG"
         """
     }
