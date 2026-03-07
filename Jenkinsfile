@@ -115,6 +115,42 @@ EOT
                             } > .allure-summary.env
                         fi
                     fi
+
+                    if [ -f .allure-summary.env ]; then
+                        . ./.allure-summary.env
+                    fi
+
+                    ALLURE_TOTAL=${ALLURE_TOTAL:-0}
+                    if [ "$ALLURE_TOTAL" -eq 0 ] && ls target/surefire-reports/TEST-*.xml >/dev/null 2>&1; then
+                        read SUREFIRE_TOTAL SUREFIRE_FAILED SUREFIRE_BROKEN SUREFIRE_SKIPPED <<EOF
+$(awk -F'"' '
+    /<testsuite / {
+        tests += $4 + 0
+        failures += $6 + 0
+        errors += $8 + 0
+        skipped += $10 + 0
+    }
+    END {
+        print tests, failures, errors, skipped
+    }
+' target/surefire-reports/TEST-*.xml)
+EOF
+
+                        SUREFIRE_TOTAL=${SUREFIRE_TOTAL:-0}
+                        SUREFIRE_FAILED=${SUREFIRE_FAILED:-0}
+                        SUREFIRE_BROKEN=${SUREFIRE_BROKEN:-0}
+                        SUREFIRE_SKIPPED=${SUREFIRE_SKIPPED:-0}
+                        SUREFIRE_PASSED=$((SUREFIRE_TOTAL - SUREFIRE_FAILED - SUREFIRE_BROKEN - SUREFIRE_SKIPPED))
+                        if [ "$SUREFIRE_PASSED" -lt 0 ]; then SUREFIRE_PASSED=0; fi
+
+                        {
+                            echo "ALLURE_TOTAL=${SUREFIRE_TOTAL}"
+                            echo "ALLURE_PASSED=${SUREFIRE_PASSED}"
+                            echo "ALLURE_FAILED=${SUREFIRE_FAILED}"
+                            echo "ALLURE_BROKEN=${SUREFIRE_BROKEN}"
+                            echo "ALLURE_SKIPPED=${SUREFIRE_SKIPPED}"
+                        } > .allure-summary.env
+                    fi
                 fi
             '''
 
@@ -173,11 +209,20 @@ EOT
                     while [ "$i" -lt "$FILLED" ]; do BAR="${BAR}█"; i=$((i + 1)); done
                     while [ "$i" -lt 10 ]; do BAR="${BAR}░"; i=$((i + 1)); done
 
-                    MSG="🚀 *${JOB_NAME}* #${BUILD_NUMBER} — УСПЕХ! ✅%0A%0A"
-                    MSG="${MSG}${BAR}  ${PASSED}/${TOTAL} тестов зелёные%0A"
-                    MSG="${MSG}🔥 Провалено: *${FAILED}* | ⚠️ Сломано: *${BROKEN}* | ⏭ Пропущено: *${SKIPPED}*%0A%0A"
-                    MSG="${MSG}📊 [Allure отчёт →](${ALLURE_URL})%0A"
-                    MSG="${MSG}🖥️ [Консоль](${BASE_URL})"
+                    MSG=$(cat <<EOT
+🚀 *${JOB_NAME}* #${BUILD_NUMBER} — УСПЕХ! ✅
+
+📈 Прогресс: ${BAR}
+✅ Всего тестов: *${TOTAL}*
+🟢 Пройдено: *${PASSED}*
+❌ Провалено: *${FAILED}*
+⚠️ Сломано: *${BROKEN}*
+⏭ Пропущено: *${SKIPPED}*
+
+📊 [Allure отчёт](${ALLURE_URL})
+🖥️ [Консоль](${BASE_URL})
+EOT
+)
 
                     curl -sS -X POST "https://api.telegram.org/bot${TOKEN}/sendMessage" \
                         -d chat_id="${CHAT}" \
@@ -228,11 +273,20 @@ EOT
                     while [ "$i" -lt "$FILLED" ]; do BAR="${BAR}█"; i=$((i + 1)); done
                     while [ "$i" -lt 10 ]; do BAR="${BAR}░"; i=$((i + 1)); done
 
-                    MSG="💥 *${JOB_NAME}* #${BUILD_NUMBER} — ПРОВАЛ! 🔥%0A%0A"
-                    MSG="${MSG}${BAR}  ${PASSED}/${TOTAL} прошли%0A"
-                    MSG="${MSG}❌ Провалено: *${FAILED}* | ⚠️ Сломано: *${BROKEN}* | ⏭ Пропущено: *${SKIPPED}*%0A%0A"
-                    MSG="${MSG}📊 [Allure отчёт →](${ALLURE_URL})%0A"
-                    MSG="${MSG}🖥️ [Консоль + лог](${BASE_URL}consoleFull)"
+                    MSG=$(cat <<EOT
+💥 *${JOB_NAME}* #${BUILD_NUMBER} — ПРОВАЛ! 🔥
+
+📈 Прогресс: ${BAR}
+✅ Всего тестов: *${TOTAL}*
+🟢 Пройдено: *${PASSED}*
+❌ Провалено: *${FAILED}*
+⚠️ Сломано: *${BROKEN}*
+⏭ Пропущено: *${SKIPPED}*
+
+📊 [Allure отчёт](${ALLURE_URL})
+🖥️ [Консоль + лог](${BASE_URL}consoleFull)
+EOT
+)
 
                     curl -sS -X POST "https://api.telegram.org/bot${TOKEN}/sendMessage" \
                         -d chat_id="${CHAT}" \
