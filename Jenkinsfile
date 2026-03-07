@@ -56,6 +56,8 @@ pipeline {
 
     post {
         always {
+            sh 'mvn -B -DskipTests allure:report || true'
+
             sh '''
                 if [ -d "${ALLURE_RESULTS_DIR}" ]; then
 
@@ -202,14 +204,7 @@ EOF
                 env.PASS_RATE = passRate.toString()
 
                 def statusLine = currentBuild.currentResult == 'FAILURE' ? '💥 ПРОВАЛ! 🔥' : '🚀 УСПЕХ! ✅'
-                currentBuild.description = """${statusLine}<br>
-📈 Доля пройденных: ${passRate}% (${passed}/${total})<br>
-✅ Всего тестов: ${total}<br>
-🟢 Пройдено: ${passed}<br>
-❌ Провалено: ${failed}<br>
-⚠️ Сломано: ${broken}<br>
-⏭️ Пропущено: ${skipped}<br>
-${hasAbsoluteUrls ? """📊 <a href='${allureUrl}'>Allure отчёт</a><br>🖥️ <a href='${consoleUrl}'>Консоль</a>""" : ""}"""
+                currentBuild.description = statusLine
 
                 echo "Allure summary => total=${total}, passed=${passed}, failed=${failed}, broken=${broken}, skipped=${skipped}"
                 echo "Build links => base=${baseUrl}, allure=${allureUrl}, console=${consoleUrl}"
