@@ -230,6 +230,26 @@ docker exec -it jenkins-local sh -lc 'for u in \
 Если тесты проходят, а в Jenkins нет Allure-отчёта — проверьте путь к результатам.
 В проекте используется `target/allure-results`, поэтому в `Jenkinsfile` публикация должна идти именно из `target/allure-results`.
 
+Если отчёт не появляется в UI Jenkins:
+
+1. Убедитесь, что установлен **Allure Jenkins Plugin**.
+2. Проверьте глобальный tool: `Manage Jenkins -> Tools -> Allure Commandline`.
+   Имя tool должно совпадать с `allure 'allure'` в `Jenkinsfile`.
+3. Откройте конкретный build и проверьте, что в артефактах есть:
+   - `target/allure-results/**`
+   - `target/site/allure-maven-plugin/**`
+4. В логе job должна быть строка вида `Allure summary => total=..., passed=...`.
+   Она показывает, что Jenkins прочитал summary и записал метрики.
+
+Чтобы ссылка из Telegram открывалась и с телефона, и с ПК:
+
+- Jenkins должен быть доступен по адресу из вашей сети (не `localhost`).
+- В `Jenkinsfile` есть переменная `JENKINS_PUBLIC_URL`.
+  Укажите её в окружении job или глобально, например:
+  `http://192.168.1.50:8080`
+- Тогда ссылки на build и Allure в Telegram будут строиться на публичном хосте,
+  а не на внутреннем `localhost`/docker-host.
+
 Для Telegram в pipeline используются credentials:
 
 - `telegram-bot-token`
