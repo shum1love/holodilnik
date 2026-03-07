@@ -13,8 +13,7 @@ pipeline {
 
     environment {
         ALLURE_RESULTS_DIR = 'target/allure-results'
-        ALLURE_RESULTS_MVN = 'allure-results'
-        ALLURE_REPORT      = 'allure-report'
+        // ALLURE_RESULTS_MVN и ALLURE_REPORT больше не нужны
     }
 
     stages {
@@ -59,8 +58,10 @@ pipeline {
         always {
             sh '''
                 if [ -d "${ALLURE_RESULTS_DIR}" ]; then
-                    rm -rf "${ALLURE_REPORT}"
+                    # Удаляем старый отчёт, если был
+                    rm -rf target/site/allure-maven-plugin
 
+                    # Пишем environment и executor — это важно
                     cat > "${ALLURE_RESULTS_DIR}/environment.properties" <<EOT
 Jenkins.Job=${JOB_NAME}
 Jenkins.BuildNumber=${BUILD_NUMBER}
@@ -78,15 +79,11 @@ EOT
 }
 EOT
 
-                    if ! mvn -B allure:report \
-                        -Dallure.results.directory=${ALLURE_RESULTS_MVN} \
-                        -Dallure.report.directory=${ALLURE_REPORT}
-                    then
-                        echo "WARN: Allure report generation failed, keeping pipeline status from test stages"
-                    fi
+                    # Генерируем отчёт БЕЗ -D параметров
+                    mvn -B allure:report || true
 
-                    if [ -f "${ALLURE_REPORT}/widgets/summary.json" ]; then
-                        # Используем awk вместо sed — гораздо меньше проблем с экранированием
+                    # Парсим summary.json из дефолтного места
+                    if [ -f "target/site/allure-maven-plugin/widgets/summary.json" ]; then
                         get_stat() {
                             local key="$1"
                             local file="$2"
@@ -99,7 +96,7 @@ EOT
                             ' "$file" || echo "0"
                         }
 
-                        SUMMARY_FILE="${ALLURE_REPORT}/widgets/summary.json"
+                        SUMMARY_FILE="target/site/allure-maven-plugin/widgets/summary.json"
 
                         {
                             echo "ALLURE_TOTAL=$(get_stat total "$SUMMARY_FILE")"
@@ -112,7 +109,8 @@ EOT
                 fi
             '''
 
-            archiveArtifacts artifacts: 'target/allure-results/**,allure-report/**,.allure-summary.env', allowEmptyArchive: true
+            // Архивим результаты + новый отчёт
+            archiveArtifacts artifacts: 'target/allure-results/**,target/site/allure-maven-plugin/**,.allure-summary.env', allowEmptyArchive: true
 
             script {
                 if (fileExists('.allure-summary.env')) {
@@ -121,6 +119,7 @@ EOT
                         env[k] = v
                     }
                 }
+                // Путь к результатам не изменился
                 if (fileExists(env.ALLURE_RESULTS_DIR)) {
                     allure([results: [[path: env.ALLURE_RESULTS_DIR]]])
                 }
