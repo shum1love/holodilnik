@@ -2,9 +2,9 @@ pipeline {
     agent any
 
     tools {
-        maven 'maven3'   // Имя Maven из Jenkins Global Tool Configuration
-        jdk 'jdk17'      // Имя JDK 17 из Jenkins Global Tool Configuration
-        allure 'allure'  // Имя Allure из Jenkins Global Tool Configuration
+        maven 'maven3'
+        jdk 'jdk17'
+        allure 'allure'
     }
 
     environment {
