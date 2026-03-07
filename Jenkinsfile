@@ -13,7 +13,6 @@ pipeline {
 
     environment {
         ALLURE_RESULTS_DIR = 'target/allure-results'
-        // ALLURE_RESULTS_MVN и ALLURE_REPORT больше не нужны
     }
 
     stages {
@@ -58,10 +57,8 @@ pipeline {
         always {
             sh '''
                 if [ -d "${ALLURE_RESULTS_DIR}" ]; then
-                    # Удаляем старый отчёт, если был
                     rm -rf target/site/allure-maven-plugin
 
-                    # Пишем environment и executor — это важно
                     cat > "${ALLURE_RESULTS_DIR}/environment.properties" <<EOT
 Jenkins.Job=${JOB_NAME}
 Jenkins.BuildNumber=${BUILD_NUMBER}
@@ -79,37 +76,48 @@ EOT
 }
 EOT
 
-                    # Генерируем отчёт БЕЗ -D параметров
                     mvn -B allure:report || true
 
-                    # Парсим summary.json из дефолтного места
-                    if [ -f "target/site/allure-maven-plugin/widgets/summary.json" ]; then
-                        get_stat() {
-                            local key="$1"
-                            local file="$2"
-                            awk -v k="$key" '
-                                $0 ~ "\"" k "\"[[:space:]]+:" {
-                                    match($0, /[0-9]+/)
-                                    if (RSTART > 0) print substr($0, RSTART, RLENGTH)
-                                    exit
-                                }
-                            ' "$file" || echo "0"
-                        }
+                    # ────────────────────────────────────────────────
+                    # Парсинг summary.json — jq если есть, иначе awk
+                    # ────────────────────────────────────────────────
+                    SUMMARY_FILE="target/site/allure-maven-plugin/widgets/summary.json"
 
-                        SUMMARY_FILE="target/site/allure-maven-plugin/widgets/summary.json"
+                    if [ -f "$SUMMARY_FILE" ]; then
+                        if command -v jq >/dev/null; then
+                            {
+                                echo "ALLURE_TOTAL=$(jq -r '.total // 0' "$SUMMARY_FILE")"
+                                echo "ALLURE_PASSED=$(jq -r '.passed // 0' "$SUMMARY_FILE")"
+                                echo "ALLURE_FAILED=$(jq -r '.failed // 0' "$SUMMARY_FILE")"
+                                echo "ALLURE_BROKEN=$(jq -r '.broken // 0' "$SUMMARY_FILE")"
+                                echo "ALLURE_SKIPPED=$(jq -r '.skipped // 0' "$SUMMARY_FILE")"
+                            } > .allure-summary.env
+                        else
+                            # fallback awk (улучшенный, учитывает пробелы)
+                            get_stat() {
+                                local key="$1"
+                                local file="$2"
+                                awk -v k="$key" '
+                                    $0 ~ "\"" k "\": *[0-9]+[ ,}]" {
+                                        gsub(/[^0-9]/, "", $0)
+                                        print $0
+                                        exit
+                                    }
+                                ' "$file" || echo "0"
+                            }
 
-                        {
-                            echo "ALLURE_TOTAL=$(get_stat total "$SUMMARY_FILE")"
-                            echo "ALLURE_PASSED=$(get_stat passed "$SUMMARY_FILE")"
-                            echo "ALLURE_FAILED=$(get_stat failed "$SUMMARY_FILE")"
-                            echo "ALLURE_BROKEN=$(get_stat broken "$SUMMARY_FILE")"
-                            echo "ALLURE_SKIPPED=$(get_stat skipped "$SUMMARY_FILE")"
-                        } > .allure-summary.env
+                            {
+                                echo "ALLURE_TOTAL=$(get_stat total "$SUMMARY_FILE")"
+                                echo "ALLURE_PASSED=$(get_stat passed "$SUMMARY_FILE")"
+                                echo "ALLURE_FAILED=$(get_stat failed "$SUMMARY_FILE")"
+                                echo "ALLURE_BROKEN=$(get_stat broken "$SUMMARY_FILE")"
+                                echo "ALLURE_SKIPPED=$(get_stat skipped "$SUMMARY_FILE")"
+                            } > .allure-summary.env
+                        fi
                     fi
                 fi
             '''
 
-            // Архивим результаты + новый отчёт
             archiveArtifacts artifacts: 'target/allure-results/**,target/site/allure-maven-plugin/**,.allure-summary.env', allowEmptyArchive: true
 
             script {
@@ -119,7 +127,6 @@ EOT
                         env[k] = v
                     }
                 }
-                // Путь к результатам не изменился
                 if (fileExists(env.ALLURE_RESULTS_DIR)) {
                     allure([results: [[path: env.ALLURE_RESULTS_DIR]]])
                 }
@@ -134,17 +141,27 @@ EOT
                 sh '''
                     set +x
                     BASE_URL="${RUN_DISPLAY_URL:-${BUILD_URL:-${JOB_URL}${BUILD_NUMBER}/}}"
-                    MSG="✅ ${JOB_NAME} #${BUILD_NUMBER}%0A"
-                    MSG="${MSG}Алюр отчёт: ${BASE_URL}allure/%0A"
-                    MSG="${MSG}passed: ${ALLURE_PASSED:-0}, failed: ${ALLURE_FAILED:-0}, broken: ${ALLURE_BROKEN:-0}, skipped: ${ALLURE_SKIPPED:-0}%0A"
-                    MSG="${MSG}Build: ${BASE_URL}"
+                    ALLURE_URL="${BASE_URL}allure/"
 
-                    HTTP_CODE=$(curl -sS -o /tmp/tg-response.txt -w "%{http_code}" -X POST "https://api.telegram.org/bot${TOKEN}/sendMessage" \
+                    PASSED=${ALLURE_PASSED:-0}
+                    TOTAL=${ALLURE_TOTAL:-0}
+                    FAILED=${ALLURE_FAILED:-0}
+                    BROKEN=${ALLURE_BROKEN:-0}
+                    SKIPPED=${ALLURE_SKIPPED:-0}
+
+                    BAR=$(printf '█%.0s' $(seq 1 $((PASSED * 10 / TOTAL + 1 2>/dev/null || echo 0))))$(printf '░%.0s' $(seq 1 $((10 - PASSED * 10 / TOTAL + 1 2>/dev/null || echo 10))))
+
+                    MSG="🚀 *${JOB_NAME}* #${BUILD_NUMBER} — УСПЕХ! ✅%0A%0A"
+                    MSG+="${BAR}  ${PASSED}/${TOTAL} тестов зелёные%0A"
+                    MSG+="🔥 Провалено: *${FAILED}* | ⚠️ Сломано: *${BROKEN}* | ⏭ Пропущено: *${SKIPPED}*%0A%0A"
+                    MSG+="📊 [Allure отчёт →](${ALLURE_URL})%0A"
+                    MSG+="🖥️ [Консоль](${BASE_URL})"
+
+                    curl -sS -X POST "https://api.telegram.org/bot${TOKEN}/sendMessage" \
                         -d chat_id="${CHAT}" \
+                        -d parse_mode="Markdown" \
                         -d disable_web_page_preview=true \
-                        --data-urlencode "text=${MSG}" || true)
-
-                    [ "${HTTP_CODE}" = "200" ] || echo "WARN: Telegram notify failed, HTTP=${HTTP_CODE}, response=$(cat /tmp/tg-response.txt)"
+                        --data-urlencode "text=${MSG}" || echo "WARN: TG failed"
                 '''
             }
         }
@@ -157,17 +174,27 @@ EOT
                 sh '''
                     set +x
                     BASE_URL="${RUN_DISPLAY_URL:-${BUILD_URL:-${JOB_URL}${BUILD_NUMBER}/}}"
-                    MSG="❌ ${JOB_NAME} #${BUILD_NUMBER}%0A"
-                    MSG="${MSG}Алюр отчёт: ${BASE_URL}allure/%0A"
-                    MSG="${MSG}passed: ${ALLURE_PASSED:-0}, failed: ${ALLURE_FAILED:-0}, broken: ${ALLURE_BROKEN:-0}, skipped: ${ALLURE_SKIPPED:-0}%0A"
-                    MSG="${MSG}Console: ${BASE_URL}consoleFull"
+                    ALLURE_URL="${BASE_URL}allure/"
 
-                    HTTP_CODE=$(curl -sS -o /tmp/tg-response.txt -w "%{http_code}" -X POST "https://api.telegram.org/bot${TOKEN}/sendMessage" \
+                    PASSED=${ALLURE_PASSED:-0}
+                    TOTAL=${ALLURE_TOTAL:-0}
+                    FAILED=${ALLURE_FAILED:-0}
+                    BROKEN=${ALLURE_BROKEN:-0}
+                    SKIPPED=${ALLURE_SKIPPED:-0}
+
+                    BAR=$(printf '█%.0s' $(seq 1 $((PASSED * 10 / TOTAL + 1 2>/dev/null || echo 0))))$(printf '░%.0s' $(seq 1 $((10 - PASSED * 10 / TOTAL + 1 2>/dev/null || echo 10))))
+
+                    MSG="💥 *${JOB_NAME}* #${BUILD_NUMBER} — ПРОВАЛ! 🔥%0A%0A"
+                    MSG+="${BAR}  ${PASSED}/${TOTAL} прошли%0A"
+                    MSG+="❌ Провалено: *${FAILED}* | ⚠️ Сломано: *${BROKEN}* | ⏭ Пропущено: *${SKIPPED}*%0A%0A"
+                    MSG+="📊 [Allure отчёт →](${ALLURE_URL})%0A"
+                    MSG+="🖥️ [Консоль + лог](${BASE_URL}consoleFull)"
+
+                    curl -sS -X POST "https://api.telegram.org/bot${TOKEN}/sendMessage" \
                         -d chat_id="${CHAT}" \
+                        -d parse_mode="Markdown" \
                         -d disable_web_page_preview=true \
-                        --data-urlencode "text=${MSG}" || true)
-
-                    [ "${HTTP_CODE}" = "200" ] || echo "WARN: Telegram notify failed, HTTP=${HTTP_CODE}, response=$(cat /tmp/tg-response.txt)"
+                        --data-urlencode "text=${MSG}" || echo "WARN: TG failed"
                 '''
             }
         }
