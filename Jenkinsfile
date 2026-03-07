@@ -36,13 +36,14 @@ pipeline {
         }
 
         stage('Publish Allure Report') {
-            steps {
-                allure([
-                    reportBuildPolicy: 'ALWAYS',
-                    results: [[path: 'target/allure-results']]
-                ])
-            }
-        }
+                    steps {
+                        allure results: [[path: 'target/allure-results']]
+                        // или более безопасный вариант:
+                        // allure([
+                        //     results: [[path: 'target/allure-results']]
+                        // ])
+                    }
+                }
     }
 
     post {
