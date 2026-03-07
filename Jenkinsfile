@@ -8,10 +8,10 @@ pipeline {
     }
 
     environment {
-        SELENOID_URL = 'http://selenoid:4444/wd/hub' // URL твоего Selenoid
+        SELENOID_URL = 'http://selenoid:4444/wd/hub'
         BROWSER = 'chrome'
         BROWSER_VERSION = '128.0'
-        HEADLESS = 'true' // headless режим
+        HEADLESS = 'true'
     }
 
     stages {
@@ -37,7 +37,10 @@ pipeline {
 
         stage('Publish Allure Report') {
             steps {
-                allure includeProperties: false, jdk: 'jdk17', results: [[path: 'target/allure-results']]
+                allure([
+                    reportBuildPolicy: 'ALWAYS',
+                    results: [[path: 'target/allure-results']]
+                ])
             }
         }
     }
