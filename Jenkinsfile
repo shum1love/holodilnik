@@ -181,12 +181,16 @@ EOF
                 def broken = (env.ALLURE_BROKEN ?: '0') as Integer
                 def skipped = (env.ALLURE_SKIPPED ?: '0') as Integer
 
-                def baseUrl = env.RUN_DISPLAY_URL ?: env.BUILD_URL ?: "${env.JOB_URL}${env.BUILD_NUMBER}/"
+                def baseUrl = env.BUILD_URL ?: env.RUN_DISPLAY_URL ?: "${env.JOB_URL}${env.BUILD_NUMBER}/"
                 if ((env.JENKINS_PUBLIC_URL ?: '').trim() && (env.BUILD_URL ?: '').trim()) {
                     def buildPath = env.BUILD_URL.replaceFirst(/^https?:\\/\\/[^\\/]+/, '')
                     if (buildPath?.trim()) {
                         baseUrl = "${env.JENKINS_PUBLIC_URL.replaceAll('/+$', '')}${buildPath}"
                     }
+                }
+
+                if (baseUrl.contains('unconfigured-jenkins-location')) {
+                    baseUrl = baseUrl.replaceFirst(/^https?:\/\/[^\/]+/, '')
                 }
 
                 if (!baseUrl.endsWith('/')) {
