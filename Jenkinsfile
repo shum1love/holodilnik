@@ -3,15 +3,28 @@ pipeline {
 
     tools {
         maven 'maven3'   // Имя Maven из Jenkins Global Tool Configuration
-        jdk 'jdk17'          // Имя JDK 17 из Jenkins Global Tool Configuration
-        allure 'allure'
+        jdk 'jdk17'      // Имя JDK 17 из Jenkins Global Tool Configuration
+        allure 'allure'  // Имя Allure из Jenkins Global Tool Configuration
+    }
+
+    environment {
+        SELENOID_URL = 'http://selenoid:4444/wd/hub' // URL твоего Selenoid
+        BROWSER = 'chrome'
+        BROWSER_VERSION = '128.0'
+        HEADLESS = 'true' // headless режим
     }
 
     stages {
         stage('Run Tests') {
             steps {
-                echo "Запуск тестов..."
-                sh 'mvn clean test'
+                echo "Запуск тестов через Selenoid..."
+                sh """
+                    mvn clean test \
+                    -Dremote.url=$SELENOID_URL \
+                    -Dbrowser=$BROWSER \
+                    -Dbrowser.version=$BROWSER_VERSION \
+                    -Dheadless=$HEADLESS
+                """
             }
         }
 
@@ -22,14 +35,9 @@ pipeline {
             }
         }
 
-        stage('Show Allure Report') {
+        stage('Publish Allure Report') {
             steps {
-                echo """
-🏆 Allure отчёт готов!
-Открой его локально командой:
-mvn allure:serve
-Или найдёшь готовый HTML здесь: target/site/allure-maven/index.html
-"""
+                allure includeProperties: false, jdk: 'jdk17', results: [[path: 'target/allure-results']]
             }
         }
     }
@@ -37,6 +45,12 @@ mvn allure:serve
     post {
         always {
             echo "Сборка завершена ✅"
+        }
+        success {
+            echo "Тесты прошли успешно 🎉"
+        }
+        failure {
+            echo "Тесты упали ❌"
         }
     }
 }
