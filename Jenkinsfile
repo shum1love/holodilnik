@@ -86,11 +86,11 @@ EOT
                     if [ -f "$SUMMARY_FILE" ]; then
                         if command -v jq >/dev/null; then
                             {
-                                echo "ALLURE_TOTAL=$(jq -r '.total // 0' "$SUMMARY_FILE")"
-                                echo "ALLURE_PASSED=$(jq -r '.passed // 0' "$SUMMARY_FILE")"
-                                echo "ALLURE_FAILED=$(jq -r '.failed // 0' "$SUMMARY_FILE")"
-                                echo "ALLURE_BROKEN=$(jq -r '.broken // 0' "$SUMMARY_FILE")"
-                                echo "ALLURE_SKIPPED=$(jq -r '.skipped // 0' "$SUMMARY_FILE")"
+                                echo "ALLURE_TOTAL=$(jq -r '((.statistic.total // .total // 0) | tonumber? // 0)' "$SUMMARY_FILE")"
+                                echo "ALLURE_PASSED=$(jq -r '((.statistic.passed // .passed // 0) | tonumber? // 0)' "$SUMMARY_FILE")"
+                                echo "ALLURE_FAILED=$(jq -r '((.statistic.failed // .failed // 0) | tonumber? // 0)' "$SUMMARY_FILE")"
+                                echo "ALLURE_BROKEN=$(jq -r '((.statistic.broken // .broken // 0) | tonumber? // 0)' "$SUMMARY_FILE")"
+                                echo "ALLURE_SKIPPED=$(jq -r '((.statistic.skipped // .skipped // 0) | tonumber? // 0)' "$SUMMARY_FILE")"
                             } > .allure-summary.env
                         else
                             # fallback awk (улучшенный, учитывает пробелы)
@@ -149,13 +149,35 @@ EOT
                     BROKEN=${ALLURE_BROKEN:-0}
                     SKIPPED=${ALLURE_SKIPPED:-0}
 
-                    BAR=$(printf '█%.0s' $(seq 1 $((PASSED * 10 / TOTAL + 1 2>/dev/null || echo 0))))$(printf '░%.0s' $(seq 1 $((10 - PASSED * 10 / TOTAL + 1 2>/dev/null || echo 10))))
+                    to_num() {
+                        case "$1" in
+                            ''|*[!0-9]*) echo "0" ;;
+                            *) echo "$1" ;;
+                        esac
+                    }
+
+                    PASSED=$(to_num "$PASSED")
+                    TOTAL=$(to_num "$TOTAL")
+                    FAILED=$(to_num "$FAILED")
+                    BROKEN=$(to_num "$BROKEN")
+                    SKIPPED=$(to_num "$SKIPPED")
+
+                    if [ "$TOTAL" -gt 0 ]; then
+                        FILLED=$((PASSED * 10 / TOTAL))
+                    else
+                        FILLED=0
+                    fi
+
+                    BAR=""
+                    i=0
+                    while [ "$i" -lt "$FILLED" ]; do BAR="${BAR}█"; i=$((i + 1)); done
+                    while [ "$i" -lt 10 ]; do BAR="${BAR}░"; i=$((i + 1)); done
 
                     MSG="🚀 *${JOB_NAME}* #${BUILD_NUMBER} — УСПЕХ! ✅%0A%0A"
-                    MSG+="${BAR}  ${PASSED}/${TOTAL} тестов зелёные%0A"
-                    MSG+="🔥 Провалено: *${FAILED}* | ⚠️ Сломано: *${BROKEN}* | ⏭ Пропущено: *${SKIPPED}*%0A%0A"
-                    MSG+="📊 [Allure отчёт →](${ALLURE_URL})%0A"
-                    MSG+="🖥️ [Консоль](${BASE_URL})"
+                    MSG="${MSG}${BAR}  ${PASSED}/${TOTAL} тестов зелёные%0A"
+                    MSG="${MSG}🔥 Провалено: *${FAILED}* | ⚠️ Сломано: *${BROKEN}* | ⏭ Пропущено: *${SKIPPED}*%0A%0A"
+                    MSG="${MSG}📊 [Allure отчёт →](${ALLURE_URL})%0A"
+                    MSG="${MSG}🖥️ [Консоль](${BASE_URL})"
 
                     curl -sS -X POST "https://api.telegram.org/bot${TOKEN}/sendMessage" \
                         -d chat_id="${CHAT}" \
@@ -182,13 +204,35 @@ EOT
                     BROKEN=${ALLURE_BROKEN:-0}
                     SKIPPED=${ALLURE_SKIPPED:-0}
 
-                    BAR=$(printf '█%.0s' $(seq 1 $((PASSED * 10 / TOTAL + 1 2>/dev/null || echo 0))))$(printf '░%.0s' $(seq 1 $((10 - PASSED * 10 / TOTAL + 1 2>/dev/null || echo 10))))
+                    to_num() {
+                        case "$1" in
+                            ''|*[!0-9]*) echo "0" ;;
+                            *) echo "$1" ;;
+                        esac
+                    }
+
+                    PASSED=$(to_num "$PASSED")
+                    TOTAL=$(to_num "$TOTAL")
+                    FAILED=$(to_num "$FAILED")
+                    BROKEN=$(to_num "$BROKEN")
+                    SKIPPED=$(to_num "$SKIPPED")
+
+                    if [ "$TOTAL" -gt 0 ]; then
+                        FILLED=$((PASSED * 10 / TOTAL))
+                    else
+                        FILLED=0
+                    fi
+
+                    BAR=""
+                    i=0
+                    while [ "$i" -lt "$FILLED" ]; do BAR="${BAR}█"; i=$((i + 1)); done
+                    while [ "$i" -lt 10 ]; do BAR="${BAR}░"; i=$((i + 1)); done
 
                     MSG="💥 *${JOB_NAME}* #${BUILD_NUMBER} — ПРОВАЛ! 🔥%0A%0A"
-                    MSG+="${BAR}  ${PASSED}/${TOTAL} прошли%0A"
-                    MSG+="❌ Провалено: *${FAILED}* | ⚠️ Сломано: *${BROKEN}* | ⏭ Пропущено: *${SKIPPED}*%0A%0A"
-                    MSG+="📊 [Allure отчёт →](${ALLURE_URL})%0A"
-                    MSG+="🖥️ [Консоль + лог](${BASE_URL}consoleFull)"
+                    MSG="${MSG}${BAR}  ${PASSED}/${TOTAL} прошли%0A"
+                    MSG="${MSG}❌ Провалено: *${FAILED}* | ⚠️ Сломано: *${BROKEN}* | ⏭ Пропущено: *${SKIPPED}*%0A%0A"
+                    MSG="${MSG}📊 [Allure отчёт →](${ALLURE_URL})%0A"
+                    MSG="${MSG}🖥️ [Консоль + лог](${BASE_URL}consoleFull)"
 
                     curl -sS -X POST "https://api.telegram.org/bot${TOKEN}/sendMessage" \
                         -d chat_id="${CHAT}" \
