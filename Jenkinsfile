@@ -39,19 +39,21 @@ pipeline {
             }
         }
 
-        stage('Run UI Tests') {
+        stage('Run UI Tests & Allure Report') {
             steps {
                 sh '''
+                    # Загружаем Selenoid URL
                     . ./.selenoid.env
-                    mvn clean test -Dselenide.remote=${SELENOID_URL_EFFECTIVE}
-                '''
-            }
-        }
 
-        stage('Generate & Publish Allure Report') {
-            steps {
-                sh 'mvn allure:report'
-                allure results: [[path: env.ALLURE_RESULTS_DIR]]
+                    # Запуск UI тестов
+                    mvn clean test -Dselenide.remote=${SELENOID_URL_EFFECTIVE}
+
+                    # Генерация Allure отчета
+                    mvn allure:report
+
+                    # Публикация Allure результатов
+                    echo "Allure report ready at: ${BUILD_URL}allure/"
+                '''
             }
         }
     }
