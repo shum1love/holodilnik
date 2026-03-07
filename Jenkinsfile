@@ -161,7 +161,7 @@ Pass rate: ${PASS_RATE}% (${TEST_PASSED}/${TEST_TOTAL})
 Failed: ${TEST_FAILED}
 Skipped: ${TEST_SKIPPED}
 
-${BUILD_URL}
+${env.BUILD_URL}
 "
 
         curl -s -X POST https://api.telegram.org/bot\$TOKEN/sendMessage \
