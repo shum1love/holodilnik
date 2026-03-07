@@ -13,6 +13,7 @@ pipeline {
 
     environment {
         ALLURE_RESULTS_DIR = 'target/allure-results'
+        JENKINS_PUBLIC_URL = ''
     }
 
     stages {
@@ -167,10 +168,22 @@ EOF
             script {
                 if (fileExists('.allure-summary.env')) {
                     readFile('.allure-summary.env').trim().split('\n').each { line ->
-                        def (k, v) = line.tokenize('=')
-                        env[k] = v
+                        def parts = line.split('=', 2)
+                        if (parts.length == 2) {
+                            env[parts[0]] = parts[1]
+                        }
                     }
                 }
+
+                def total = (env.ALLURE_TOTAL ?: '0') as Integer
+                def passed = (env.ALLURE_PASSED ?: '0') as Integer
+                def failed = (env.ALLURE_FAILED ?: '0') as Integer
+                def broken = (env.ALLURE_BROKEN ?: '0') as Integer
+                def skipped = (env.ALLURE_SKIPPED ?: '0') as Integer
+                currentBuild.description = "✅ ${passed}/${total} | ❌ ${failed} | ⚠️ ${broken} | ⏭️ ${skipped}"
+
+                echo "Allure summary => total=${total}, passed=${passed}, failed=${failed}, broken=${broken}, skipped=${skipped}"
+
                 if (fileExists(env.ALLURE_RESULTS_DIR)) {
                     allure([results: [[path: env.ALLURE_RESULTS_DIR]]])
                 }
@@ -184,7 +197,20 @@ EOF
             ]) {
                 sh '''
                     set +x
-                    BASE_URL="${RUN_DISPLAY_URL:-${BUILD_URL:-${JOB_URL}${BUILD_NUMBER}/}}"
+
+                    build_public_url() {
+                        local base_url="${RUN_DISPLAY_URL:-${BUILD_URL:-${JOB_URL}${BUILD_NUMBER}/}}"
+                        if [ -n "${JENKINS_PUBLIC_URL}" ] && [ -n "${BUILD_URL}" ]; then
+                            local build_path
+                            build_path="$(echo "${BUILD_URL}" | sed -E 's#https?://[^/]+##')"
+                            if [ -n "${build_path}" ]; then
+                                base_url="${JENKINS_PUBLIC_URL%/}${build_path}"
+                            fi
+                        fi
+                        echo "${base_url}"
+                    }
+
+                    BASE_URL="$(build_public_url)"
                     ALLURE_URL="${BASE_URL}allure/"
 
                     PASSED=${ALLURE_PASSED:-0}
@@ -248,7 +274,20 @@ EOT
             ]) {
                 sh '''
                     set +x
-                    BASE_URL="${RUN_DISPLAY_URL:-${BUILD_URL:-${JOB_URL}${BUILD_NUMBER}/}}"
+
+                    build_public_url() {
+                        local base_url="${RUN_DISPLAY_URL:-${BUILD_URL:-${JOB_URL}${BUILD_NUMBER}/}}"
+                        if [ -n "${JENKINS_PUBLIC_URL}" ] && [ -n "${BUILD_URL}" ]; then
+                            local build_path
+                            build_path="$(echo "${BUILD_URL}" | sed -E 's#https?://[^/]+##')"
+                            if [ -n "${build_path}" ]; then
+                                base_url="${JENKINS_PUBLIC_URL%/}${build_path}"
+                            fi
+                        fi
+                        echo "${base_url}"
+                    }
+
+                    BASE_URL="$(build_public_url)"
                     ALLURE_URL="${BASE_URL}allure/"
 
                     PASSED=${ALLURE_PASSED:-0}
