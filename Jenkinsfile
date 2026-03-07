@@ -42,19 +42,17 @@ pipeline {
         stage('Run UI Tests & Allure Report') {
             steps {
                 sh '''
-                    # Загружаем Selenoid URL
                     . ./.selenoid.env
-
-                    # Запуск UI тестов
                     mvn clean test -Dselenide.remote=${SELENOID_URL_EFFECTIVE}
-
-                    # Генерация Allure отчета
                     mvn allure:report
                 '''
 
-                // Добавляем описание билда с ссылкой на Allure
                 script {
-                    def allureLink = "${env.BUILD_URL}allure/"
+                    // Используем RUN_DISPLAY_URL, если BUILD_URL пустой
+                    def baseUrl = env.RUN_DISPLAY_URL ?: env.JOB_URL ?: ''
+                    def allureLink = baseUrl + 'allure/'
+
+                    echo "Allure report: ${allureLink}"
                     currentBuild.description = "<a href='${allureLink}'>Алюр отчёт</a>"
                 }
             }
