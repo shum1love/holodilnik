@@ -50,10 +50,13 @@ pipeline {
 
                     # Генерация Allure отчета
                     mvn allure:report
-
-                    # Публикация Allure результатов
-                    echo "Allure report ready at: ${BUILD_URL}allure/"
                 '''
+
+                // Добавляем описание билда с ссылкой на Allure
+                script {
+                    def allureLink = "${BUILD_URL}allure/"
+                    currentBuild.description = "<a href='${allureLink}'>Алюр отчёт</a>"
+                }
             }
         }
     }
