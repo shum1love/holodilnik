@@ -180,9 +180,42 @@ EOF
                 def failed = (env.ALLURE_FAILED ?: '0') as Integer
                 def broken = (env.ALLURE_BROKEN ?: '0') as Integer
                 def skipped = (env.ALLURE_SKIPPED ?: '0') as Integer
-                currentBuild.description = "✅ ${passed}/${total} | ❌ ${failed} | ⚠️ ${broken} | ⏭️ ${skipped}"
+
+                def baseUrl = env.RUN_DISPLAY_URL ?: env.BUILD_URL ?: "${env.JOB_URL}${env.BUILD_NUMBER}/"
+                if ((env.JENKINS_PUBLIC_URL ?: '').trim() && (env.BUILD_URL ?: '').trim()) {
+                    def buildPath = env.BUILD_URL.replaceFirst(/^https?:\\/\\/[^\\/]+/, '')
+                    if (buildPath?.trim()) {
+                        baseUrl = "${env.JENKINS_PUBLIC_URL.replaceAll('/+$', '')}${buildPath}"
+                    }
+                }
+
+                if (!baseUrl.endsWith('/')) {
+                    baseUrl = "${baseUrl}/"
+                }
+
+                def allureUrl = "${baseUrl}allure/"
+                def consoleUrl = currentBuild.currentResult == 'FAILURE' ? "${baseUrl}consoleFull" : baseUrl
+                def barFilled = total > 0 ? (int) ((passed * 10) / total) : 0
+                def bar = ('█' * barFilled) + ('░' * (10 - barFilled))
+
+                env.BUILD_PUBLIC_URL = baseUrl
+                env.ALLURE_REPORT_URL = allureUrl
+                env.CONSOLE_URL = consoleUrl
+                env.PROGRESS_BAR = bar
+
+                def statusLine = currentBuild.currentResult == 'FAILURE' ? '💥 ПРОВАЛ! 🔥' : '🚀 УСПЕХ! ✅'
+                currentBuild.description = """${statusLine}<br>
+📈 Прогресс: ${bar}<br>
+✅ Всего тестов: ${total}<br>
+🟢 Пройдено: ${passed}<br>
+❌ Провалено: ${failed}<br>
+⚠️ Сломано: ${broken}<br>
+⏭️ Пропущено: ${skipped}<br>
+📊 <a href='${allureUrl}'>Allure отчёт</a><br>
+🖥️ <a href='${consoleUrl}'>Консоль</a>"""
 
                 echo "Allure summary => total=${total}, passed=${passed}, failed=${failed}, broken=${broken}, skipped=${skipped}"
+                echo "Build links => base=${baseUrl}, allure=${allureUrl}, console=${consoleUrl}"
 
                 if (fileExists(env.ALLURE_RESULTS_DIR)) {
                     allure([results: [[path: env.ALLURE_RESULTS_DIR]]])
@@ -198,21 +231,6 @@ EOF
                 sh '''
                     set +x
 
-                    build_public_url() {
-                        local base_url="${RUN_DISPLAY_URL:-${BUILD_URL:-${JOB_URL}${BUILD_NUMBER}/}}"
-                        if [ -n "${JENKINS_PUBLIC_URL}" ] && [ -n "${BUILD_URL}" ]; then
-                            local build_path
-                            build_path="$(echo "${BUILD_URL}" | sed -E 's#https?://[^/]+##')"
-                            if [ -n "${build_path}" ]; then
-                                base_url="${JENKINS_PUBLIC_URL%/}${build_path}"
-                            fi
-                        fi
-                        echo "${base_url}"
-                    }
-
-                    BASE_URL="$(build_public_url)"
-                    ALLURE_URL="${BASE_URL}allure/"
-
                     PASSED=${ALLURE_PASSED:-0}
                     TOTAL=${ALLURE_TOTAL:-0}
                     FAILED=${ALLURE_FAILED:-0}
@@ -244,23 +262,23 @@ EOF
                     while [ "$i" -lt 10 ]; do BAR="${BAR}░"; i=$((i + 1)); done
 
                     MSG=$(cat <<EOT
-🚀 *${JOB_NAME}* #${BUILD_NUMBER} — УСПЕХ! ✅
+🚀 <b>${JOB_NAME}</b> #${BUILD_NUMBER} — УСПЕХ! ✅
 
 📈 Прогресс: ${BAR}
-✅ Всего тестов: *${TOTAL}*
-🟢 Пройдено: *${PASSED}*
-❌ Провалено: *${FAILED}*
-⚠️ Сломано: *${BROKEN}*
-⏭ Пропущено: *${SKIPPED}*
+✅ Всего тестов: <b>${TOTAL}</b>
+🟢 Пройдено: <b>${PASSED}</b>
+❌ Провалено: <b>${FAILED}</b>
+⚠️ Сломано: <b>${BROKEN}</b>
+⏭ Пропущено: <b>${SKIPPED}</b>
 
-📊 [Allure отчёт](${ALLURE_URL})
-🖥️ [Консоль](${BASE_URL})
+📊 <a href="${ALLURE_REPORT_URL}">Allure отчёт</a>
+🖥️ <a href="${CONSOLE_URL}">Консоль</a>
 EOT
 )
 
                     curl -sS -X POST "https://api.telegram.org/bot${TOKEN}/sendMessage" \
                         -d chat_id="${CHAT}" \
-                        -d parse_mode="Markdown" \
+                        -d parse_mode="HTML" \
                         -d disable_web_page_preview=true \
                         --data-urlencode "text=${MSG}" || echo "WARN: TG failed"
                 '''
@@ -275,21 +293,6 @@ EOT
                 sh '''
                     set +x
 
-                    build_public_url() {
-                        local base_url="${RUN_DISPLAY_URL:-${BUILD_URL:-${JOB_URL}${BUILD_NUMBER}/}}"
-                        if [ -n "${JENKINS_PUBLIC_URL}" ] && [ -n "${BUILD_URL}" ]; then
-                            local build_path
-                            build_path="$(echo "${BUILD_URL}" | sed -E 's#https?://[^/]+##')"
-                            if [ -n "${build_path}" ]; then
-                                base_url="${JENKINS_PUBLIC_URL%/}${build_path}"
-                            fi
-                        fi
-                        echo "${base_url}"
-                    }
-
-                    BASE_URL="$(build_public_url)"
-                    ALLURE_URL="${BASE_URL}allure/"
-
                     PASSED=${ALLURE_PASSED:-0}
                     TOTAL=${ALLURE_TOTAL:-0}
                     FAILED=${ALLURE_FAILED:-0}
@@ -321,23 +324,23 @@ EOT
                     while [ "$i" -lt 10 ]; do BAR="${BAR}░"; i=$((i + 1)); done
 
                     MSG=$(cat <<EOT
-💥 *${JOB_NAME}* #${BUILD_NUMBER} — ПРОВАЛ! 🔥
+💥 <b>${JOB_NAME}</b> #${BUILD_NUMBER} — ПРОВАЛ! 🔥
 
 📈 Прогресс: ${BAR}
-✅ Всего тестов: *${TOTAL}*
-🟢 Пройдено: *${PASSED}*
-❌ Провалено: *${FAILED}*
-⚠️ Сломано: *${BROKEN}*
-⏭ Пропущено: *${SKIPPED}*
+✅ Всего тестов: <b>${TOTAL}</b>
+🟢 Пройдено: <b>${PASSED}</b>
+❌ Провалено: <b>${FAILED}</b>
+⚠️ Сломано: <b>${BROKEN}</b>
+⏭ Пропущено: <b>${SKIPPED}</b>
 
-📊 [Allure отчёт](${ALLURE_URL})
-🖥️ [Консоль + лог](${BASE_URL}consoleFull)
+📊 <a href="${ALLURE_REPORT_URL}">Allure отчёт</a>
+🖥️ <a href="${CONSOLE_URL}">Консоль + лог</a>
 EOT
 )
 
                     curl -sS -X POST "https://api.telegram.org/bot${TOKEN}/sendMessage" \
                         -d chat_id="${CHAT}" \
-                        -d parse_mode="Markdown" \
+                        -d parse_mode="HTML" \
                         -d disable_web_page_preview=true \
                         --data-urlencode "text=${MSG}" || echo "WARN: TG failed"
                 '''
