@@ -3,7 +3,7 @@ pipeline {
 
     tools {
         maven 'Maven 3'   // Имя Maven из Jenkins Global Tool Configuration
-        jdk 'JDK 17'          // Имя JDK 17 из Jenkins Global Tool Configuration
+        jdk 'jdk17'          // Имя JDK 17 из Jenkins Global Tool Configuration
         allure 'allure'
     }
 
