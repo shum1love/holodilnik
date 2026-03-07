@@ -1,6 +1,12 @@
 pipeline {
     agent any
 
+    tools {
+        jdk 'jdk17'
+        maven 'maven3'
+        allure 'allure'
+    }
+
     environment {
         TELEGRAM_TOKEN = credentials('telegram-bot-token')
         TELEGRAM_CHAT_ID = credentials('telegram-chat-id')
@@ -35,9 +41,7 @@ pipeline {
         stage('Generate Allure Report') {
             steps {
                 script {
-                    allure([
-                        results: [[path: 'target/allure-results']]
-                    ])
+                    sh "${tool('allure')}/bin/allure generate target/allure-results -o target/allure-report --clean"
                 }
             }
         }
@@ -48,7 +52,7 @@ pipeline {
                     allowMissing: true,
                     alwaysLinkToLastBuild: true,
                     keepAll: true,
-                    reportDir: 'target/site/allure-maven-plugin',
+                    reportDir: 'target/allure-report',
                     reportFiles: 'index.html',
                     reportName: 'Allure'
                 ])
@@ -58,7 +62,6 @@ pipeline {
         stage('Parse Test Results') {
             steps {
                 script {
-
                     def report = junit testResults: 'target/surefire-reports/*.xml'
 
                     def total = report.totalCount
@@ -81,7 +84,6 @@ pipeline {
 
         success {
             script {
-
                 def message = """
 🚀 ${env.JOB_NAME} #${env.BUILD_NUMBER} — УСПЕХ! ✅
 
@@ -109,7 +111,6 @@ ${env.RUN_DISPLAY_URL}
 
         failure {
             script {
-
                 def message = """
 🔥 ${env.JOB_NAME} #${env.BUILD_NUMBER} — ПАДЕНИЕ ❌
 
