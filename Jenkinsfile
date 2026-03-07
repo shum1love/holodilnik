@@ -76,9 +76,7 @@ EOT
 }
 EOT
 
-                    # ────────────────────────────────────────────────
                     # Парсинг summary.json — jq если есть, иначе awk
-                    # ────────────────────────────────────────────────
                     SUMMARY_FILE="target/site/allure-maven-plugin/widgets/summary.json"
 
                     if [ -f "$SUMMARY_FILE" ]; then
@@ -91,7 +89,6 @@ EOT
                                 echo "ALLURE_SKIPPED=$(jq -r '((.statistic.skipped // .skipped // 0) | tonumber? // 0)' "$SUMMARY_FILE")"
                             } > .allure-summary.env
                         else
-                            # fallback awk (улучшенный, учитывает пробелы)
                             get_stat() {
                                 local key="$1"
                                 local file="$2"
@@ -202,14 +199,15 @@ EOF
                 env.PASS_RATE = passRate.toString()
 
                 def statusLine = currentBuild.currentResult == 'FAILURE' ? '💥 ПРОВАЛ! 🔥' : '🚀 УСПЕХ! ✅'
-                currentBuild.description = """${statusLine}<br>
-📈 Доля пройденных: ${passRate}% (${passed}/${total})<br>
-✅ Всего тестов: ${total}<br>
-🟢 Пройдено: ${passed}<br>
-❌ Провалено: ${failed}<br>
-⚠️ Сломано: ${broken}<br>
-⏭️ Пропущено: ${skipped}<br>
-${hasAbsoluteUrls ? """📊 <a href='${allureUrl}'>Allure отчёт</a><br>🖥️ <a href='${consoleUrl}'>Консоль</a>""" : ""}"""
+
+                currentBuild.description = """${statusLine}
+📈 Доля пройденных: ${passRate}% (${passed}/${total})
+✅ Всего тестов: ${total}
+🟢 Пройдено: ${passed}
+❌ Провалено: ${failed}
+⚠️ Сломано: ${broken}
+⏭️ Пропущено: ${skipped}
+${hasAbsoluteUrls ? "📊 <a href='${allureUrl}'>Allure отчёт</a>   🖥️ <a href='${consoleUrl}'>Консоль</a>" : ""}"""
 
                 echo "Allure summary => total=${total}, passed=${passed}, failed=${failed}, broken=${broken}, skipped=${skipped}"
                 echo "Build links => base=${baseUrl}, allure=${allureUrl}, console=${consoleUrl}"
@@ -276,8 +274,7 @@ ${hasAbsoluteUrls ? """📊 <a href='${allureUrl}'>Allure отчёт</a><br>🖥
 ⏭ Пропущено: <b>${SKIPPED}</b>
 
 $(if [ -n "${ALLURE_REPORT_URL}" ] && [ -n "${CONSOLE_URL}" ]; then
-echo "📊 <a href=\"${ALLURE_REPORT_URL}\">Allure отчёт</a>"
-echo "🖥️ <a href=\"${CONSOLE_URL}\">Консоль</a>"
+echo "📊 <a href=\"${ALLURE_REPORT_URL}\">Allure отчёт</a>   🖥️ <a href=\"${CONSOLE_URL}\">Консоль</a>"
 fi)
 EOT
 )
@@ -335,8 +332,7 @@ EOT
 ⏭ Пропущено: <b>${SKIPPED}</b>
 
 $(if [ -n "${ALLURE_REPORT_URL}" ] && [ -n "${CONSOLE_URL}" ]; then
-echo "📊 <a href=\"${ALLURE_REPORT_URL}\">Allure отчёт</a>"
-echo "🖥️ <a href=\"${CONSOLE_URL}\">Консоль + лог</a>"
+echo "📊 <a href=\"${ALLURE_REPORT_URL}\">Allure отчёт</a>   🖥️ <a href=\"${CONSOLE_URL}\">Консоль + лог</a>"
 fi)
 EOT
 )
