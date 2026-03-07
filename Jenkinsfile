@@ -56,47 +56,46 @@ pipeline {
 
     post {
         always {
-            sh '''
-                if [ -d "${ALLURE_RESULTS_DIR}" ]; then
-                    cat > "${ALLURE_RESULTS_DIR}/environment.properties" <<EOT
-Jenkins.Job=${JOB_NAME}
-Jenkins.BuildNumber=${BUILD_NUMBER}
-Jenkins.Branch=${GIT_BRANCH}
-Jenkins.Commit=${GIT_COMMIT}
-EOT
+            // архивируем артефакты напрямую
+            archiveArtifacts artifacts: 'target/allure-results/**,target/site/allure-maven-plugin/**', allowEmptyArchive: true
 
-                    cat > "${ALLURE_RESULTS_DIR}/executor.json" <<EOT
-{
-  "name": "Jenkins",
-  "type": "jenkins",
-  "buildName": "${JOB_NAME} #${BUILD_NUMBER}",
-  "buildUrl": "${BUILD_URL}",
-  "reportUrl": "${BUILD_URL}allure"
-}
-EOT
-                fi
-
-                archiveArtifacts artifacts: 'target/allure-results/**,target/site/allure-maven-plugin/**', allowEmptyArchive: true
-            '''
-
+            // обрабатываем summary и Allure переменные
             script {
-                def total = 0, passed = 0, failed = 0, broken = 0, skipped = 0
-                if (fileExists('target/site/allure-maven-plugin/widgets/summary.json')) {
-                    def summary = readJSON file: 'target/site/allure-maven-plugin/widgets/summary.json'
-                    total = summary.statistic.total ?: 0
-                    passed = summary.statistic.passed ?: 0
-                    failed = summary.statistic.failed ?: 0
-                    broken = summary.statistic.broken ?: 0
-                    skipped = summary.statistic.skipped ?: 0
+                def summaryFile = 'target/site/allure-maven-plugin/widgets/summary.json'
+
+                if (fileExists(summaryFile)) {
+                    def summary = readJSON file: summaryFile
+                    env.ALLURE_TOTAL  = (summary.statistic.total ?: 0).toString()
+                    env.ALLURE_PASSED = (summary.statistic.passed ?: 0).toString()
+                    env.ALLURE_FAILED = (summary.statistic.failed ?: 0).toString()
+                    env.ALLURE_BROKEN = (summary.statistic.broken ?: 0).toString()
+                    env.ALLURE_SKIPPED= (summary.statistic.skipped ?: 0).toString()
+                } else {
+                    env.ALLURE_TOTAL  = '0'
+                    env.ALLURE_PASSED = '0'
+                    env.ALLURE_FAILED = '0'
+                    env.ALLURE_BROKEN = '0'
+                    env.ALLURE_SKIPPED= '0'
                 }
 
-                env.ALLURE_TOTAL = total.toString()
-                env.ALLURE_PASSED = passed.toString()
-                env.ALLURE_FAILED = failed.toString()
-                env.ALLURE_BROKEN = broken.toString()
-                env.ALLURE_SKIPPED = skipped.toString()
-                env.PASS_RATE = total > 0 ? ((passed * 100 / total).toInteger()).toString() : "0"
+                def total = env.ALLURE_TOTAL.toInteger()
+                def passed = env.ALLURE_PASSED.toInteger()
+                env.PASS_RATE = total > 0 ? ((passed * 100) / total).toInteger().toString() : '0'
+
+                def internalBuildUrl = env.BUILD_URL ?: "${env.JOB_URL}${env.BUILD_NUMBER}/"
+                env.BUILD_PUBLIC_URL = internalBuildUrl
+                env.ALLURE_REPORT_URL = "${internalBuildUrl}allure"
+                env.CONSOLE_URL = "${internalBuildUrl}console"
             }
+
+            // Allure отчёт
+            allure([
+                includeProperties: false,
+                jdk: '',
+                properties: [],
+                reportBuildPolicy: 'ALWAYS',
+                results: [[path: env.ALLURE_RESULTS_DIR]]
+            ])
         }
 
         success {
@@ -105,22 +104,32 @@ EOT
                 string(credentialsId: 'telegram-chat-id', variable: 'CHAT')
             ]) {
                 sh '''
+                    PASSED=${ALLURE_PASSED:-0}
+                    TOTAL=${ALLURE_TOTAL:-0}
+                    FAILED=${ALLURE_FAILED:-0}
+                    BROKEN=${ALLURE_BROKEN:-0}
+                    SKIPPED=${ALLURE_SKIPPED:-0}
+                    PASS_RATE=${PASS_RATE:-0}
+
                     MSG=$(cat <<EOT
 🚀 <b>${JOB_NAME}</b> #${BUILD_NUMBER} — УСПЕХ! ✅
 
-📈 Доля пройденных: ${PASS_RATE}% (${ALLURE_PASSED}/${ALLURE_TOTAL})
-✅ Всего тестов: <b>${ALLURE_TOTAL}</b>
-🟢 Пройдено: <b>${ALLURE_PASSED}</b>
-❌ Провалено: <b>${ALLURE_FAILED}</b>
-⚠️ Сломано: <b>${ALLURE_BROKEN}</b>
-⏭ Пропущено: <b>${ALLURE_SKIPPED}</b>
+📈 Доля пройденных: ${PASS_RATE}% (${PASSED}/${TOTAL})
+✅ Всего тестов: <b>${TOTAL}</b>
+🟢 Пройдено: <b>${PASSED}</b>
+❌ Провалено: <b>${FAILED}</b>
+⚠️ Сломано: <b>${BROKEN}</b>
+⏭ Пропущено: <b>${SKIPPED}</b>
+
+📊 <a href="${ALLURE_REPORT_URL}">Allure отчёт</a>   🖥️ <a href="${CONSOLE_URL}">Консоль</a>
 EOT
-                    )
+)
 
                     curl -sS -X POST "https://api.telegram.org/bot${TOKEN}/sendMessage" \
                         -d chat_id="${CHAT}" \
                         -d parse_mode="HTML" \
-                        --data-urlencode "text=${MSG}" || echo "WARN: TG failed"
+                        -d disable_web_page_preview=true \
+                        --data-urlencode "text=${MSG}"
                 '''
             }
         }
@@ -131,22 +140,32 @@ EOT
                 string(credentialsId: 'telegram-chat-id', variable: 'CHAT')
             ]) {
                 sh '''
+                    PASSED=${ALLURE_PASSED:-0}
+                    TOTAL=${ALLURE_TOTAL:-0}
+                    FAILED=${ALLURE_FAILED:-0}
+                    BROKEN=${ALLURE_BROKEN:-0}
+                    SKIPPED=${ALLURE_SKIPPED:-0}
+                    PASS_RATE=${PASS_RATE:-0}
+
                     MSG=$(cat <<EOT
 💥 <b>${JOB_NAME}</b> #${BUILD_NUMBER} — ПРОВАЛ! 🔥
 
-📈 Доля пройденных: ${PASS_RATE}% (${ALLURE_PASSED}/${ALLURE_TOTAL})
-✅ Всего тестов: <b>${ALLURE_TOTAL}</b>
-🟢 Пройдено: <b>${ALLURE_PASSED}</b>
-❌ Провалено: <b>${ALLURE_FAILED}</b>
-⚠️ Сломано: <b>${ALLURE_BROKEN}</b>
-⏭ Пропущено: <b>${ALLURE_SKIPPED}</b>
+📈 Доля пройденных: ${PASS_RATE}% (${PASSED}/${TOTAL})
+✅ Всего тестов: <b>${TOTAL}</b>
+🟢 Пройдено: <b>${PASSED}</b>
+❌ Провалено: <b>${FAILED}</b>
+⚠️ Сломано: <b>${BROKEN}</b>
+⏭ Пропущено: <b>${SKIPPED}</b>
+
+📊 <a href="${ALLURE_REPORT_URL}">Allure отчёт</a>   🖥️ <a href="${CONSOLE_URL}">Консоль + лог</a>
 EOT
-                    )
+)
 
                     curl -sS -X POST "https://api.telegram.org/bot${TOKEN}/sendMessage" \
                         -d chat_id="${CHAT}" \
                         -d parse_mode="HTML" \
-                        --data-urlencode "text=${MSG}" || echo "WARN: TG failed"
+                        -d disable_web_page_preview=true \
+                        --data-urlencode "text=${MSG}"
                 '''
             }
         }
