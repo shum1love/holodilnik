@@ -72,8 +72,8 @@ EOT
   "name": "Jenkins",
   "type": "jenkins",
   "buildName": "${JOB_NAME} #${BUILD_NUMBER}",
-  "buildUrl": "${RUN_DISPLAY_URL:-${BUILD_URL}}",
-  "reportUrl": "${RUN_DISPLAY_URL:-${BUILD_URL}}allure/"
+  "buildUrl": "${BUILD_URL}",
+  "reportUrl": "${BUILD_URL}allure"
 }
 EOT
 
@@ -181,42 +181,38 @@ EOF
                 def broken = (env.ALLURE_BROKEN ?: '0') as Integer
                 def skipped = (env.ALLURE_SKIPPED ?: '0') as Integer
 
-                def baseUrl = env.BUILD_URL ?: env.RUN_DISPLAY_URL ?: "${env.JOB_URL}${env.BUILD_NUMBER}/"
-                if ((env.JENKINS_PUBLIC_URL ?: '').trim() && (env.BUILD_URL ?: '').trim()) {
-                    def buildPath = env.BUILD_URL.replaceFirst(/^https?:\\/\\/[^\\/]+/, '')
-                    if (buildPath?.trim()) {
-                        baseUrl = "${env.JENKINS_PUBLIC_URL.replaceAll('/+$', '')}${buildPath}"
-                    }
-                }
+                def internalBuildUrl = env.BUILD_URL ?: "${env.JOB_URL}${env.BUILD_NUMBER}/"
+                def buildPath = internalBuildUrl.replaceFirst(/^https?:\/\/[^\/]+/, '')
+                def publicRoot = (env.JENKINS_PUBLIC_URL ?: env.JENKINS_URL ?: '').trim().replaceAll('/+$', '')
 
-                if (baseUrl.contains('unconfigured-jenkins-location')) {
-                    baseUrl = baseUrl.replaceFirst(/^https?:\/\/[^\/]+/, '')
+                def baseUrl = internalBuildUrl
+                if (publicRoot && buildPath?.trim()) {
+                    baseUrl = "${publicRoot}${buildPath}"
                 }
 
                 if (!baseUrl.endsWith('/')) {
                     baseUrl = "${baseUrl}/"
                 }
 
-                def allureUrl = "${baseUrl}allure/"
-                def consoleUrl = currentBuild.currentResult == 'FAILURE' ? "${baseUrl}consoleFull" : baseUrl
-                def barFilled = total > 0 ? (int) ((passed * 10) / total) : 0
-                def bar = ('█' * barFilled) + ('░' * (10 - barFilled))
+                def allureUrl = "${baseUrl}allure"
+                def consoleUrl = currentBuild.currentResult == 'FAILURE' ? "${baseUrl}consoleFull" : "${baseUrl}console"
+                def hasAbsoluteUrls = allureUrl ==~ /^https?:\/\/.+/
+                def passRate = total > 0 ? (int) Math.round((passed * 100.0d) / total) : 0
 
                 env.BUILD_PUBLIC_URL = baseUrl
-                env.ALLURE_REPORT_URL = allureUrl
-                env.CONSOLE_URL = consoleUrl
-                env.PROGRESS_BAR = bar
+                env.ALLURE_REPORT_URL = hasAbsoluteUrls ? allureUrl : ''
+                env.CONSOLE_URL = hasAbsoluteUrls ? consoleUrl : ''
+                env.PASS_RATE = passRate.toString()
 
                 def statusLine = currentBuild.currentResult == 'FAILURE' ? '💥 ПРОВАЛ! 🔥' : '🚀 УСПЕХ! ✅'
                 currentBuild.description = """${statusLine}<br>
-📈 Прогресс: ${bar}<br>
+📈 Доля пройденных: ${passRate}% (${passed}/${total})<br>
 ✅ Всего тестов: ${total}<br>
 🟢 Пройдено: ${passed}<br>
 ❌ Провалено: ${failed}<br>
 ⚠️ Сломано: ${broken}<br>
 ⏭️ Пропущено: ${skipped}<br>
-📊 <a href='${allureUrl}'>Allure отчёт</a><br>
-🖥️ <a href='${consoleUrl}'>Консоль</a>"""
+${hasAbsoluteUrls ? "📊 <a href='${allureUrl}'>Allure отчёт</a><br>🖥️ <a href='${consoleUrl}'>Консоль</a>" : "⚠️ Внешние ссылки недоступны: укажите JENKINS_PUBLIC_URL/JENKINS_URL"}"""
 
                 echo "Allure summary => total=${total}, passed=${passed}, failed=${failed}, broken=${broken}, skipped=${skipped}"
                 echo "Build links => base=${baseUrl}, allure=${allureUrl}, console=${consoleUrl}"
@@ -255,28 +251,27 @@ EOF
                     SKIPPED=$(to_num "$SKIPPED")
 
                     if [ "$TOTAL" -gt 0 ]; then
-                        FILLED=$((PASSED * 10 / TOTAL))
+                        PASS_RATE=$(( (PASSED * 100 + TOTAL / 2) / TOTAL ))
                     else
-                        FILLED=0
+                        PASS_RATE=0
                     fi
-
-                    BAR=""
-                    i=0
-                    while [ "$i" -lt "$FILLED" ]; do BAR="${BAR}█"; i=$((i + 1)); done
-                    while [ "$i" -lt 10 ]; do BAR="${BAR}░"; i=$((i + 1)); done
 
                     MSG=$(cat <<EOT
 🚀 <b>${JOB_NAME}</b> #${BUILD_NUMBER} — УСПЕХ! ✅
 
-📈 Прогресс: ${BAR}
+📈 Доля пройденных: ${PASS_RATE}% (${PASSED}/${TOTAL})
 ✅ Всего тестов: <b>${TOTAL}</b>
 🟢 Пройдено: <b>${PASSED}</b>
 ❌ Провалено: <b>${FAILED}</b>
 ⚠️ Сломано: <b>${BROKEN}</b>
 ⏭ Пропущено: <b>${SKIPPED}</b>
 
-📊 <a href="${ALLURE_REPORT_URL}">Allure отчёт</a>
-🖥️ <a href="${CONSOLE_URL}">Консоль</a>
+$(if [ -n "${ALLURE_REPORT_URL}" ] && [ -n "${CONSOLE_URL}" ]; then
+echo "📊 <a href=\"${ALLURE_REPORT_URL}\">Allure отчёт</a>"
+echo "🖥️ <a href=\"${CONSOLE_URL}\">Консоль</a>"
+else
+echo "⚠️ Внешние ссылки недоступны: настройте JENKINS_PUBLIC_URL/JENKINS_URL"
+fi)
 EOT
 )
 
@@ -317,28 +312,27 @@ EOT
                     SKIPPED=$(to_num "$SKIPPED")
 
                     if [ "$TOTAL" -gt 0 ]; then
-                        FILLED=$((PASSED * 10 / TOTAL))
+                        PASS_RATE=$(( (PASSED * 100 + TOTAL / 2) / TOTAL ))
                     else
-                        FILLED=0
+                        PASS_RATE=0
                     fi
-
-                    BAR=""
-                    i=0
-                    while [ "$i" -lt "$FILLED" ]; do BAR="${BAR}█"; i=$((i + 1)); done
-                    while [ "$i" -lt 10 ]; do BAR="${BAR}░"; i=$((i + 1)); done
 
                     MSG=$(cat <<EOT
 💥 <b>${JOB_NAME}</b> #${BUILD_NUMBER} — ПРОВАЛ! 🔥
 
-📈 Прогресс: ${BAR}
+📈 Доля пройденных: ${PASS_RATE}% (${PASSED}/${TOTAL})
 ✅ Всего тестов: <b>${TOTAL}</b>
 🟢 Пройдено: <b>${PASSED}</b>
 ❌ Провалено: <b>${FAILED}</b>
 ⚠️ Сломано: <b>${BROKEN}</b>
 ⏭ Пропущено: <b>${SKIPPED}</b>
 
-📊 <a href="${ALLURE_REPORT_URL}">Allure отчёт</a>
-🖥️ <a href="${CONSOLE_URL}">Консоль + лог</a>
+$(if [ -n "${ALLURE_REPORT_URL}" ] && [ -n "${CONSOLE_URL}" ]; then
+echo "📊 <a href=\"${ALLURE_REPORT_URL}\">Allure отчёт</a>"
+echo "🖥️ <a href=\"${CONSOLE_URL}\">Консоль + лог</a>"
+else
+echo "⚠️ Внешние ссылки недоступны: настройте JENKINS_PUBLIC_URL/JENKINS_URL"
+fi)
 EOT
 )
 
