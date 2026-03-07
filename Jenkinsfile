@@ -1,135 +1,130 @@
 pipeline {
-
     agent any
 
-    tools {
-        jdk 'jdk17'
-        maven 'maven3'
-        allure 'allure'
+    environment {
+        TELEGRAM_TOKEN = credentials('telegram-bot-token')
+        TELEGRAM_CHAT_ID = credentials('telegram-chat-id')
     }
 
     stages {
 
         stage('Checkout') {
             steps {
-                git branch: 'main', url: 'https://github.com/shum1love/holodilnik.git'
+                git url: 'https://github.com/shum1love/holodilnik.git', branch: 'main'
             }
         }
 
-        stage('Detect Selenoid') {
+        stage('Build') {
             steps {
-                sh '''
-                if curl -s http://host.docker.internal:4444/status > /dev/null
-                then
-                  echo "SELENOID=http://host.docker.internal:4444/wd/hub" > selenoid.env
-                else
-                  echo "SELENOID=http://localhost:4444/wd/hub" > selenoid.env
-                fi
-                '''
+                sh 'mvn clean compile'
             }
         }
 
         stage('Run UI tests') {
             steps {
-                sh '''
-                . ./selenoid.env
-                mvn -B clean test \
-                  -Dgroups=UI \
-                  -Dselenide.remote=$SELENOID
-                '''
+                sh 'mvn test'
             }
         }
 
-        stage('Generate Allure') {
+        stage('Publish JUnit') {
             steps {
-                sh '''
-                $ALLURE_HOME/bin/allure generate \
-                target/allure-results \
-                -o allure-report \
-                --clean
-                '''
+                junit 'target/surefire-reports/*.xml'
             }
         }
 
-        stage('Publish Allure') {
+        stage('Generate Allure Report') {
+            steps {
+                script {
+                    allure([
+                        results: [[path: 'target/allure-results']]
+                    ])
+                }
+            }
+        }
+
+        stage('Publish Allure HTML') {
             steps {
                 publishHTML([
-                        reportDir: 'allure-report',
-                        reportFiles: 'index.html',
-                        reportName: 'Allure Report',
-                        keepAll: true,
-                        alwaysLinkToLastBuild: true,
-                        allowMissing: true
+                    allowMissing: true,
+                    alwaysLinkToLastBuild: true,
+                    keepAll: true,
+                    reportDir: 'target/site/allure-maven-plugin',
+                    reportFiles: 'index.html',
+                    reportName: 'Allure'
                 ])
+            }
+        }
+
+        stage('Parse Test Results') {
+            steps {
+                script {
+
+                    def report = junit testResults: 'target/surefire-reports/*.xml'
+
+                    def total = report.totalCount
+                    def failed = report.failCount
+                    def skipped = report.skipCount
+                    def passed = total - failed - skipped
+                    def passRate = total > 0 ? (passed * 100 / total).toInteger() : 0
+
+                    env.TEST_TOTAL = total.toString()
+                    env.TEST_PASSED = passed.toString()
+                    env.TEST_FAILED = failed.toString()
+                    env.TEST_SKIPPED = skipped.toString()
+                    env.TEST_PASSRATE = passRate.toString()
+                }
             }
         }
     }
 
     post {
 
-        always {
-
+        success {
             script {
 
-                if (!fileExists('target/surefire-reports')) {
-                    echo "No test results found"
-                    return
-                }
-
-                def stats = sh(
-                        script: """
-                        awk '
-                        /<testsuite /{
-                        match(\$0,/tests="[0-9]+"/);t+=substr(\$0,RSTART+7,RLENGTH-8)
-                        match(\$0,/failures="[0-9]+"/);f+=substr(\$0,RSTART+10,RLENGTH-11)
-                        match(\$0,/errors="[0-9]+"/);e+=substr(\$0,RSTART+8,RLENGTH-9)
-                        match(\$0,/skipped="[0-9]+"/);s+=substr(\$0,RSTART+9,RLENGTH-10)
-                        }
-                        END{print t,f,e,s}
-                        ' target/surefire-reports/*.xml
-                        """,
-                        returnStdout: true
-                ).trim().split(" ")
-
-                def total = stats[0] as int
-                def failures = stats[1] as int
-                def errors = stats[2] as int
-                def skipped = stats[3] as int
-
-                def passed = total - failures - errors - skipped
-                def rate = total > 0 ? (passed * 100 / total) : 0
-
-                def statusEmoji = currentBuild.currentResult == "SUCCESS"
-                        ? "УСПЕХ! ✅"
-                        : "ПАДЕНИЕ! ❌"
-
                 def message = """
-🚀 ${env.JOB_NAME} #${env.BUILD_NUMBER} — ${statusEmoji}
+🚀 ${env.JOB_NAME} #${env.BUILD_NUMBER} — УСПЕХ! ✅
 
 📊 Результаты тестов
 
-📈 Доля пройденных: ${rate}% (${passed}/${total})
+📈 Доля пройденных: ${env.TEST_PASSRATE}% (${env.TEST_PASSED}/${env.TEST_TOTAL})
 
-🧪 Всего тестов: ${total}
-🟢 Пройдено: ${passed}
-❌ Провалено: ${failures}
-⚠️ Ошибки: ${errors}
-⏭️ Пропущено: ${skipped}
+🧪 Всего тестов: ${env.TEST_TOTAL}
+🟢 Пройдено: ${env.TEST_PASSED}
+❌ Провалено: ${env.TEST_FAILED}
+⏭️ Пропущено: ${env.TEST_SKIPPED}
 
-📎 Jenkins отчёт:
-${env.BUILD_URL}
+📎 Jenkins отчёт
+${env.RUN_DISPLAY_URL}
 """
 
-                withCredentials([
-                        string(credentialsId: 'telegram-bot-token', variable: 'TOKEN'),
-                        string(credentialsId: 'telegram-chat-id', variable: 'CHAT')
-                ]) {
-                    sh """
-                    curl -s -X POST https://api.telegram.org/bot\$TOKEN/sendMessage \
-                    -d chat_id=\$CHAT \
-                    --data-urlencode text="${message}"
-                    """
-                }
+                sh """
+                curl -s -X POST https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage \
+                -d chat_id=${TELEGRAM_CHAT_ID} \
+                -d text="${message}" \
+                -d parse_mode="HTML"
+                """
+            }
+        }
+
+        failure {
+            script {
+
+                def message = """
+🔥 ${env.JOB_NAME} #${env.BUILD_NUMBER} — ПАДЕНИЕ ❌
+
+🧪 Всего тестов: ${env.TEST_TOTAL}
+❌ Провалено: ${env.TEST_FAILED}
+
+📎 Jenkins отчёт
+${env.RUN_DISPLAY_URL}
+"""
+
+                sh """
+                curl -s -X POST https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage \
+                -d chat_id=${TELEGRAM_CHAT_ID} \
+                -d text="${message}"
+                """
             }
         }
     }
