@@ -123,15 +123,23 @@ EOT
                     ALLURE_TOTAL=${ALLURE_TOTAL:-0}
                     if [ "$ALLURE_TOTAL" -eq 0 ] && ls target/surefire-reports/TEST-*.xml >/dev/null 2>&1; then
                         read SUREFIRE_TOTAL SUREFIRE_FAILED SUREFIRE_BROKEN SUREFIRE_SKIPPED <<EOF
-$(awk -F'"' '
+$(awk '
     /<testsuite / {
-        tests += $4 + 0
-        failures += $6 + 0
-        errors += $8 + 0
-        skipped += $10 + 0
+        if (match($0, /tests="[0-9]+"/)) {
+            tests += substr($0, RSTART + 7, RLENGTH - 8) + 0
+        }
+        if (match($0, /failures="[0-9]+"/)) {
+            failures += substr($0, RSTART + 10, RLENGTH - 11) + 0
+        }
+        if (match($0, /errors="[0-9]+"/)) {
+            errors += substr($0, RSTART + 8, RLENGTH - 9) + 0
+        }
+        if (match($0, /skipped="[0-9]+"/)) {
+            skipped += substr($0, RSTART + 9, RLENGTH - 10) + 0
+        }
     }
     END {
-        print tests, failures, errors, skipped
+        print tests + 0, failures + 0, errors + 0, skipped + 0
     }
 ' target/surefire-reports/TEST-*.xml)
 EOF
