@@ -1,19 +1,14 @@
 pipeline {
+
     agent any
 
     tools {
         jdk 'jdk17'
         maven 'maven3'
-        allure 'allure'
-    }
-
-    triggers {
-        cron('H 2 * * *')
     }
 
     environment {
         ALLURE_RESULTS = 'target/allure-results'
-        ALLURE_REPORT = 'allure-report'
     }
 
     stages {
@@ -53,19 +48,22 @@ pipeline {
             }
         }
 
-        stage('Generate Allure Report') {
+        stage('Generate Allure') {
             steps {
                 sh '''
-                if [ -d "$ALLURE_RESULTS" ]; then
-                    allure generate $ALLURE_RESULTS -o $ALLURE_REPORT --clean
+                if command -v allure >/dev/null 2>&1; then
+                    allure generate target/allure-results -o allure-report --clean
                 else
-                    echo "No allure results"
+                    echo "Allure CLI not installed, skipping report"
                 fi
                 '''
             }
         }
 
         stage('Publish Allure') {
+            when {
+                expression { fileExists('allure-report/index.html') }
+            }
             steps {
                 publishHTML([
                     allowMissing: true,
@@ -73,7 +71,7 @@ pipeline {
                     keepAll: true,
                     reportDir: 'allure-report',
                     reportFiles: 'index.html',
-                    reportName: 'Allure Report'
+                    reportName: 'Allure'
                 ])
             }
         }
@@ -92,7 +90,7 @@ pipeline {
 
                 if (fileExists('target/surefire-reports')) {
 
-                    def report = sh(
+                    def stats = sh(
                         script: """
                         awk '
                         /<testsuite /{
@@ -107,15 +105,18 @@ pipeline {
                         returnStdout: true
                     ).trim()
 
-                    def parts = report.split(" ")
+                    def p = stats.split(" ")
 
-                    total = parts[0].toInteger()
-                    failed = parts[1].toInteger()
-                    skipped = parts[2].toInteger()
+                    total = p[0] as Integer
+                    failed = p[1] as Integer
+                    skipped = p[2] as Integer
                     passed = total - failed - skipped
                 }
 
-                def passRate = total > 0 ? Math.round((passed * 100) / total) : 0
+                def passRate = 0
+                if (total > 0) {
+                    passRate = (passed * 100) / total
+                }
 
                 env.TEST_TOTAL = total.toString()
                 env.TEST_FAILED = failed.toString()
@@ -124,20 +125,20 @@ pipeline {
                 env.PASS_RATE = passRate.toString()
 
                 currentBuild.description = """
-📈 Pass rate: ${passRate}%
-✅ Passed: ${passed}
-❌ Failed: ${failed}
-⏭ Skipped: ${skipped}
+Pass rate: ${passRate}%
+Passed: ${passed}
+Failed: ${failed}
+Skipped: ${skipped}
 """
             }
         }
 
         success {
-            telegramNotify("🚀 УСПЕХ")
+            telegramNotify("SUCCESS")
         }
 
         failure {
-            telegramNotify("💥 ПРОВАЛ")
+            telegramNotify("FAIL")
         }
     }
 }
@@ -150,17 +151,16 @@ def telegramNotify(status) {
     ]) {
 
         sh """
-        MSG="
-${status}
+        MSG="${status}
 
-📦 ${JOB_NAME} #${BUILD_NUMBER}
+${JOB_NAME} #${BUILD_NUMBER}
 
-📈 Pass rate: ${PASS_RATE}% (${TEST_PASSED}/${TEST_TOTAL})
-❌ Failed: ${TEST_FAILED}
-⏭ Skipped: ${TEST_SKIPPED}
+Pass rate: ${PASS_RATE}% (${TEST_PASSED}/${TEST_TOTAL})
 
-📊 ${BUILD_URL}Allure_20Report/
-🖥 ${BUILD_URL}console
+Failed: ${TEST_FAILED}
+Skipped: ${TEST_SKIPPED}
+
+${BUILD_URL}
 "
 
         curl -s -X POST https://api.telegram.org/bot\$TOKEN/sendMessage \
