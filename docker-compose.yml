@@ -1,40 +1,26 @@
-version: '3.8'
+version: '3'
 services:
-  jenkins:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: jenkins-local
-    restart: unless-stopped
-    ports:
-      - "8080:8080"
-      - "50000:50000"
-    volumes:
-      - jenkins_home:/var/jenkins_home
-    networks:
-      - test-net
-    environment:
-      - JAVA_OPTS=-Djenkins.install.runSetupWizard=false
-
   selenoid:
-    image: aerokube/selenoid:latest-release
+    image: aerokube/selenoid:latest
     container_name: selenoid
-    restart: unless-stopped
+    network_mode: bridge
     ports:
       - "4444:4444"
-    command:
-      - "-container-network"
-      - "test-net"
-      - "-limit"
-      - "4"
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - ./selenoid-config:/etc/selenoid:ro
-    networks:
-      - test-net
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      - "./selenoid:/etc/selenoid"
+      - "./selenoid/video:/opt/selenoid/video"
+      - "./selenoid/logs:/opt/selenoid/logs"
+    environment:
+      - OVERRIDE_VIDEO_OUTPUT_DIR=${PWD}/selenoid/video
+    command: ["-conf", "/etc/selenoid/browsers.json", "-video-output-dir", "/opt/selenoid/video", "-log-output-dir", "/opt/selenoid/logs"]
 
-networks:
-  test-net:
-    name: test-net
-volumes:
-  jenkins_home:
+  selenoid-ui:
+    image: aerokube/selenoid-ui:latest
+    container_name: selenoid-ui
+    network_mode: bridge
+    links:
+      - selenoid
+    ports:
+      - "8080:8080"
+    command: ["--selenoid-uri", "http://selenoid:4444"]
