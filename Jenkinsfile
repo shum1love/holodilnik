@@ -18,7 +18,13 @@ pipeline {
 
         stage('Run tests') {
             steps {
-                sh 'mvn clean test'
+                sh '''
+                    mvn clean test \
+                    -Dselenide.remote=http://localhost:4444/wd/hub \
+                    -Dselenide.browser=chrome \
+                    -Dselenide.browserVersion=128.0 \
+                    -Dselenide.headless=true
+                '''
             }
         }
 
