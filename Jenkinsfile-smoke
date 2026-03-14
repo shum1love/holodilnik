@@ -1,0 +1,4 @@
+node {
+    env.TEST_SUITE = "smoke"
+    load "Jenkinsfile"
+}
