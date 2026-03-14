@@ -16,6 +16,12 @@ pipeline {
             }
         }
 
+        stage('Show test suite') {
+            steps {
+                echo "Running TEST_SUITE=${env.TEST_SUITE}"
+            }
+        }
+
         stage('Run tests') {
             steps {
                 script {
@@ -45,6 +51,7 @@ pipeline {
                             chrome: {
                                 sh '''
                                     mvn clean test \
+                                    -Dallure.results.directory=target/allure-results-chrome \
                                     -Dselenide.remote=http://selenoid:4444/wd/hub \
                                     -Dselenide.browser=chrome \
                                     -Dselenide.browserVersion=128.0 \
@@ -54,6 +61,7 @@ pipeline {
                             firefox: {
                                 sh '''
                                     mvn clean test \
+                                    -Dallure.results.directory=target/allure-results-firefox \
                                     -Dselenide.remote=http://selenoid:4444/wd/hub \
                                     -Dselenide.browser=firefox \
                                     -Dselenide.headless=true
@@ -74,7 +82,11 @@ pipeline {
             allure(
                 includeProperties: false,
                 jdk: '',
-                results: [[path: 'target/allure-results']]
+                results: [
+                    [path: 'target/allure-results'],
+                    [path: 'target/allure-results-chrome'],
+                    [path: 'target/allure-results-firefox']
+                ]
             )
         }
     }
