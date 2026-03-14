@@ -1,3 +1,0 @@
-environment {
-    TEST_SUITE = 'crossbrowser'
-}
