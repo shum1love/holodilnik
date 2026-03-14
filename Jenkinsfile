@@ -47,10 +47,11 @@ pipeline {
                             -Dselenide.headless=true
                         '''
                     } else if (env.TEST_SUITE == 'crossbrowser') {
+                    sh 'mvn clean'
                         parallel(
                             chrome: {
                                 sh '''
-                                    mvn clean test \
+                                    mvn test \
                                     -Dallure.results.directory=target/allure-results-chrome \
                                     -Dselenide.remote=http://selenoid:4444/wd/hub \
                                     -Dselenide.browser=chrome \
@@ -60,7 +61,7 @@ pipeline {
                             },
                             firefox: {
                                 sh '''
-                                    mvn clean test \
+                                    mvn test \
                                     -Dallure.results.directory=target/allure-results-firefox \
                                     -Dselenide.remote=http://selenoid:4444/wd/hub \
                                     -Dselenide.browser=firefox \
