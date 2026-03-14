@@ -46,30 +46,22 @@ pipeline {
                             -Dselenide.browserVersion=128.0 \
                             -Dselenide.headless=true
                         '''
-                    } else if (env.TEST_SUITE == 'crossbrowser') {
-                    sh 'mvn clean'
-                        parallel(
-                            chrome: {
-                                sh '''
-                                    mvn test \
-                                    -Dallure.results.directory=target/allure-results-chrome \
-                                    -Dselenide.remote=http://selenoid:4444/wd/hub \
-                                    -Dselenide.browser=chrome \
-                                    -Dselenide.browserVersion=128.0 \
-                                    -Dselenide.headless=true
-                                '''
-                            },
-                            firefox: {
-                                sh '''
-                                    mvn test \
-                                    -Dallure.results.directory=target/allure-results-firefox \
-                                    -Dselenide.remote=http://selenoid:4444/wd/hub \
-                                    -Dselenide.browser=firefox \
-                                    -Dselenide.headless=true
-                                '''
-                            }
-                        )
-                    } else {
+                    } else if (suite == 'crossbrowser') {
+                                      sh """
+                                          mvn clean test \
+                                              -Dallure.results.directory=target/allure-results-chrome \
+                                              -Dselenide.browser=chrome \
+                                              -Dselenide.browserVersion=128.0 \
+                                              ${commonArgs}
+                                      """
+
+                                      sh """
+                                          mvn test \
+                                              -Dallure.results.directory=target/allure-results-firefox \
+                                              -Dselenide.browser=firefox \
+                                              ${commonArgs}
+                                      """
+                                  } else {
                         error("Неизвестный TEST_SUITE='${env.TEST_SUITE}'. Допустимые значения: smoke, regression, crossbrowser.")
                     }
                 }
