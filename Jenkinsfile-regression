@@ -1,2 +1,4 @@
-env.TEST_SUITE = "regression"
-load "Jenkinsfile"
+node {
+    env.TEST_SUITE = "regression"
+    load "Jenkinsfile"
+}
