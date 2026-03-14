@@ -11,7 +11,7 @@ services:
       - ./selenoid:/etc/selenoid
       - ./selenoid/video:/opt/selenoid/video
       - ./selenoid/logs:/opt/selenoid/logs
-    shm_size: 1gb
+    shm_size: 3gb
     command: >
       -conf /etc/selenoid/browsers.json
       -video-output-dir /opt/selenoid/video
