@@ -47,13 +47,6 @@ pipeline {
                             -Dselenide.headless=true
                         '''
                     } else if (suite == 'crossbrowser') {
-                                      sh """
-                                          mvn clean test \
-                                              -Dallure.results.directory=target/allure-results-chrome \
-                                              -Dselenide.browser=chrome \
-                                              -Dselenide.browserVersion=128.0 \
-                                              ${commonArgs}
-                                      """
 
                                       sh """
                                           mvn test \
