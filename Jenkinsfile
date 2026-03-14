@@ -17,15 +17,53 @@ pipeline {
         }
 
         stage('Run tests') {
-
             steps {
-                sh '''
-                    mvn clean test \
-                    -Dselenide.remote=http://selenoid:4444/wd/hub \
-                    -Dselenide.browser=chrome \
-                    -Dselenide.browserVersion=128.0 \
-                    -Dselenide.headless=true
-                '''
+                script {
+                    if (!env.TEST_SUITE?.trim()) {
+                        error('TEST_SUITE не задан. Укажите TEST_SUITE в конфигурации Jenkins job: smoke, regression или crossbrowser.')
+                    }
+
+                    if (env.TEST_SUITE == 'smoke') {
+                        sh '''
+                            mvn clean test \
+                            -Dgroups=smoke \
+                            -Dselenide.remote=http://selenoid:4444/wd/hub \
+                            -Dselenide.browser=chrome \
+                            -Dselenide.browserVersion=128.0 \
+                            -Dselenide.headless=true
+                        '''
+                    } else if (env.TEST_SUITE == 'regression') {
+                        sh '''
+                            mvn clean test \
+                            -Dselenide.remote=http://selenoid:4444/wd/hub \
+                            -Dselenide.browser=chrome \
+                            -Dselenide.browserVersion=128.0 \
+                            -Dselenide.headless=true
+                        '''
+                    } else if (env.TEST_SUITE == 'crossbrowser') {
+                        parallel(
+                            chrome: {
+                                sh '''
+                                    mvn clean test \
+                                    -Dselenide.remote=http://selenoid:4444/wd/hub \
+                                    -Dselenide.browser=chrome \
+                                    -Dselenide.browserVersion=128.0 \
+                                    -Dselenide.headless=true
+                                '''
+                            },
+                            firefox: {
+                                sh '''
+                                    mvn clean test \
+                                    -Dselenide.remote=http://selenoid:4444/wd/hub \
+                                    -Dselenide.browser=firefox \
+                                    -Dselenide.headless=true
+                                '''
+                            }
+                        )
+                    } else {
+                        error("Неизвестный TEST_SUITE='${env.TEST_SUITE}'. Допустимые значения: smoke, regression, crossbrowser.")
+                    }
+                }
             }
         }
 
