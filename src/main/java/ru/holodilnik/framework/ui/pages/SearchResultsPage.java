@@ -3,7 +3,7 @@ package ru.holodilnik.framework.ui.pages;
 import com.codeborne.selenide.SelenideElement;
 import io.qameta.allure.Step;
 import ru.holodilnik.framework.ui.pages.components.HeaderComponent;
-import ru.holodilnik.framework.ui.pages.locators.SearchResultsLocators;
+import ru.holodilnik.framework.ui.locators.SearchResultsLocators;
 
 import static com.codeborne.selenide.CollectionCondition.sizeGreaterThan;
 import static com.codeborne.selenide.CollectionCondition.sizeGreaterThanOrEqual;
@@ -42,7 +42,7 @@ public final class SearchResultsPage extends BasePage<SearchResultsPage> {
     }
 
     @Step("Выбрать категорию '{categoryName}'")
-    public SearchResultsPage selectCategory(String categoryName) {
+    public SearchResultsPage selectCategory(final String categoryName) {
         SearchResultsLocators.categoryItems()
                 .findBy(text(categoryName))
                 .shouldBe(visible)
@@ -69,6 +69,17 @@ public final class SearchResultsPage extends BasePage<SearchResultsPage> {
         return this;
     }
 
+    @Step("Открыть {number}-ю карточку товара")
+    public SearchResultsPage openProductCard(final int number) {
+        SearchResultsLocators.titleCarts()
+                .shouldHave(sizeGreaterThanOrEqual(number))
+                .get(number - 1)
+                .click();
+
+        return this;
+    }
+
+
     @Step("Добавить {number}-ю карточку товара в корзину")
     public SearchResultsPage addProductCard(final int number) {
         SearchResultsLocators
@@ -80,8 +91,13 @@ public final class SearchResultsPage extends BasePage<SearchResultsPage> {
         return this;
     }
 
+    @Step("Проверить, что открыта страница товара {productName}")
+    public SearchResultsPage productShouldOpened(String name){
+        return this;
+    }
+
     @Step("Счётчик корзины показывает {expectedCount} товаров")
-    public SearchResultsPage cartCountShouldBe(int expectedCount) {
+    public SearchResultsPage cartCountShouldBe(final int expectedCount) {
         header.cartCountShouldBe(expectedCount);
         return this;
     }

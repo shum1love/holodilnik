@@ -1,4 +1,4 @@
-package ru.holodilnik.framework.ui.pages.locators;
+package ru.holodilnik.framework.ui.locators;
 
 import com.codeborne.selenide.SelenideElement;
 import ru.holodilnik.framework.ui.elements.UiElement;

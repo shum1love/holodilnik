@@ -1,4 +1,4 @@
-package ru.holodilnik.framework.ui.pages.locators;
+package ru.holodilnik.framework.ui.locators;
 
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
@@ -73,6 +73,10 @@ public final class SearchResultsLocators {
 
     public static ElementsCollection addToCartButtons() {
         return $$("a[data-smoke='AddToCartListing']");
+    }
+
+    public static ElementsCollection titleCarts() {
+        return $$("span[class*='product-name']");
     }
 
     private static UiElement ui(String name, SelenideElement element) {

@@ -3,7 +3,7 @@ package ru.holodilnik.framework.ui.pages;
 import com.codeborne.selenide.SelenideElement;
 import io.qameta.allure.Step;
 import ru.holodilnik.framework.ui.pages.components.HeaderComponent;
-import ru.holodilnik.framework.ui.pages.locators.ShoppingCartLocators;
+import ru.holodilnik.framework.ui.locators.ShoppingCartLocators;
 
 import static com.codeborne.selenide.Selenide.$;
 
