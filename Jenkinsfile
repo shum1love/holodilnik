@@ -9,7 +9,6 @@ pipeline {
     }
 
     parameters {
-        string(name: 'BRANCH', defaultValue: 'main', description: 'Git ветка для запуска')
         string(name: 'TEST_CLASS', defaultValue: '', description: 'Тестовый класс(ы) для manual запуска (через запятую)')
     }
 
@@ -17,26 +16,27 @@ pipeline {
 
         stage('Checkout') {
             steps {
-                git branch: "${params.BRANCH}",
-                    url: 'https://YOUR_REPOSITORY_URL.git'
+                checkout scm
             }
         }
 
         stage('Show test suite') {
             steps {
+
                 echo "Running TEST_SUITE=${env.TEST_SUITE}"
-                echo "Branch: ${params.BRANCH}"
 
                 script {
                     if (env.TEST_SUITE == 'manual') {
                         echo "Selected classes: ${params.TEST_CLASS ?: 'не указан — упадёт ниже'}"
                     }
                 }
+
             }
         }
 
         stage('Run tests') {
             steps {
+
                 script {
 
                     if (!env.TEST_SUITE?.trim()) {
@@ -83,12 +83,15 @@ pipeline {
 
                     } else {
 
-                        error("Неизвестный TEST_SUITE='${env.TEST_SUITE}'. Допустимые: smoke, regression, manual.")
+                        error("Неизвестный TEST_SUITE='${env.TEST_SUITE}'")
 
                     }
+
                 }
+
             }
         }
+
     }
 
     post {
@@ -96,10 +99,9 @@ pipeline {
             allure(
                 includeProperties: false,
                 jdk: '',
-                results: [
-                    [path: 'target/allure-results']
-                ]
+                results: [[path: 'target/allure-results']]
             )
         }
     }
+
 }
