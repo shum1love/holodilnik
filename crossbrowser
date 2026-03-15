@@ -1,4 +1,0 @@
-node {
-    env.TEST_SUITE = "crossbrowser"
-    load "Jenkinsfile"
-}
