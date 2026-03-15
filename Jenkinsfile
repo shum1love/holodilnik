@@ -9,6 +9,7 @@ pipeline {
     }
 
     parameters {
+        string(name: 'BRANCH', defaultValue: 'main', description: 'Git ветка для запуска')
         string(name: 'TEST_CLASS', defaultValue: '', description: 'Тестовый класс(ы) для manual запуска (через запятую)')
     }
 
@@ -16,13 +17,16 @@ pipeline {
 
         stage('Checkout') {
             steps {
-                checkout scm
+                git branch: "${params.BRANCH}",
+                    url: 'https://YOUR_REPOSITORY_URL.git'
             }
         }
 
         stage('Show test suite') {
             steps {
                 echo "Running TEST_SUITE=${env.TEST_SUITE}"
+                echo "Branch: ${params.BRANCH}"
+
                 script {
                     if (env.TEST_SUITE == 'manual') {
                         echo "Selected classes: ${params.TEST_CLASS ?: 'не указан — упадёт ниже'}"
@@ -34,11 +38,13 @@ pipeline {
         stage('Run tests') {
             steps {
                 script {
+
                     if (!env.TEST_SUITE?.trim()) {
                         error('TEST_SUITE не задан. Допустимые: smoke, regression, manual')
                     }
 
                     if (env.TEST_SUITE == 'smoke') {
+
                         sh '''
                             mvn clean test \
                             -Dgroups=smoke \
@@ -47,7 +53,9 @@ pipeline {
                             -Dselenide.browserVersion=128.0 \
                             -Dselenide.headless=true
                         '''
+
                     } else if (env.TEST_SUITE == 'regression') {
+
                         sh '''
                             mvn clean test \
                             -Dselenide.remote=http://selenoid:4444/wd/hub \
@@ -55,7 +63,9 @@ pipeline {
                             -Dselenide.browserVersion=128.0 \
                             -Dselenide.headless=true
                         '''
+
                     } else if (env.TEST_SUITE == 'manual') {
+
                         if (!params.TEST_CLASS?.trim()) {
                             error('Для manual режима ОБЯЗАТЕЛЬНО укажи параметр TEST_CLASS!')
                         }
@@ -70,13 +80,15 @@ pipeline {
                             -Dselenide.browserVersion=128.0 \
                             -Dselenide.headless=true
                         """
+
                     } else {
+
                         error("Неизвестный TEST_SUITE='${env.TEST_SUITE}'. Допустимые: smoke, regression, manual.")
+
                     }
                 }
             }
         }
-
     }
 
     post {
@@ -90,5 +102,4 @@ pipeline {
             )
         }
     }
-
 }
