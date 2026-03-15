@@ -47,7 +47,7 @@ pipeline {
 
                         sh '''
                             mvn clean test \
-                            -Dgroups=Smoke \
+                            -Dgroups=smoke \
                             -Dselenide.remote=http://selenoid:4444/wd/hub \
                             -Dselenide.browser=chrome \
                             -Dselenide.browserVersion=128.0 \

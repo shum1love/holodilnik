@@ -13,7 +13,7 @@ import ru.holodilnik.tests.base.BaseTest;
 @Owner("Rodion Shumilov")
 @Severity(SeverityLevel.CRITICAL)
 @Tag("UI")
-@Tag("Smoke")
+@Tag("smoke")
 @Tag("Cart")
 public class AddingItemCartTest extends BaseTest {
     MainPage main = new MainPage();
