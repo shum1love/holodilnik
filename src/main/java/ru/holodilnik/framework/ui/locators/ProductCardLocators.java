@@ -11,51 +11,51 @@ import static com.codeborne.selenide.Selenide.$;
 public final class ProductCardLocators {
 
     public static UiElement productTitle() {
-        return ui("Название товара", $(""));
+        return ui("Название товара", $("h1"));
     }
 
     public static UiElement productRating() {
-        return ui("Рейтинг", $(""));
+        return ui("Рейтинг", $("span[class='widget-rating__value']"));
     }
 
     public static UiElement productReviews() {
-        return ui("Отзывы", $(""));
+        return ui("Отзывы", $("span.widget-rating__count"));
     }
 
     public static UiElement productCode() {
-        return ui("Код товара", $(""));
+        return ui("Код товара", $("div[class='widget-copy__value']:last-of-type"));
     }
 
     public static UiElement productPhoto() {
-        return ui("Фото товара", $(""));
+        return ui("Фото товара", $("div.card-product-img__body"));
     }
 
     public static UiElement productPrice() {
-        return ui("Цена товара", $(""));
+        return ui("Цена товара", $("div.product-price"));
     }
 
     public static UiElement addToCartButton() {
-        return ui("Кнопка 'В корзину'", $(""));
+        return ui("Кнопка 'В корзину'", $("a[data-smoke='btn-buy__product-old']:first-of-type"));
     }
 
     public static UiElement addToFavoritesButton() {
-        return ui("Кнопка добавить в избранное", $(""));
+        return ui("Кнопка добавить в избранное", $("span[data-action-button='favorite']:first-of-type"));
     }
 
     public static UiElement printButton() {
-        return ui("Кнопка 'Распечатать'", $(""));
+        return ui("Кнопка 'Распечатать'", $("div.print-out"));
     }
 
     public static UiElement specificationsTab() {
-        return ui("Вкладка 'Характеристики'", $(""));
+        return ui("Вкладка 'Характеристики'", $("a[aria-controls='item-description']"));
     }
 
     public static UiElement reviewsTab() {
-        return ui("Вкладка 'Отзывы'", $(""));
+        return ui("Вкладка 'Отзывы'", $("a[aria-controls='item-reviews']"));
     }
 
     public static UiElement certificatesTab() {
-        return ui("Вкладка 'Сертификаты'", $(""));
+        return ui("Вкладка 'Сертификаты'", $("a[aria-controls='item-certificates']"));
     }
 
     private static UiElement ui(String name, SelenideElement element) {
