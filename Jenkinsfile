@@ -8,6 +8,10 @@ pipeline {
         allure 'allure'
     }
 
+    parameters {
+        string(name: 'TEST_CLASS', defaultValue: '', description: 'Тестовый класс(ы) для manual запуска (через запятую)')
+    }
+
     stages {
 
         stage('Checkout') {
@@ -19,6 +23,11 @@ pipeline {
         stage('Show test suite') {
             steps {
                 echo "Running TEST_SUITE=${env.TEST_SUITE}"
+                script {
+                    if (env.TEST_SUITE == 'manual') {
+                        echo "Selected classes: ${params.TEST_CLASS ?: 'не указан — упадёт ниже'}"
+                    }
+                }
             }
         }
 
@@ -26,7 +35,7 @@ pipeline {
             steps {
                 script {
                     if (!env.TEST_SUITE?.trim()) {
-                        error('TEST_SUITE не задан. Укажите TEST_SUITE в конфигурации Jenkins job: smoke, regression или crossbrowser.')
+                        error('TEST_SUITE не задан. Допустимые: smoke, regression, manual')
                     }
 
                     if (env.TEST_SUITE == 'smoke') {
@@ -46,16 +55,23 @@ pipeline {
                             -Dselenide.browserVersion=128.0 \
                             -Dselenide.headless=true
                         '''
-                    } else if (suite == 'crossbrowser') {
+                    } else if (env.TEST_SUITE == 'manual') {
+                        if (!params.TEST_CLASS?.trim()) {
+                            error('Для manual режима ОБЯЗАТЕЛЬНО укажи параметр TEST_CLASS!')
+                        }
 
-                                      sh """
-                                          mvn test \
-                                              -Dallure.results.directory=target/allure-results-firefox \
-                                              -Dselenide.browser=firefox \
-                                              ${commonArgs}
-                                      """
-                                  } else {
-                        error("Неизвестный TEST_SUITE='${env.TEST_SUITE}'. Допустимые значения: smoke, regression, crossbrowser.")
+                        def classes = params.TEST_CLASS.trim().replaceAll(/\s+/, '')
+
+                        sh """
+                            mvn clean test \
+                            -Dtest=${classes} \
+                            -Dselenide.remote=http://selenoid:4444/wd/hub \
+                            -Dselenide.browser=chrome \
+                            -Dselenide.browserVersion=128.0 \
+                            -Dselenide.headless=true
+                        """
+                    } else {
+                        error("Неизвестный TEST_SUITE='${env.TEST_SUITE}'. Допустимые: smoke, regression, manual.")
                     }
                 }
             }
@@ -69,9 +85,7 @@ pipeline {
                 includeProperties: false,
                 jdk: '',
                 results: [
-                    [path: 'target/allure-results'],
-                    [path: 'target/allure-results-chrome'],
-                    [path: 'target/allure-results-firefox']
+                    [path: 'target/allure-results']
                 ]
             )
         }
