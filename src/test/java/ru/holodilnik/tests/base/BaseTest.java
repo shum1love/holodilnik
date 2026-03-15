@@ -17,6 +17,6 @@ public abstract class BaseTest {
         SelenideLogger.addListener("allure", new AllureSelenide()
                 .screenshots(true)
                 .savePageSource(true)
-                .includeSelenideSteps(true));
+                .includeSelenideSteps(false));
     }
 }
