@@ -3,6 +3,7 @@ package ru.holodilnik.framework.ui.pages.components;
 import com.codeborne.selenide.SelenideElement;
 import io.qameta.allure.Step;
 import ru.holodilnik.framework.ui.elements.UiElement;
+import ru.holodilnik.framework.ui.pages.CatalogueMenuPage;
 import ru.holodilnik.framework.ui.pages.SearchResultsPage;
 import ru.holodilnik.framework.ui.pages.ShoppingCardPage;
 
@@ -66,6 +67,12 @@ public class HeaderComponent {
     public HeaderComponent cartCountShouldBe(final int expectedCount) {
         cartCount.shouldHaveExactText(String.valueOf(expectedCount));
         return this;
+    }
+
+    @Step("Нажать на кнопку 'Каталог'")
+    public CatalogueMenuPage goToCatalogue() {
+        catalogBtn.click();
+        return new CatalogueMenuPage().shouldBeOpen();
     }
 
     @Step("Перейти в раздел 'Корзина'")

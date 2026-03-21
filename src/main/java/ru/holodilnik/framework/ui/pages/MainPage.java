@@ -2,8 +2,8 @@ package ru.holodilnik.framework.ui.pages;
 
 import com.codeborne.selenide.SelenideElement;
 import io.qameta.allure.Step;
-import ru.holodilnik.framework.ui.pages.components.HeaderComponent;
 import ru.holodilnik.framework.ui.locators.MainPageLocators;
+import ru.holodilnik.framework.ui.pages.components.HeaderComponent;
 
 import static com.codeborne.selenide.Selenide.$;
 
@@ -11,7 +11,7 @@ import static com.codeborne.selenide.Selenide.$;
  * Главная страница сайта holodilnik.ru
  */
 public final class MainPage extends BasePage<MainPage> {
-    private final HeaderComponent header;
+    private static HeaderComponent header;
 
     public MainPage() {
         super("/");
@@ -24,10 +24,10 @@ public final class MainPage extends BasePage<MainPage> {
     }
 
     @Step("Проверить видимость основных элементов главной страницы")
-    public MainPage clickSearchButton(){
+    public MainPage checkMainElements() {
         // TODO: Дописать метод
         return this;
-   }
+    }
 
     @Step("Проверить видимость хедера и всех его элементов")
     public MainPage checkHeaderVisible() {
@@ -38,6 +38,12 @@ public final class MainPage extends BasePage<MainPage> {
     @Step("Ввести значение {value} в поле 'Поиск по каталогу'")
     public SearchResultsPage inputValueSearchField(final String value) {
         return header.inputValueSearchField(value);
+    }
+
+    @Step("Нажать на кнопку 'Каталог'")
+    public CatalogueMenuPage openCatalogMenu() {
+        header.goToCatalogue();
+        return new CatalogueMenuPage().shouldBeOpen();
     }
 
     /**

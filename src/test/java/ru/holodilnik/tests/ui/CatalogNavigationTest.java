@@ -14,25 +14,30 @@ import ru.holodilnik.framework.ui.pages.MainPage;
 @Tag("UI")
 @Tag("smoke")
 @Tag("Catalog")
-public class SearchTest {
+public class CatalogNavigationTest {
 
-    private static final String REFRIGERATOR_ATLANT = "Двухкамерный холодильник Atlant";
+    private static final String REFRIGERATOR = "Двухкамерный холодильник";
+    private static final String REFRIGERATOR_TITLE = "Холодильники и морозильники";
+    private static final String DOUBLE_CHAMBER_REFRIGERATORS = "Двухкамерные холодильники";
 
-    MainPage main = new MainPage();
+    private static final MainPage main = new MainPage();
+
 
     @Test
     @DisplayName("Пользователь может найти и открыть карточку товара")
     public void searchTest() {
         main
                 .open()
-                .checkHeaderVisible()
-                .inputValueSearchField(REFRIGERATOR_ATLANT)
-                .checkProductCardsArePresent()
+                .openCatalogMenu()
+                .checkMainSections()
+                .clickRefrigerator()
+                .checkTitle(REFRIGERATOR_TITLE)
+                .selectCategory(DOUBLE_CHAMBER_REFRIGERATORS)
                 .openProductCard(1)
                 .checkMainCardElements()
                 .checkLowerSections()
                 .checkPrintButton()
-                .checkCardName(REFRIGERATOR_ATLANT)
+                .checkCardName(REFRIGERATOR)
         ;
     }
 }

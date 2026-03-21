@@ -108,6 +108,7 @@ public class UiElement {
         element.shouldBe(Condition.enabled);
         return this;
     }
+
     public UiElement shouldBeDisabled() {
         element.shouldBe(Condition.disabled);
         return this;

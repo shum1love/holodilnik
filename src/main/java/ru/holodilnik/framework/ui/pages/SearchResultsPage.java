@@ -2,8 +2,8 @@ package ru.holodilnik.framework.ui.pages;
 
 import com.codeborne.selenide.SelenideElement;
 import io.qameta.allure.Step;
-import ru.holodilnik.framework.ui.pages.components.HeaderComponent;
 import ru.holodilnik.framework.ui.locators.SearchResultsLocators;
+import ru.holodilnik.framework.ui.pages.components.HeaderComponent;
 
 import static com.codeborne.selenide.CollectionCondition.sizeGreaterThan;
 import static com.codeborne.selenide.CollectionCondition.sizeGreaterThanOrEqual;
@@ -59,12 +59,6 @@ public final class SearchResultsPage extends BasePage<SearchResultsPage> {
         return this;
     }
 
-    @Step("Очищаем все фильтры")
-    public SearchResultsPage clearAllFilters() {
-        SearchResultsLocators.clearFiltersButton().click();
-        return this;
-    }
-
     @Step("Проверить, что отображается несколько карточек товаров")
     public SearchResultsPage checkProductCardsArePresent() {
         SearchResultsLocators.productCards()
@@ -82,7 +76,6 @@ public final class SearchResultsPage extends BasePage<SearchResultsPage> {
         return new ProductCardPage().shouldBeOpen();
     }
 
-
     @Step("Добавить {number}-ю карточку товара в корзину")
     public SearchResultsPage addProductCard(final int number) {
         SearchResultsLocators
@@ -91,11 +84,6 @@ public final class SearchResultsPage extends BasePage<SearchResultsPage> {
                 .get(number - 1)
                 .click();
 
-        return this;
-    }
-
-    @Step("Проверить, что открыта страница товара {productName}")
-    public SearchResultsPage productShouldOpened(String name){
         return this;
     }
 

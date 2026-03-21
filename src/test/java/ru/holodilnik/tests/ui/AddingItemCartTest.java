@@ -22,7 +22,6 @@ public class AddingItemCartTest extends BaseTest {
     @DisplayName("Пользователь может добавить товар в корзину с главной страницы")
     public void addingItemCartTest() {
         main.open()
-                .clickSearchButton()
                 .checkHeaderVisible()
                 .inputValueSearchField("машина")
                 .checkParameterBlock()
