@@ -104,6 +104,10 @@ public class UiElement {
         return this;
     }
 
+    public UiElement shouldBeEnabled() {
+        element.shouldBe(Condition.enabled);
+        return this;
+    }
     public UiElement shouldBeDisabled() {
         element.shouldBe(Condition.disabled);
         return this;
@@ -126,7 +130,7 @@ public class UiElement {
     }
 
     public String getText() {
-        return element.getText();
+        return element.shouldBe(visible).getText();
     }
 
     // ─── Внутренняя логика ─────────────────────────────────────────────

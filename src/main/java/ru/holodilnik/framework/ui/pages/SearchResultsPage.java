@@ -11,6 +11,9 @@ import static com.codeborne.selenide.Condition.text;
 import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selenide.$;
 
+/**
+ * Класс описывающий страницу "Поиск товара".
+ */
 public final class SearchResultsPage extends BasePage<SearchResultsPage> {
 
     private final HeaderComponent header = new HeaderComponent($("header.site-header, header, .b-header"));
@@ -70,13 +73,13 @@ public final class SearchResultsPage extends BasePage<SearchResultsPage> {
     }
 
     @Step("Открыть {number}-ю карточку товара")
-    public SearchResultsPage openProductCard(final int number) {
+    public ProductCardPage openProductCard(final int number) {
         SearchResultsLocators.titleCarts()
                 .shouldHave(sizeGreaterThanOrEqual(number))
                 .get(number - 1)
                 .click();
 
-        return this;
+        return new ProductCardPage().shouldBeOpen();
     }
 
 
@@ -97,8 +100,7 @@ public final class SearchResultsPage extends BasePage<SearchResultsPage> {
     }
 
     @Step("Счётчик корзины показывает {expectedCount} товаров")
-    public SearchResultsPage cartCountShouldBe(final int expectedCount) {
+    public void cartCountShouldBe(final int expectedCount) {
         header.cartCountShouldBe(expectedCount);
-        return this;
     }
 }

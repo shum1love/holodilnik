@@ -16,7 +16,7 @@ import ru.holodilnik.framework.ui.pages.MainPage;
 @Tag("Catalog")
 public class SearchTest {
 
-    private static final String REFRIGERATOR_ATLANT = "холодильник атлант двухкамерный";
+    private static final String REFRIGERATOR_ATLANT = "Двухкамерный холодильник Atlant";
 
     MainPage main = new MainPage();
 
@@ -26,12 +26,13 @@ public class SearchTest {
         main.open()
                 .clickSearchButton()
                 .checkHeaderVisible()
-                .inputValueSearchField("REFRIGERATOR_ATLANT")
+                .inputValueSearchField(REFRIGERATOR_ATLANT)
                 .checkProductCardsArePresent()
                 .openProductCard(1)
-
-                .addProductCard(1)
-                .cartCountShouldBe(1)
+                .checkMainCardElements()
+                .checkLowerSections()
+                .checkPrintButton()
+                .checkCardName(REFRIGERATOR_ATLANT)
         ;
     }
 }
