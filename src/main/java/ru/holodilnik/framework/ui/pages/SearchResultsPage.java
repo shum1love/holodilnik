@@ -88,7 +88,13 @@ public final class SearchResultsPage extends BasePage<SearchResultsPage> {
     }
 
     @Step("Счётчик корзины показывает {expectedCount} товаров")
-    public void cartCountShouldBe(final int expectedCount) {
+    public SearchResultsPage cartCountShouldBe(final int expectedCount) {
         header.cartCountShouldBe(expectedCount);
+        return this;
+    }
+
+    @Step("Перейти в раздел 'Корзина'")
+    public CartPage goToCardPage() {
+        return header.goToShoppingCart();
     }
 }

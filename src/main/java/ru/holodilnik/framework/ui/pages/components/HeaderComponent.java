@@ -3,9 +3,9 @@ package ru.holodilnik.framework.ui.pages.components;
 import com.codeborne.selenide.SelenideElement;
 import io.qameta.allure.Step;
 import ru.holodilnik.framework.ui.elements.UiElement;
+import ru.holodilnik.framework.ui.pages.CartPage;
 import ru.holodilnik.framework.ui.pages.CatalogueMenuPage;
 import ru.holodilnik.framework.ui.pages.SearchResultsPage;
-import ru.holodilnik.framework.ui.pages.ShoppingCardPage;
 
 import static com.codeborne.selenide.Selectors.withText;
 
@@ -24,8 +24,7 @@ public class HeaderComponent {
     private final UiElement myOrders;
     private final UiElement favorites;
     private final UiElement shoppingCart;
-    private final UiElement cartCount;           // ← добавили поле
-
+    private final UiElement cartCount;
     public HeaderComponent(SelenideElement container) {
         this.self = new UiElement("Шапка сайта", container);
 
@@ -76,9 +75,9 @@ public class HeaderComponent {
     }
 
     @Step("Перейти в раздел 'Корзина'")
-    public ShoppingCardPage goToShoppingCart() {
+    public CartPage goToShoppingCart() {
         shoppingCart.click();
-        return new ShoppingCardPage().shouldBeOpen();
+        return new CartPage().shouldBeOpen();
     }
 
 }
