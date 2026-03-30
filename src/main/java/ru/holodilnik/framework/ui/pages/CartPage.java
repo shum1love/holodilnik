@@ -30,6 +30,16 @@ public class CartPage extends BasePage<CartPage> {
         return this;
     }
 
+    @Step("Увеличить количество товара в корзине")
+    public void increaseQuantityOfItems() {
+        CartLocators.plusItem().click();
+    }
+
+    @Step("Уменьшить количество товара в корзине")
+    public void reduceQuantityOfItems() {
+        CartLocators.minusItem().click();
+    }
+
     @Step("Нажать кнопку удалить товар из корзины")
     public CartPage clickDeleteButton() {
         CartLocators.deleteButton().click();
@@ -40,6 +50,15 @@ public class CartPage extends BasePage<CartPage> {
     public void checkEmptyCart() {
         CartLocators.emptyCart().shouldBeVisible();
         CartLocators.itemName().shouldNotBeVisible();
+    }
+
+    @Step("Получить итоговую цену товара")
+    public int getSummaryCost() {
+        String text = CartLocators.totalSummeryCosts()
+                .getText()
+                .replaceAll("[^0-9]", "");
+
+        return Integer.parseInt(text);
     }
 
     // ─── Helper methods ─────────────────────────────────

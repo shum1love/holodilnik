@@ -35,6 +35,10 @@ public class CartLocators {
         return ui("Элементы стоимости товара", $("div.basket-summary__prices"));
     }
 
+    public static UiElement totalSummeryCosts() {
+        return ui("Элементы стоимости товара", $x("(//div[@class='summary-row__value']/span)[2]"));
+    }
+
     public static UiElement orderButton() {
         return ui("Кнопка Перейти к оформлению", $("a[data-smoke='GoOrderBtn']"));
     }

@@ -16,28 +16,6 @@ import static com.codeborne.selenide.Selenide.$;
  */
 public final class SearchResultsPage extends BasePage<SearchResultsPage> {
 
-    private final HeaderComponent header = new HeaderComponent($("header.site-header, header, .b-header"));
-
-    public SearchResultsPage() {
-        super("");
-    }
-
-    @Override
-    protected SelenideElement pageIdentifier() {
-        return SearchResultsLocators.title().getSelenideElement();
-    }
-
-    @Override
-    public SearchResultsPage shouldBeOpen() {
-        super.shouldBeOpen();
-        SearchResultsLocators.title()
-                .shouldBeVisible()
-                .shouldContainText("Результаты поиска");
-        return this;
-    }
-
-    // ─── Business actions ─────────────────────────────────
-
     @Step("Проверить, что отображается блок фильтров")
     public SearchResultsPage checkParameterBlock() {
         SearchResultsLocators.parameterBlock().shouldBeVisible();
@@ -96,5 +74,26 @@ public final class SearchResultsPage extends BasePage<SearchResultsPage> {
     @Step("Перейти в раздел 'Корзина'")
     public CartPage goToCardPage() {
         return header.goToShoppingCart();
+    }
+
+    // ─── Helper methods ─────────────────────────────────
+    private final HeaderComponent header = new HeaderComponent($("header.site-header, header, .b-header"));
+
+    public SearchResultsPage() {
+        super("");
+    }
+
+    @Override
+    protected SelenideElement pageIdentifier() {
+        return SearchResultsLocators.title().getSelenideElement();
+    }
+
+    @Override
+    public SearchResultsPage shouldBeOpen() {
+        super.shouldBeOpen();
+        SearchResultsLocators.title()
+                .shouldBeVisible()
+                .shouldContainText("Результаты поиска");
+        return this;
     }
 }
