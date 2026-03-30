@@ -7,19 +7,19 @@ import org.junit.jupiter.api.Test;
 import ru.holodilnik.framework.ui.pages.MainPage;
 
 @Epic("Корзина")
-@Feature("Добавление в корзину")
-@Story("Проверка добавления товара в корзину")
+@Feature("Удаление из корзины")
+@Story("Проверка удаления товара из корзины")
 @Owner("Rodion Shumilov")
 @Severity(SeverityLevel.CRITICAL)
 @Tag("UI")
 @Tag("smoke")
 @Tag("Cart")
-public class AddToCartTest {
+public class RemoveFromCartTest {
     private static final String REFRIGERATOR = "Двухкамерный холодильник";
     private static final MainPage main = new MainPage();
 
     @Test
-    @DisplayName("Пользователь может найти найти товар и добавить его в корзину")
+    @DisplayName("Пользователь может удалить товар из корзины")
     public void searchTest() {
         main
                 .open()
@@ -31,6 +31,8 @@ public class AddToCartTest {
                 .goToCardPage()
                 .checkItemInCard(REFRIGERATOR)
                 .checkProductCounter()
-                .checkPriceAndOrderButton();
+                .checkPriceAndOrderButton()
+                .clickDeleteButton()
+                .checkEmptyCart();
     }
 }

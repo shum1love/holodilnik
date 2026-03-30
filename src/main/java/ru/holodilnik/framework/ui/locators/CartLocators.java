@@ -4,6 +4,7 @@ import com.codeborne.selenide.SelenideElement;
 import ru.holodilnik.framework.ui.elements.UiElement;
 
 import static com.codeborne.selenide.Selenide.$;
+import static com.codeborne.selenide.Selenide.$x;
 
 /**
  * Локаторы страницы "Корзина".
@@ -38,6 +39,15 @@ public class CartLocators {
         return ui("Кнопка Перейти к оформлению", $("a[data-smoke='GoOrderBtn']"));
     }
 
+    public static UiElement deleteButton() {
+        return ui("Кнопка удаления товара", $("span[data-smoke='btn-delete__basket-element']"));
+    }
+
+    public static UiElement emptyCart() {
+        return ui("Надпись корзина  пуста", $x("//div[text()='Корзина пуста']"));
+    }
+
+    // ─── Helper methods ─────────────────────────────────
     private static UiElement ui(String name, SelenideElement element) {
         return new UiElement(name, element);
     }

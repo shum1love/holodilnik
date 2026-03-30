@@ -24,9 +24,22 @@ public class CartPage extends BasePage<CartPage> {
     }
 
     @Step("Проверить элементы стоимости и кнопку оформления заказа")
-    public void checkPriceAndOrderButton() {
+    public CartPage checkPriceAndOrderButton() {
         CartLocators.summaryPrices().shouldBeVisible();
         CartLocators.orderButton().shouldBeEnabled();
+        return this;
+    }
+
+    @Step("Нажать кнопку удалить товар из корзины")
+    public CartPage clickDeleteButton() {
+        CartLocators.deleteButton().click();
+        return this;
+    }
+
+    @Step("Проверить отображение надписи 'Корзина пуста' и отсутствие товара")
+    public void checkEmptyCart() {
+        CartLocators.emptyCart().shouldBeVisible();
+        CartLocators.itemName().shouldNotBeVisible();
     }
 
     // ─── Helper methods ─────────────────────────────────

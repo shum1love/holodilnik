@@ -37,7 +37,6 @@ public class CatalogNavigationTest {
                 .checkMainCardElements()
                 .checkLowerSections()
                 .checkPrintButton()
-                .checkCardName(REFRIGERATOR)
-        ;
+                .checkCardName(REFRIGERATOR);
     }
 }

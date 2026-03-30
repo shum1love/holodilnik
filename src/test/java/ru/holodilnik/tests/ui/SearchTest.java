@@ -32,7 +32,6 @@ public class SearchTest {
                 .checkMainCardElements()
                 .checkLowerSections()
                 .checkPrintButton()
-                .checkCardName(REFRIGERATOR_ATLANT)
-        ;
+                .checkCardName(REFRIGERATOR_ATLANT);
     }
 }

@@ -79,6 +79,11 @@ public class UiElement {
         return this;
     }
 
+    public UiElement shouldNotBeVisible() {
+        element.shouldNotBe(visible);
+        return this;
+    }
+
     public UiElement shouldHaveExactText(String expected) {
         element.shouldHave(Condition.exactText(expected));
         return this;
