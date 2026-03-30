@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import ru.holodilnik.framework.ui.pages.CartPage;
 import ru.holodilnik.framework.ui.pages.MainPage;
-import ru.holodilnik.framework.ui.pages.SearchResultsPage;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -21,17 +20,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class ChangeQuantityCardTest {
     private static final String REFRIGERATOR = "Двухкамерный холодильник";
 
-
     @Test
     @DisplayName("Пользователь может изменить количество товара в корзине")
-    public void changeQuantityCardTest() {
+    public void shouldChangeProductQuantityInCart() {
 
         final MainPage main = new MainPage();
-        final SearchResultsPage searchResultPage = new SearchResultsPage();
         final CartPage cardPage = new CartPage();
 
-        int firstTotalPrice = 0;
-        int secondTotalPrice = 0;
+        int firstTotalPrice;
 
         main
                 .open()
@@ -47,20 +43,16 @@ public class ChangeQuantityCardTest {
 
         firstTotalPrice = cardPage.getSummaryCost();
 
-        cardPage.increaseQuantityOfItems();
+        cardPage
+                .increaseQuantityOfItems()
+                .cartCountShouldBe(2);
 
-        searchResultPage.cartCountShouldBe(2);
+        assertEquals(firstTotalPrice * 2, cardPage.getSummaryCost());
 
-        secondTotalPrice = cardPage.getSummaryCost();
+        cardPage
+                .reduceQuantityOfItems()
+                .cartCountShouldBe(1);
 
-        assertEquals(firstTotalPrice * 2, secondTotalPrice);
-
-        cardPage.reduceQuantityOfItems();
-
-        searchResultPage.cartCountShouldBe(1);
-
-        secondTotalPrice = cardPage.getSummaryCost();
-
-        assertEquals(firstTotalPrice, secondTotalPrice);
+        assertEquals(firstTotalPrice, cardPage.getSummaryCost());
     }
 }
