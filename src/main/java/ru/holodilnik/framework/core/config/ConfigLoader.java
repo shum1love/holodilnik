@@ -29,4 +29,16 @@ public final class ConfigLoader {
     public static String getEnv() {
         return get("env");
     }
+
+    public static String getMailSlurpApiKey() {
+        return get("mailslurp.api.key");
+    }
+
+    public static String getMailSlurpInboxId() {
+        return get("mailslurp.inbox.id");
+    }
+
+    public static String getTestEmail() {
+        return get("test.email");
+    }
 }
