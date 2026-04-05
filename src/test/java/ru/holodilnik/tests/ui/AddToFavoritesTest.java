@@ -27,10 +27,10 @@ public class AddToFavoritesTest {
                 .checkHeaderVisible()
                 .inputValueSearchField(REFRIGERATOR)
                 .checkProductCardsArePresent()
-
                 .addProductCard(1)
-                .cartCountShouldBe(1)
-                .goToCardPage()
+                .favoriteListCountShouldBe(1)
+                .goToFavoriteList()
+
                 .checkItemInCard(REFRIGERATOR)
                 .checkProductCounter()
                 .checkPriceAndOrderButton();

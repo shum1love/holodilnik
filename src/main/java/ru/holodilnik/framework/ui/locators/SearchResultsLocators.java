@@ -71,6 +71,10 @@ public final class SearchResultsLocators {
         return $$(".goods-tile.preview-product");
     }
 
+    public static ElementsCollection addToFavoriteList() {
+        return $$("span[data-action-button='favorite']");
+    }
+
     public static ElementsCollection addToCartButtons() {
         return $$("a[data-smoke='AddToCartListing']");
     }

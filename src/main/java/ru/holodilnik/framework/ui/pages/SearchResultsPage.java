@@ -54,7 +54,7 @@ public final class SearchResultsPage extends BasePage<SearchResultsPage> {
         return new ProductCardPage().shouldBeOpen();
     }
 
-    @Step("Добавить {number}-ю карточку товара в корзину")
+    @Step("Добавить {number}-ю карточку товара в лист желаний")
     public SearchResultsPage addFavoriteList(final int number) {
         SearchResultsLocators
                 .addToCartButtons()
@@ -65,10 +65,16 @@ public final class SearchResultsPage extends BasePage<SearchResultsPage> {
         return this;
     }
 
+    @Step("Счётчик листа желаний показывает {expectedCount} товаров")
+    public SearchResultsPage favoriteListCountShouldBe(final int expectedCount) {
+        header.favoriteListCountShouldBe(expectedCount);
+        return this;
+    }
+
     @Step("Добавить {number}-ю карточку товара в корзину")
     public SearchResultsPage addProductCard(final int number) {
         SearchResultsLocators
-                .addToCartButtons()
+                .addToFavoriteList()
                 .shouldHave(sizeGreaterThanOrEqual(number))
                 .get(number - 1)
                 .click();
@@ -80,6 +86,11 @@ public final class SearchResultsPage extends BasePage<SearchResultsPage> {
     public SearchResultsPage cartCountShouldBe(final int expectedCount) {
         header.cartCountShouldBe(expectedCount);
         return this;
+    }
+
+    @Step("Перейти в раздел 'Избранное'")
+    public CartPage goToFavoriteList() {
+        return header.goToFavoriteList();
     }
 
     @Step("Перейти в раздел 'Корзина'")

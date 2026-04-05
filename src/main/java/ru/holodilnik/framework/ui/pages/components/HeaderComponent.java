@@ -25,6 +25,7 @@ public class HeaderComponent {
     private final UiElement favorites;
     private final UiElement shoppingCart;
     private final UiElement cartCount;
+    private final UiElement favoriteListCount;
     public HeaderComponent(SelenideElement container) {
         this.self = new UiElement("Шапка сайта", container);
 
@@ -37,6 +38,7 @@ public class HeaderComponent {
         this.favorites = new UiElement("Избранное", container.$("a[data-ga-event-category='HeaderFavoriteClick'] > span:first-child"));
         this.shoppingCart = new UiElement("Корзина", container.$("a[data-ga-event-category='HeaderBasketClick'] > span:first-child"));
         this.cartCount = new UiElement("Счётчик товаров в корзине", container.$("#numInCart"));
+        this.favoriteListCount = new UiElement("Счётчик товаров в листе ожиданий", container.$("#favorite_products_count"));
     }
 
     @Step("Проверяем, что шапка отображается")
@@ -62,6 +64,12 @@ public class HeaderComponent {
         return new SearchResultsPage();
     }
 
+    @Step("Счётчик листа желаний показывает {expectedCount} товаров")
+    public HeaderComponent favoriteListCountShouldBe(final int expectedCount) {
+        favoriteListCount.shouldHaveExactText(String.valueOf(expectedCount));
+        return this;
+    }
+
     @Step("Счётчик корзины показывает {expectedCount} товаров")
     public HeaderComponent cartCountShouldBe(final int expectedCount) {
         cartCount.shouldHaveExactText(String.valueOf(expectedCount));
@@ -72,6 +80,12 @@ public class HeaderComponent {
     public CatalogueMenuPage goToCatalogue() {
         catalogBtn.click();
         return new CatalogueMenuPage().shouldBeOpen();
+    }
+
+    @Step("Перейти в раздел 'Лист желаний'")
+    public CartPage goToFavoriteList() {
+        favorites.click();
+        return new CartPage().shouldBeOpen();
     }
 
     @Step("Перейти в раздел 'Корзина'")
