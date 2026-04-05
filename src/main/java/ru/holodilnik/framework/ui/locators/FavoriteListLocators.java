@@ -17,9 +17,19 @@ public final class FavoriteListLocators {
     public static UiElement productName() {
         return ui("Имя товара в карточке", $("span[class*='product-name__category']"));
     }
+    public static UiElement removeFavoriteButton() {
+        return ui("Удалить товар из Избранного", $("span[data-action-button='favorite']"));
+    }
     public static UiElement favoriteMenuCounter() {
         return ui("Счётчик в разделе меню 'Избранное'", $("#favorite_products_count_menu"));
     }
+    public static UiElement favoriteEmptyInfo() {
+        return ui("Информация о пустом разделе 'Избранное'", $("div.favorites-empty__info"));
+    }
+    public static UiElement advertisingBannerClose() {
+        return ui("Кнопка закрытия рекламного банера", $("div.ap-close"));
+    }
+
     // ─── Helper methods ─────────────────────────────────
     private static UiElement ui(String name, SelenideElement element) {
         return new UiElement(name, element);

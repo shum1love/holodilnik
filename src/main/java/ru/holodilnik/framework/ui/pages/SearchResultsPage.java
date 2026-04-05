@@ -66,7 +66,7 @@ public final class SearchResultsPage extends BasePage<SearchResultsPage> {
     }
 
     @Step("Счётчик листа желаний показывает {expectedCount} товаров")
-    public SearchResultsPage favoriteListCountShouldBe(final int expectedCount) {
+    public SearchResultsPage favoriteListCountShouldBe(final Integer expectedCount) {
         header.favoriteListCountShouldBe(expectedCount);
         return this;
     }

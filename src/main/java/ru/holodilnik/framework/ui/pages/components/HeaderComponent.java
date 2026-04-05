@@ -63,7 +63,12 @@ public class HeaderComponent {
     }
 
     @Step("Счётчик листа желаний показывает {expectedCount} товаров")
-    public void favoriteListCountShouldBe(final int expectedCount) {
+    public void favoriteListCountShouldBe(final Integer expectedCount) {
+        if (expectedCount == null) {
+            favoriteListCount.shouldHaveExactText("");
+            return;
+        }
+
         favoriteListCount.shouldHaveExactText(String.valueOf(expectedCount));
     }
 
