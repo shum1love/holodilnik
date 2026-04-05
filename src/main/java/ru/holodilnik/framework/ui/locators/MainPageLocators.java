@@ -10,14 +10,14 @@ import static com.codeborne.selenide.Selenide.$;
  */
 public final class MainPageLocators {
 
-    private static UiElement ui(String name, SelenideElement element) {
-        return new UiElement(name, element);
-    }
-
     public static UiElement logo() {
         return ui("Логотип 'Холодильник.ру'", $("span.site-header__logo-brand"));
     }
 
+
+    private static UiElement ui(String name, SelenideElement element) {
+        return new UiElement(name, element);
+    }
     private MainPageLocators() {
         throw new AssertionError("Этот класс — только статические методы, экземпляры создавать нельзя");
     }

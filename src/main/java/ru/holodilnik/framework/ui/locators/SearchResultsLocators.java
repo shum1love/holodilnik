@@ -79,6 +79,7 @@ public final class SearchResultsLocators {
         return $$("span[class*='product-name']");
     }
 
+    // ─── Helper methods ─────────────────────────────────
     private static UiElement ui(String name, SelenideElement element) {
         return new UiElement(name, element);
     }

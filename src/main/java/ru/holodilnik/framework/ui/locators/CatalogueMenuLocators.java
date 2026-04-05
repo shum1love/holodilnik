@@ -42,6 +42,7 @@ public class CatalogueMenuLocators {
         return $$("div.categories__item-list");
     }
 
+    // ─── Helper methods ─────────────────────────────────
     private static UiElement ui(String name, SelenideElement element) {
         return new UiElement(name, element);
     }

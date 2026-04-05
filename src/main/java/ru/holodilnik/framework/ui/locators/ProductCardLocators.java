@@ -58,6 +58,7 @@ public final class ProductCardLocators {
         return ui("Вкладка 'Сертификаты'", $("a[aria-controls='item-certificates']"));
     }
 
+    // ─── Helper methods ─────────────────────────────────
     private static UiElement ui(String name, SelenideElement element) {
         return new UiElement(name, element);
     }

@@ -2,7 +2,7 @@ package ru.holodilnik.framework.ui.pages;
 
 import com.codeborne.selenide.SelenideElement;
 import io.qameta.allure.Step;
-import ru.holodilnik.framework.ui.locators.CartLocators;
+import ru.holodilnik.framework.ui.locators.ShoppingCartLocators;
 import ru.holodilnik.framework.ui.pages.components.HeaderComponent;
 
 import static com.codeborne.selenide.Selenide.$;
@@ -14,52 +14,52 @@ public class CartPage extends BasePage<CartPage> {
 
     @Step("Проверить, что отображается товар с наименованием {name}")
     public CartPage checkItemInCard(final String name) {
-        CartLocators.itemName().shouldContainText(name);
+        ShoppingCartLocators.itemName().shouldContainText(name);
         return this;
     }
 
     @Step("Проверить счётчик товаров в корзине")
     public CartPage checkProductCounter() {
-        CartLocators.minusItem().shouldBeVisible();
-        CartLocators.plusItem().shouldBeVisible();
-        CartLocators.productCounter().shouldBeVisible();
+        ShoppingCartLocators.minusItem().shouldBeVisible();
+        ShoppingCartLocators.plusItem().shouldBeVisible();
+        ShoppingCartLocators.productCounter().shouldBeVisible();
         return this;
     }
 
     @Step("Проверить элементы стоимости и кнопку оформления заказа")
     public CartPage checkPriceAndOrderButton() {
-        CartLocators.summaryPrices().shouldBeVisible();
-        CartLocators.orderButton().shouldBeEnabled();
+        ShoppingCartLocators.summaryPrices().shouldBeVisible();
+        ShoppingCartLocators.orderButton().shouldBeEnabled();
         return this;
     }
 
     @Step("Увеличить количество товара в корзине")
     public CartPage increaseQuantityOfItems() {
-        CartLocators.plusItem().click();
+        ShoppingCartLocators.plusItem().click();
         return this;
     }
 
     @Step("Уменьшить количество товара в корзине")
     public CartPage reduceQuantityOfItems() {
-        CartLocators.minusItem().click();
+        ShoppingCartLocators.minusItem().click();
         return this;
     }
 
     @Step("Нажать кнопку удалить товар из корзины")
     public CartPage clickDeleteButton() {
-        CartLocators.deleteButton().click();
+        ShoppingCartLocators.deleteButton().click();
         return this;
     }
 
     @Step("Проверить отображение надписи 'Корзина пуста' и отсутствие товара")
     public void checkEmptyCart() {
-        CartLocators.emptyCart().shouldBeVisible();
-        CartLocators.itemName().shouldNotBeVisible();
+        ShoppingCartLocators.emptyCart().shouldBeVisible();
+        ShoppingCartLocators.itemName().shouldNotBeVisible();
     }
 
     @Step("Получить итоговую цену товара")
     public int getSummaryCost() {
-        String text = CartLocators.totalSummeryCosts()
+        String text = ShoppingCartLocators.totalSummeryCosts()
                 .getText()
                 .replaceAll("[^0-9]", "");
 
@@ -81,13 +81,13 @@ public class CartPage extends BasePage<CartPage> {
 
     @Override
     protected SelenideElement pageIdentifier() {
-        return CartLocators.title().getSelenideElement();
+        return ShoppingCartLocators.title().getSelenideElement();
     }
 
     @Override
     public CartPage shouldBeOpen() {
         super.shouldBeOpen();
-        CartLocators.title()
+        ShoppingCartLocators.title()
                 .shouldBeVisible()
                 .shouldContainText("Корзина");
         return this;

@@ -55,6 +55,17 @@ public final class SearchResultsPage extends BasePage<SearchResultsPage> {
     }
 
     @Step("Добавить {number}-ю карточку товара в корзину")
+    public SearchResultsPage addFavoriteList(final int number) {
+        SearchResultsLocators
+                .addToCartButtons()
+                .shouldHave(sizeGreaterThanOrEqual(number))
+                .get(number - 1)
+                .click();
+
+        return this;
+    }
+
+    @Step("Добавить {number}-ю карточку товара в корзину")
     public SearchResultsPage addProductCard(final int number) {
         SearchResultsLocators
                 .addToCartButtons()
