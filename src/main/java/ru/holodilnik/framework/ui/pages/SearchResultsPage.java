@@ -89,7 +89,7 @@ public final class SearchResultsPage extends BasePage<SearchResultsPage> {
     }
 
     @Step("Перейти в раздел 'Избранное'")
-    public CartPage goToFavoriteList() {
+    public FavoriteList goToFavoriteList() {
         return header.goToFavoriteList();
     }
 

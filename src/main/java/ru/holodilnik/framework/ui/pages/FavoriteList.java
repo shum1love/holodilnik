@@ -18,6 +18,12 @@ public class FavoriteList extends BasePage<FavoriteList> {
         return this;
     }
 
+    @Step("Проверить, что название карточки товара содержит текст '{productName}'")
+    public FavoriteList checkProductNameInCard(final String productName){
+        FavoriteListLocators.productName().shouldContainText(productName);
+        return this;
+    }
+
     // ─── Helper methods ─────────────────────────────────
 
     public FavoriteList() {
@@ -36,7 +42,7 @@ public class FavoriteList extends BasePage<FavoriteList> {
         super.shouldBeOpen();
         FavoriteListLocators.title()
                 .shouldBeVisible()
-                .shouldContainText("Корзина");
+                .shouldContainText("Избранное");
         return this;
     }
 }

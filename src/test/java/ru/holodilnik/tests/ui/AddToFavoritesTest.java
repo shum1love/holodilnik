@@ -8,7 +8,7 @@ import ru.holodilnik.framework.ui.pages.MainPage;
 
 @Epic("Избранное")
 @Feature("Добавление в избранное")
-@Story("Проверка добавления товара в корзину")
+@Story("Проверка добавления товара в Избранное")
 @Owner("Rodion Shumilov")
 @Severity(SeverityLevel.CRITICAL)
 @Tag("UI")
@@ -20,7 +20,7 @@ public class AddToFavoritesTest {
     private static final MainPage main = new MainPage();
 
     @Test
-    @DisplayName("Пользователь может найти найти товар и добавить его в корзину")
+    @DisplayName("Пользователь может найти найти товар и добавить его в Избранное")
     public void addToFavoritesTest() {
         main
                 .open()
@@ -30,9 +30,6 @@ public class AddToFavoritesTest {
                 .addProductCard(1)
                 .favoriteListCountShouldBe(1)
                 .goToFavoriteList()
-
-                .checkItemInCard(REFRIGERATOR)
-                .checkProductCounter()
-                .checkPriceAndOrderButton();
+                .checkProductNameInCard(REFRIGERATOR);
     }
 }

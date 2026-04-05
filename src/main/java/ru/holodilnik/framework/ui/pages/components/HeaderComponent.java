@@ -5,6 +5,7 @@ import io.qameta.allure.Step;
 import ru.holodilnik.framework.ui.elements.UiElement;
 import ru.holodilnik.framework.ui.pages.CartPage;
 import ru.holodilnik.framework.ui.pages.CatalogueMenuPage;
+import ru.holodilnik.framework.ui.pages.FavoriteList;
 import ru.holodilnik.framework.ui.pages.SearchResultsPage;
 
 import static com.codeborne.selenide.Selectors.withText;
@@ -42,9 +43,8 @@ public class HeaderComponent {
     }
 
     @Step("Проверяем, что шапка отображается")
-    public HeaderComponent shouldBeVisible() {
+    public void shouldBeVisible() {
         self.shouldBeVisible();
-
         logo.shouldBeVisible();
         catalogBtn.shouldBeVisible();
         searchField.shouldBeVisible();
@@ -53,8 +53,6 @@ public class HeaderComponent {
         myOrders.shouldBeVisible();
         favorites.shouldBeVisible();
         shoppingCart.shouldBeVisible();
-
-        return this;
     }
 
     @Step("Ввести значение {value} в поле поиска")
@@ -65,15 +63,13 @@ public class HeaderComponent {
     }
 
     @Step("Счётчик листа желаний показывает {expectedCount} товаров")
-    public HeaderComponent favoriteListCountShouldBe(final int expectedCount) {
+    public void favoriteListCountShouldBe(final int expectedCount) {
         favoriteListCount.shouldHaveExactText(String.valueOf(expectedCount));
-        return this;
     }
 
     @Step("Счётчик корзины показывает {expectedCount} товаров")
-    public HeaderComponent cartCountShouldBe(final int expectedCount) {
+    public void cartCountShouldBe(final int expectedCount) {
         cartCount.shouldHaveExactText(String.valueOf(expectedCount));
-        return this;
     }
 
     @Step("Нажать на кнопку 'Каталог'")
@@ -83,9 +79,9 @@ public class HeaderComponent {
     }
 
     @Step("Перейти в раздел 'Лист желаний'")
-    public CartPage goToFavoriteList() {
+    public FavoriteList goToFavoriteList() {
         favorites.click();
-        return new CartPage().shouldBeOpen();
+        return new FavoriteList().shouldBeOpen();
     }
 
     @Step("Перейти в раздел 'Корзина'")

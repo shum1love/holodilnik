@@ -6,12 +6,16 @@ import ru.holodilnik.framework.ui.elements.UiElement;
 import static com.codeborne.selenide.Selenide.$;
 
 /**
- * Локаторы страницы "Лист желаний".
+ * Локаторы страницы "Избранное".
  */
 public final class FavoriteListLocators {
 
     public static UiElement title() {
-        return ui("Заголовок раздела 'Избранное'", $("span.cabinet-navigation__link_state_active"));
+        return ui("Заголовок раздела 'Избранное'", $("h1"));
+    }
+
+    public static UiElement productName() {
+        return ui("Имя товара в карточке", $("span[class*='product-name__category']"));
     }
     public static UiElement favoriteMenuCounter() {
         return ui("Счётчик в разделе меню 'Избранное'", $("#favorite_products_count_menu"));
