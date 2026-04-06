@@ -17,8 +17,7 @@ import static com.codeborne.selenide.Selenide.executeJavaScript;
 import static com.codeborne.selenide.Selenide.screenshot;
 
 /*
- * Обёртка над SelenideElement с человеческими шагами в Allure,
- *защитой от типичных флейков и опциональной подсветкой для дебага.
+ * Обёртка над SelenideElement с человеческими шагами в Allure
  */
 
 public class UiElement {
@@ -51,13 +50,13 @@ public class UiElement {
         return this;
     }
 
-    @Step("{humanName} → вводим '{text}'")
+    @Step("{text} → вводим '{text}'")
     public UiElement type(String text) {
         performAction(() -> element.shouldBe(visible, Condition.enabled).setValue(text), "ввод: " + text);
         return this;
     }
 
-    @Step("{humanName} → очищаем и вводим '{text}'")
+    @Step("очищаем и вводим '{text}'")
     public UiElement clearAndType(String text) {
         performAction(() -> {
             element.shouldBe(visible, Condition.enabled).clear();
@@ -66,7 +65,7 @@ public class UiElement {
         return this;
     }
 
-    @Step("{humanName} → нажимаем Enter")
+    @Step("нажимаем Enter")
     public UiElement pressEnter() {
         performAction(element::pressEnter, "нажатие Enter");
         return this;
