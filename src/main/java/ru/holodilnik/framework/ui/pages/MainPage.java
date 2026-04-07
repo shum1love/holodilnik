@@ -29,6 +29,12 @@ public final class MainPage extends BasePage<MainPage> {
         return this;
     }
 
+    @Step("Проверить доступность элементов нижнего хедера")
+    public MainPage checkDownHeaderElements() {
+        MainPageLocators.downHeaderElements();
+        return this;
+    }
+
     @Step("Проверить видимость хедера и всех его элементов")
     public MainPage checkHeaderVisible() {
         header.shouldBeVisible();
