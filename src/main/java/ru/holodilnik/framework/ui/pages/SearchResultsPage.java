@@ -8,7 +8,6 @@ import ru.holodilnik.framework.ui.pages.components.HeaderComponent;
 import static com.codeborne.selenide.CollectionCondition.sizeGreaterThan;
 import static com.codeborne.selenide.CollectionCondition.sizeGreaterThanOrEqual;
 import static com.codeborne.selenide.Condition.text;
-import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selenide.$;
 
 /**
@@ -26,7 +25,7 @@ public final class SearchResultsPage extends BasePage<SearchResultsPage> {
     public SearchResultsPage selectCategory(final String categoryName) {
         SearchResultsLocators.categoryItems()
                 .findBy(text(categoryName))
-                .shouldBe(visible)
+                .shouldBeVisible()
                 .click();
         return this;
     }

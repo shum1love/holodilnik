@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import ru.holodilnik.framework.ui.pages.FavoriteList;
 import ru.holodilnik.framework.ui.pages.MainPage;
 import ru.holodilnik.framework.ui.pages.SearchResultsPage;
+import ru.holodilnik.tests.base.BaseTest;
 
 @Epic("Избранное")
 @Feature("Удаление из избранного")
@@ -16,7 +17,7 @@ import ru.holodilnik.framework.ui.pages.SearchResultsPage;
 @Tag("UI")
 @Tag("smoke")
 @Tag("Favorite")
-public class RemoveFromFavoritesTest {
+public class RemoveFromFavoritesTest extends BaseTest {
     private static final String REFRIGERATOR = "Двухкамерный холодильник";
 
     private static final MainPage main = new MainPage();

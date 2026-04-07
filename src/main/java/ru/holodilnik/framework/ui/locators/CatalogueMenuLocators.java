@@ -3,6 +3,7 @@ package ru.holodilnik.framework.ui.locators;
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
 import ru.holodilnik.framework.ui.elements.UiElement;
+import ru.holodilnik.framework.ui.elements.UiElementsCollection;
 
 import static com.codeborne.selenide.Condition.text;
 import static com.codeborne.selenide.Selenide.$;
@@ -38,13 +39,16 @@ public class CatalogueMenuLocators {
         return ui("Заголовок", $("h1"));
     }
 
-    public static ElementsCollection categories() {
-        return $$("div.categories__item-list");
+    public static UiElementsCollection categories() {
+        return uis("Категории каталога", $$("div.categories__item-list"));
     }
 
-    // ─── Helper methods ─────────────────────────────────
     private static UiElement ui(String name, SelenideElement element) {
         return new UiElement(name, element);
+    }
+
+    private static UiElementsCollection uis(String name, ElementsCollection elements) {
+        return new UiElementsCollection(name, elements);
     }
 
     private CatalogueMenuLocators() {

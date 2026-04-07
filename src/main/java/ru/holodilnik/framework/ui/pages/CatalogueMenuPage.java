@@ -5,7 +5,6 @@ import io.qameta.allure.Step;
 import ru.holodilnik.framework.ui.locators.CatalogueMenuLocators;
 
 import static com.codeborne.selenide.Condition.text;
-import static com.codeborne.selenide.Condition.visible;
 
 /**
  * Класс описывающий меню каталога
@@ -56,7 +55,7 @@ public class CatalogueMenuPage extends BasePage<CatalogueMenuPage> {
     public SearchResultsPage selectCategory(final String categoryName) {
         CatalogueMenuLocators.categories()
                 .findBy(text(categoryName))
-                .shouldBe(visible)
+                .shouldBeVisible()
                 .click();
 
         return new SearchResultsPage();

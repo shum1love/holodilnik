@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import ru.holodilnik.framework.ui.pages.CartPage;
 import ru.holodilnik.framework.ui.pages.MainPage;
+import ru.holodilnik.tests.base.BaseTest;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -17,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @Tag("UI")
 @Tag("smoke")
 @Tag("Cart")
-public class ChangeQuantityCardTest {
+public class ChangeQuantityCardTest extends BaseTest {
     private static final String REFRIGERATOR = "Двухкамерный холодильник";
 
     @Test
