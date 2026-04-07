@@ -5,6 +5,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import ru.holodilnik.framework.ui.pages.MainPage;
+import ru.holodilnik.tests.base.BaseTest;
 
 @Epic("Каталог")
 @Feature("Поиск в каталоге")
@@ -14,7 +15,7 @@ import ru.holodilnik.framework.ui.pages.MainPage;
 @Tag("UI")
 @Tag("smoke")
 @Tag("Catalog")
-public class CatalogNavigationTest {
+public class CatalogNavigationTest extends BaseTest {
 
     private static final String REFRIGERATOR = "Двухкамерный холодильник";
     private static final String REFRIGERATOR_TITLE = "Холодильники и морозильники";

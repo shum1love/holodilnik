@@ -5,8 +5,9 @@ import com.codeborne.selenide.logevents.SelenideLogger;
 import io.qameta.allure.selenide.AllureSelenide;
 import org.junit.jupiter.api.BeforeAll;
 import ru.holodilnik.framework.core.config.ConfigLoader;
+import ru.holodilnik.tests.base.actions.ActionPage;
 
-public abstract class BaseTest {
+public abstract class BaseTest implements ActionPage {
 
     @BeforeAll
     static void setup() {

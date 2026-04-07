@@ -31,7 +31,7 @@ public final class MainPage extends BasePage<MainPage> {
 
     @Step("Проверить доступность элементов нижнего хедера")
     public MainPage checkDownHeaderElements() {
-        MainPageLocators.downHeaderElements();
+        MainPageLocators.downHeaderElements().size();
         return this;
     }
 

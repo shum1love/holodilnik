@@ -5,6 +5,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import ru.holodilnik.framework.ui.pages.MainPage;
+import ru.holodilnik.tests.base.BaseTest;
 
 @Epic("Корзина")
 @Feature("Добавление в корзину")
@@ -14,7 +15,7 @@ import ru.holodilnik.framework.ui.pages.MainPage;
 @Tag("UI")
 @Tag("smoke")
 @Tag("Cart")
-public class AddToCartTest {
+public class AddToCartTest extends BaseTest {
     private static final String REFRIGERATOR = "Двухкамерный холодильник";
     private static final MainPage main = new MainPage();
 

@@ -3,6 +3,7 @@ package ru.holodilnik.framework.ui.locators;
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
 import ru.holodilnik.framework.ui.elements.UiElement;
+import ru.holodilnik.framework.ui.elements.UiElementsCollection;
 
 import static com.codeborne.selenide.Condition.text;
 import static com.codeborne.selenide.Selenide.$;
@@ -17,7 +18,6 @@ public final class SearchResultsLocators {
         return ui("Заголовок страницы результатов", $$("h1").first());
     }
 
-    // parameterBlock
     public static UiElement parameterBlock() {
         return ui("Блок фильтров", $("div.filter-c__body"));
     }
@@ -30,8 +30,8 @@ public final class SearchResultsLocators {
         return ui("Поиск по категориям", $("input[id='quick-searchcategory']"));
     }
 
-    public static ElementsCollection categoryItems() {
-        return $$("label[id*='cfilter_search_category']");
+    public static UiElementsCollection categoryItems() {
+        return uis("Список категорий", $$("label[id*='cfilter_search_category']"));
     }
 
     public static UiElement priceSectionTitle() {
@@ -54,8 +54,8 @@ public final class SearchResultsLocators {
         return ui("Поиск по производителям", $("input[id='quick-searchvendor']"));
     }
 
-    public static ElementsCollection manufacturerItems() {
-        return $$("label[id*='cfilter_search_vendor']");
+    public static UiElementsCollection manufacturerItems() {
+        return uis("Список производителей", $$("label[id*='cfilter_search_vendor']"));
     }
 
     public static UiElement showButton() {
@@ -66,26 +66,28 @@ public final class SearchResultsLocators {
         return ui("Очистить фильтры", $("a[id='cfilter_btnclear']"));
     }
 
-    // Блок поиска результатов
-    public static ElementsCollection productCards() {
-        return $$(".goods-tile.preview-product");
+    public static UiElementsCollection productCards() {
+        return uis("Карточки товаров", $$(".goods-tile.preview-product"));
     }
 
-    public static ElementsCollection addToFavoriteList() {
-        return $$("span[data-action-button='favorite']");
+    public static UiElementsCollection addToFavoriteList() {
+        return uis("Кнопки добавления в избранное", $$("span[data-action-button='favorite']"));
     }
 
-    public static ElementsCollection addToCartButtons() {
-        return $$("a[data-smoke='AddToCartListing']");
+    public static UiElementsCollection addToCartButtons() {
+        return uis("Кнопки добавления в корзину", $$("a[data-smoke='AddToCartListing']"));
     }
 
-    public static ElementsCollection titleCarts() {
-        return $$("span[class*='product-name']");
+    public static UiElementsCollection titleCarts() {
+        return uis("Названия карточек товаров", $$("span[class*='product-name']"));
     }
 
-    // ─── Helper methods ─────────────────────────────────
     private static UiElement ui(String name, SelenideElement element) {
         return new UiElement(name, element);
+    }
+
+    private static UiElementsCollection uis(String name, ElementsCollection elements) {
+        return new UiElementsCollection(name, elements);
     }
 
     private SearchResultsLocators() {
