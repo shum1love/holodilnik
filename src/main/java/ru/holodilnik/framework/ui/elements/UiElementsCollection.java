@@ -11,40 +11,40 @@ import io.qameta.allure.Step;
 public class UiElementsCollection {
 
     private final ElementsCollection elements;
-    private final String humanName;
+    private final String name;
 
-    public UiElementsCollection(String humanName, ElementsCollection elements) {
-        this.humanName = humanName;
+    public UiElementsCollection(String name, ElementsCollection elements) {
+        this.name = name;
         this.elements = elements;
     }
 
-    @Step("{humanName} → проверяем условие коллекции")
+    @Step("{name} → проверяем условие коллекции")
     public UiElementsCollection shouldHave(WebElementsCondition condition) {
         elements.shouldHave(condition);
         return this;
     }
 
-    @Step("{humanName} → фильтруем по условию")
+    @Step("{name} → фильтруем по условию")
     public UiElementsCollection filterBy(WebElementCondition condition) {
-        return new UiElementsCollection(humanName + " (filtered)", elements.filterBy(condition));
+        return new UiElementsCollection(name + " (filtered)", elements.filterBy(condition));
     }
 
-    @Step("{humanName} → ищем элемент по условию")
+    @Step("{name} → ищем элемент по условию")
     public UiElement findBy(WebElementCondition condition) {
-        return new UiElement(humanName + " (found)", elements.findBy(condition));
+        return new UiElement(name + " (found)", elements.findBy(condition));
     }
 
-    @Step("{humanName} → берём элемент с индексом {index}")
+    @Step("{name} → берём элемент с индексом {index}")
     public UiElement get(int index) {
-        return new UiElement(humanName + "[" + index + "]", elements.get(index));
+        return new UiElement(name + "[" + index + "]", elements.get(index));
     }
 
     public UiElement first() {
-        return new UiElement(humanName + "[first]", elements.first());
+        return new UiElement(name + "[first]", elements.first());
     }
 
     public UiElement last() {
-        return new UiElement(humanName + "[last]", elements.last());
+        return new UiElement(name + "[last]", elements.last());
     }
 
     public int size() {

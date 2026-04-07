@@ -24,6 +24,7 @@ public class OpenMainPageTest extends BaseTest {
         main
                 .open()
                 .checkHeaderVisible()
+                .checkDownHeaderElements()
         // TODO: Видимость банера
         // TODO: Кнопка техПоддержки
         // TODO: Раздел новинки
