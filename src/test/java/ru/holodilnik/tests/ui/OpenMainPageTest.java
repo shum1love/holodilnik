@@ -25,10 +25,8 @@ public class OpenMainPageTest extends BaseTest {
                 .open()
                 .checkHeaderVisible()
                 .checkDownHeaderElements()
-        // TODO: Видимость банера
-        // TODO: Кнопка техПоддержки
-        // TODO: Раздел новинки
-        // TODO: скролл до футтера сайта вниз
-                ;
+                .checkBannerVisibility()
+                .checkMainElements()
+                .scrollAndCheckFooterItems();
     }
 }

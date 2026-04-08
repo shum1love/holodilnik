@@ -25,13 +25,14 @@ public final class MainPage extends BasePage<MainPage> {
 
     @Step("Проверить видимость основных элементов главной страницы")
     public MainPage checkMainElements() {
-        // TODO: Дописать метод
+        MainPageLocators.productCategorySections().shouldAllBeEnabled();
         return this;
     }
 
     @Step("Проверить доступность элементов нижнего хедера")
     public MainPage checkDownHeaderElements() {
-        MainPageLocators.downHeaderElements().size();
+        MainPageLocators.downHeaderElements().shouldAllBeEnabled();
+
         return this;
     }
 
@@ -39,6 +40,17 @@ public final class MainPage extends BasePage<MainPage> {
     public MainPage checkHeaderVisible() {
         header.shouldBeVisible();
         return this;
+    }
+
+    @Step("Проверить видимость главного банера")
+    public MainPage checkBannerVisibility() {
+        MainPageLocators.banner().shouldBeEnabled();
+        return this;
+    }
+
+    @Step("Скролл до элементов футера и их проверка")
+    public void scrollAndCheckFooterItems() {
+        MainPageLocators.footerElements().scrollToAll().shouldBeVisibleExceptLast(2);
     }
 
     @Step("Ввести значение {value} в поле 'Поиск по каталогу'")

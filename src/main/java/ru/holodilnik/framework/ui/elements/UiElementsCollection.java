@@ -5,6 +5,9 @@ import com.codeborne.selenide.WebElementCondition;
 import com.codeborne.selenide.WebElementsCondition;
 import io.qameta.allure.Step;
 
+import static com.codeborne.selenide.Condition.enabled;
+import static com.codeborne.selenide.Condition.visible;
+
 /**
  * Обёртка над ElementsCollection с удобными шагами и типобезопасными операциями.
  */
@@ -18,15 +21,35 @@ public class UiElementsCollection {
         this.elements = elements;
     }
 
-    @Step("{name} → проверяем условие коллекции")
-    public UiElementsCollection shouldHave(WebElementsCondition condition) {
-        elements.shouldHave(condition);
+    @Step("{name} → проверяем условия коллекции")
+    public UiElementsCollection shouldHave(WebElementsCondition... conditions) {
+        for (WebElementsCondition condition : conditions) {
+            elements.shouldHave(condition);
+        }
         return this;
     }
 
-    @Step("{name} → фильтруем по условию")
-    public UiElementsCollection filterBy(WebElementCondition condition) {
-        return new UiElementsCollection(name + " (filtered)", elements.filterBy(condition));
+    @Step("{name} → все элементы видимы")
+    public UiElementsCollection shouldAllBeVisible() {
+        elements.forEach(el -> el.shouldBe(visible));
+        return this;
+    }
+
+    @Step("{name} → все элементы, кроме последних {countToSkip}, видимы")
+    public UiElementsCollection shouldBeVisibleExceptLast(int countToSkip) {
+        int size = elements.size();
+
+        for (int i = 0; i < size - countToSkip; i++) {
+            elements.get(i).shouldBe(visible);
+        }
+
+        return this;
+    }
+
+    @Step("{name} → все элементы активны (enabled)")
+    public UiElementsCollection shouldAllBeEnabled() {
+        elements.forEach(el -> el.shouldBe(enabled));
+        return this;
     }
 
     @Step("{name} → ищем элемент по условию")
@@ -37,6 +60,12 @@ public class UiElementsCollection {
     @Step("{name} → берём элемент с индексом {index}")
     public UiElement get(int index) {
         return new UiElement(name + "[" + index + "]", elements.get(index));
+    }
+
+    @Step("{name} → скроллим до всех элементов")
+    public UiElementsCollection scrollToAll() {
+        elements.forEach(el -> el.scrollIntoView(true));
+        return this;
     }
 
     public UiElement first() {
