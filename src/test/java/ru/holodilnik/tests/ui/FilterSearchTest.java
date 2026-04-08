@@ -7,30 +7,30 @@ import org.junit.jupiter.api.Test;
 import ru.holodilnik.framework.ui.pages.MainPage;
 import ru.holodilnik.tests.base.BaseTest;
 
-@Epic("Избранное")
-@Feature("Добавление в избранное")
-@Story("Проверка добавления товара в Избранное")
+@Epic("Поиск")
+@Feature("Фильтра поиска")
+@Story("Проверка поиска товара c применением фильтров и сортировки")
 @Owner("Rodion Shumilov")
 @Severity(SeverityLevel.CRITICAL)
 @Tag("UI")
 @Tag("smoke")
 @Tag("Favorite")
-public class AddToFavoritesTest extends BaseTest {
+public class FilterSearchTest extends BaseTest {
 
     private static final String REFRIGERATOR = "Двухкамерный холодильник";
     private static final MainPage main = new MainPage();
 
     @Test
-    @DisplayName("Пользователь может найти найти товар и добавить его в Избранное")
-    public void addToFavoritesTest() {
+    @DisplayName("Пользователь может найти товар с применением фильтров и сортировки")
+    public void removeFromFavoritesTest() {
         main
                 .open()
-                .checkHeaderVisible()
+                .checkMainElements()
                 .inputValueSearchField(REFRIGERATOR)
                 .checkProductCardsArePresent()
-                .addFavoriteList(1)
-                .favoriteListCountShouldBe(1)
-                .goToFavoriteList()
-                .checkProductNameInCard(REFRIGERATOR);
+                .checkParameterBlock()
+                .selectCategory(REFRIGERATOR)
+                .clickShowButton()
+                ;
     }
 }

@@ -53,10 +53,10 @@ public final class SearchResultsPage extends BasePage<SearchResultsPage> {
         return new ProductCardPage().shouldBeOpen();
     }
 
-    @Step("Добавить {number}-ю карточку товара в лист желаний")
+    @Step("Добавить {number}-ю карточку товара в Избранное")
     public SearchResultsPage addFavoriteList(final int number) {
         SearchResultsLocators
-                .addToCartButtons()
+                .addToFavoriteList()
                 .shouldHave(sizeGreaterThanOrEqual(number))
                 .get(number - 1)
                 .click();
