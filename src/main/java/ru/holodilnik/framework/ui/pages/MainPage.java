@@ -11,7 +11,7 @@ import static com.codeborne.selenide.Selenide.$;
  * Главная страница сайта holodilnik.ru
  */
 public final class MainPage extends BasePage<MainPage> {
-    private static HeaderComponent header;
+    private final HeaderComponent header;
 
     public MainPage() {
         super("/");

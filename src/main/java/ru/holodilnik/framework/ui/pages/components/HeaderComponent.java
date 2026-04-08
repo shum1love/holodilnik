@@ -4,7 +4,6 @@ import com.codeborne.selenide.SelenideElement;
 import io.qameta.allure.Step;
 import ru.holodilnik.framework.ui.elements.UiElement;
 import ru.holodilnik.framework.ui.pages.CartPage;
-import ru.holodilnik.framework.ui.pages.CatalogueMenuPage;
 import ru.holodilnik.framework.ui.pages.FavoriteList;
 import ru.holodilnik.framework.ui.pages.SearchResultsPage;
 
@@ -27,6 +26,7 @@ public class HeaderComponent {
     private final UiElement shoppingCart;
     private final UiElement cartCount;
     private final UiElement favoriteListCount;
+
     public HeaderComponent(SelenideElement container) {
         this.self = new UiElement("Шапка сайта", container);
 
@@ -78,9 +78,8 @@ public class HeaderComponent {
     }
 
     @Step("Нажать на кнопку 'Каталог'")
-    public CatalogueMenuPage goToCatalogue() {
+    public void goToCatalogue() {
         catalogBtn.click();
-        return new CatalogueMenuPage().shouldBeOpen();
     }
 
     @Step("Перейти в раздел 'Лист желаний'")
