@@ -2,6 +2,7 @@ package ru.holodilnik.framework.ui.pages;
 
 import com.codeborne.selenide.SelenideElement;
 import io.qameta.allure.Step;
+import ru.holodilnik.framework.ui.enums.FilterParameters;
 import ru.holodilnik.framework.ui.locators.SearchResultsLocators;
 import ru.holodilnik.framework.ui.pages.components.HeaderComponent;
 
@@ -30,9 +31,41 @@ public final class SearchResultsPage extends BasePage<SearchResultsPage> {
         return this;
     }
 
+    @Step("Выбрать производителя '{fabricName}'")
+    public SearchResultsPage selectFabric(final String fabricName) {
+        SearchResultsLocators.manufacturerItems()
+                .scrollToAll()
+                .findBy(text(fabricName))
+                .shouldBeVisible()
+                .click();
+        return this;
+    }
+
+    @Step("Установить минимальную цену")
+    public SearchResultsPage setMinPrice(final Integer minValue){
+        SearchResultsLocators.minPriceInput().clearAndType(minValue.toString());
+        return this;
+    }
+
+    @Step("Установить минимальную цену")
+    public SearchResultsPage setMaxPrice(final Integer maxValue){
+        SearchResultsLocators.maxPriceInput().clearAndType(maxValue.toString());
+        return this;
+    }
+
     @Step("Нажать кнопку 'Показать'")
     public SearchResultsPage clickShowButton() {
         SearchResultsLocators.showButton().click();
+        return this;
+    }
+
+    @Step("Выбрать параметр {parameter} в фильтре сортировки")
+    public SearchResultsPage sortByParam(final FilterParameters parameter){
+        SearchResultsLocators.sortingFilterDropdown().click();
+        SearchResultsLocators.sortingFilterParameters()
+                .findBy(text(parameter.getDisplayName()))
+                .shouldBeVisible()
+                .click();
         return this;
     }
 
