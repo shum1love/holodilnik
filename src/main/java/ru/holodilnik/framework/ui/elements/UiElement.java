@@ -19,15 +19,12 @@ import static com.codeborne.selenide.Selenide.screenshot;
 /*
  * Обёртка над SelenideElement с человеческими шагами в Allure
  */
-
 public class UiElement {
 
     private static final Logger log = LoggerFactory.getLogger(UiElement.class);
     private static final boolean HIGHLIGHT_ENABLED = Boolean.parseBoolean(System.getProperty("ui.highlight", "false"));
     private static final boolean SCREENSHOT_ON_FAIL = Boolean.parseBoolean(System.getProperty("ui.screenshot.on.fail", "true"));
     private static final int ACTION_RETRY_COUNT = 2;
-    private static final Duration RETRY_DELAY = Duration.ofMillis(400);
-
     private final SelenideElement element;
     private final String name;
 
