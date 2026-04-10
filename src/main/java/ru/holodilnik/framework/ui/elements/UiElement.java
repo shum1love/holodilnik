@@ -29,22 +29,22 @@ public class UiElement {
     private static final Duration RETRY_DELAY = Duration.ofMillis(400);
 
     private final SelenideElement element;
-    private final String humanName;
+    private final String name;
 
-    public UiElement(String humanName, SelenideElement element) {
-        this.humanName = humanName;
+    public UiElement(String name, SelenideElement element) {
+        this.name = name;
         this.element = element;
     }
 
     // ─── Действия ──────────────────────────────────────────────────────
 
-    @Step("{humanName} → кликаем")
+    @Step("{name} → кликаем")
     public UiElement click() {
         performAction(() -> element.shouldBe(visible, Condition.enabled).click(), "клик");
         return this;
     }
 
-    @Step("{humanName} → force-клик (JS)")
+    @Step("{name} → force-клик (JS)")
     public UiElement forceClick() {
         performAction(() -> executeJavaScript("arguments[0].click();", element), "force-клик");
         return this;
@@ -141,7 +141,7 @@ public class UiElement {
     // ─── Внутренняя логика ─────────────────────────────────────────────
 
     private void performAction(Runnable action, String actionDesc) {
-        log.debug("{} → {}", humanName, actionDesc);
+        log.debug("{} → {}", name, actionDesc);
 
         if (HIGHLIGHT_ENABLED) highlight();
 
@@ -154,7 +154,7 @@ public class UiElement {
             } catch (Exception e) {
                 lastError = e;
                 if (attempt < ACTION_RETRY_COUNT && shouldRetry(e)) {
-                    log.warn("Попытка {}: {} → {} → {}", attempt, humanName, actionDesc, e.getClass().getSimpleName());
+                    log.warn("Попытка {}: {} → {} → {}", attempt, name, actionDesc, e.getClass().getSimpleName());
                     // polling вместо sleep
                     element.shouldBe(visible, Duration.ofMillis(400));
                 } else {
@@ -200,13 +200,13 @@ public class UiElement {
                 URL: {}
                 Селектор: {}
                 Текст элемента: "{}"
-                """, actionDesc, humanName, currentUrl, selector, elementText, e);
+                """, actionDesc, name, currentUrl, selector, elementText, e);
 
         if (SCREENSHOT_ON_FAIL) {
             try {
                 byte[] bytes = screenshot(OutputType.BYTES);
                 Allure.addAttachment(
-                        "FAIL: " + humanName + " → " + actionDesc,
+                        "FAIL: " + name + " → " + actionDesc,
                         new ByteArrayInputStream(bytes)
                 );
             } catch (Exception ex) {
