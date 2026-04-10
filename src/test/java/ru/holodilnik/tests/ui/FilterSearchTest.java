@@ -17,7 +17,6 @@ import ru.holodilnik.tests.base.BaseTest;
 @Tag("smoke")
 @Tag("Favorite")
 public class FilterSearchTest extends BaseTest {
-
     private static final String REFRIGERATOR = "Холодильник";
     private static final String DOUBLE_CHAMBER_REFRIGERATORS = "Двухкамерные холодильники";
     private static final String LIEBBHERR_FABRIC_NAME = "Liebherr";

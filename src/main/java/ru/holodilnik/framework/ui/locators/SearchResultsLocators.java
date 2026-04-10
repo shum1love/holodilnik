@@ -74,6 +74,10 @@ public final class SearchResultsLocators {
         return uis("Карточки товаров", $$(".goods-tile.preview-product"));
     }
 
+    public static UiElement nothingWasFound() {
+        return ui("Надпись Ничего не найдено", $("strong.red"));
+    }
+
     public static UiElementsCollection addToFavoriteList() {
         return uis("Кнопки добавления в избранное", $$("span[data-action-button='favorite']"));
     }
