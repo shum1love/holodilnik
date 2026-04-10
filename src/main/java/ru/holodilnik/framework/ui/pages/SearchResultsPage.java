@@ -16,9 +16,20 @@ import static com.codeborne.selenide.Selenide.$;
  */
 public final class SearchResultsPage extends BasePage<SearchResultsPage> {
 
-    @Step("Проверить, что отображается блок фильтров")
+    @Step("Проверить, что отображается блок фильтров и его элементы")
     public SearchResultsPage checkParameterBlock() {
         SearchResultsLocators.parameterBlock().shouldBeVisible();
+        SearchResultsLocators.categorySectionTitle().shouldBeVisible();
+        SearchResultsLocators.categoryQuickSearch().shouldBeVisible();
+        SearchResultsLocators.categoryItems().first(5).shouldAllBeVisible();
+        SearchResultsLocators.priceSectionTitle().shouldBeVisible();
+        SearchResultsLocators.minPriceInput().shouldBeVisible();
+        SearchResultsLocators.maxPriceInput().shouldBeVisible();
+        SearchResultsLocators.priceSliderValue().shouldBeVisible();
+        SearchResultsLocators.manufacturerQuickSearch().shouldBeVisible();
+        SearchResultsLocators.manufacturerItems().first(5).shouldAllBeVisible();
+        SearchResultsLocators.showButton().shouldBeVisible();
+        SearchResultsLocators.clearFiltersButton().shouldBeVisible();
         return this;
     }
 
@@ -42,13 +53,13 @@ public final class SearchResultsPage extends BasePage<SearchResultsPage> {
     }
 
     @Step("Установить минимальную цену")
-    public SearchResultsPage setMinPrice(final Integer minValue){
+    public SearchResultsPage setMinPrice(final Integer minValue) {
         SearchResultsLocators.minPriceInput().clearAndType(minValue.toString());
         return this;
     }
 
     @Step("Установить минимальную цену")
-    public SearchResultsPage setMaxPrice(final Integer maxValue){
+    public SearchResultsPage setMaxPrice(final Integer maxValue) {
         SearchResultsLocators.maxPriceInput().clearAndType(maxValue.toString());
         return this;
     }
@@ -60,7 +71,7 @@ public final class SearchResultsPage extends BasePage<SearchResultsPage> {
     }
 
     @Step("Выбрать параметр {parameter} в фильтре сортировки")
-    public SearchResultsPage sortByParam(final FilterParameters parameter){
+    public SearchResultsPage sortByParam(final FilterParameters parameter) {
         SearchResultsLocators.sortingFilterDropdown().click();
         SearchResultsLocators.sortingFilterParameters()
                 .findBy(text(parameter.getDisplayName()))
@@ -70,7 +81,7 @@ public final class SearchResultsPage extends BasePage<SearchResultsPage> {
     }
 
     @Step("Проверить, что отображается надпись 'не найдено'")
-    public void checkNothingWasFound(){
+    public void checkNothingWasFound() {
         SearchResultsLocators.nothingWasFound().shouldContainText("не найдено");
     }
 

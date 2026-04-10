@@ -16,7 +16,7 @@ import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selenide.executeJavaScript;
 import static com.codeborne.selenide.Selenide.screenshot;
 
-/*
+/**
  * Обёртка над SelenideElement с человеческими шагами в Allure
  */
 public class UiElement {

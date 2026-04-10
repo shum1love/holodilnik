@@ -68,8 +68,20 @@ public class UiElementsCollection {
         return this;
     }
 
-    public UiElement first() {
-        return new UiElement(name + "[first]", elements.first());
+    @Step("{name} → берём первые {count} элементов")
+    public UiElementsCollection first(int count) {
+        int actualSize = elements.size();
+
+        if (actualSize < count) {
+            throw new AssertionError(
+                    String.format("Ожидали минимум %d элементов, но нашли %d", count, actualSize)
+            );
+        }
+
+        return new UiElementsCollection(
+                name + " (first " + count + ")",
+                elements.first(count)
+        );
     }
 
     public UiElement last() {
