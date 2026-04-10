@@ -70,9 +70,8 @@ public final class SearchResultsPage extends BasePage<SearchResultsPage> {
     }
 
     @Step("Проверить, что отображается надпись 'не найдено'")
-    public SearchResultsPage checkNothingWasFound(){
+    public void checkNothingWasFound(){
         SearchResultsLocators.nothingWasFound().shouldContainText("не найдено");
-        return this;
     }
 
     @Step("Проверить, что отображается несколько карточек товаров")
