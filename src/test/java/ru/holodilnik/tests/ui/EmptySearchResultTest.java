@@ -24,7 +24,6 @@ public class EmptySearchResultTest {
                 .open()
                 .checkMainElements()
                 .inputValueSearchField("asdfghjkl")
-                .checkNothingWasFound()
-        ;
+                .checkNothingWasFound();
     }
 }
