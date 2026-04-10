@@ -21,7 +21,7 @@ public class RemoveFromCartTest extends BaseTest {
 
     @Test
     @DisplayName("Пользователь может удалить товар из корзины")
-    public void searchTest() {
+    public void removeFromCartTest() {
         main
                 .open()
                 .checkHeaderVisible()

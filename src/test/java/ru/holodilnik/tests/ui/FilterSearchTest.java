@@ -15,7 +15,7 @@ import ru.holodilnik.tests.base.BaseTest;
 @Severity(SeverityLevel.CRITICAL)
 @Tag("UI")
 @Tag("smoke")
-@Tag("Favorite")
+@Tag("Search")
 public class FilterSearchTest extends BaseTest {
     private static final String REFRIGERATOR = "Холодильник";
     private static final String DOUBLE_CHAMBER_REFRIGERATORS = "Двухкамерные холодильники";
@@ -24,7 +24,7 @@ public class FilterSearchTest extends BaseTest {
 
     @Test
     @DisplayName("Пользователь может найти товар с применением фильтров и сортировки")
-    public void removeFromFavoritesTest() {
+    public void filterSearchTest() {
         main
                 .open()
                 .checkMainElements()

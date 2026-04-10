@@ -9,14 +9,13 @@ import ru.holodilnik.tests.base.BaseTest;
 
 @Epic("Каталог")
 @Feature("Поиск в каталоге")
-@Story("Проверка поиска товара и открытия карточки товара")
+@Story("Проверка поиска товара через каталог")
 @Owner("Rodion Shumilov")
 @Severity(SeverityLevel.CRITICAL)
 @Tag("UI")
 @Tag("smoke")
 @Tag("Catalog")
 public class CatalogNavigationTest extends BaseTest {
-
     private static final String REFRIGERATOR = "Двухкамерный холодильник";
     private static final String REFRIGERATOR_TITLE = "Холодильники и морозильники";
     private static final String DOUBLE_CHAMBER_REFRIGERATORS = "Двухкамерные холодильники";
@@ -25,8 +24,8 @@ public class CatalogNavigationTest extends BaseTest {
 
 
     @Test
-    @DisplayName("Пользователь может найти и открыть карточку товара")
-    public void searchTest() {
+    @DisplayName("Пользователь может найти товар через каталог")
+    public void catalogNavigationTest() {
         main
                 .open()
                 .openCatalogMenu()

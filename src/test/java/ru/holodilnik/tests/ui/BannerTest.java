@@ -15,7 +15,6 @@ import ru.holodilnik.framework.ui.pages.MainPage;
 @Tag("smoke")
 @Tag("Banner")
 public class BannerTest {
-
     private static final MainPage main = new MainPage();
 
     @Test

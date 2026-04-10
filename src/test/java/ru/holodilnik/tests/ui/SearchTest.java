@@ -14,9 +14,8 @@ import ru.holodilnik.tests.base.BaseTest;
 @Severity(SeverityLevel.CRITICAL)
 @Tag("UI")
 @Tag("smoke")
-@Tag("Catalog")
+@Tag("Search")
 public class SearchTest extends BaseTest {
-
     private static final String REFRIGERATOR_ATLANT = "Двухкамерный холодильник Atlant";
 
     MainPage main = new MainPage();

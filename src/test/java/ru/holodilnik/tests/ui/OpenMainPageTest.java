@@ -14,13 +14,13 @@ import ru.holodilnik.tests.base.BaseTest;
 @Severity(SeverityLevel.CRITICAL)
 @Tag("UI")
 @Tag("smoke")
-@Tag("Favorite")
+@Tag("Main")
 public class OpenMainPageTest extends BaseTest {
     private static final MainPage main = new MainPage();
 
     @Test
-    @DisplayName("Пользователь может удалить товар из раздела Избранное")
-    public void removeFromFavoritesTest() {
+    @DisplayName("Пользователь может открыть главную страницу")
+    public void openMainPageTest() {
         main
                 .open()
                 .checkHeaderVisible()
