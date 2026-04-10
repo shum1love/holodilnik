@@ -31,6 +31,7 @@ public class BreadCrumbsNavigationTest {
                 .clickRefrigerator()
                 .checkTitle(REFRIGERATOR_TITLE)
                 .selectCategory(DOUBLE_CHAMBER_REFRIGERATORS)
+                .checkProductCardsArePresent()
                 .openProductCard(1)
                 .checkCardName(REFRIGERATOR);
                 ;
