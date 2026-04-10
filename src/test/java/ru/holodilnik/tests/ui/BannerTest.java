@@ -5,26 +5,25 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import ru.holodilnik.framework.ui.pages.MainPage;
-import ru.holodilnik.tests.base.BaseTest;
 
-@Epic("Поиск")
-@Feature("Поиск товара")
-@Story("Проверка надписи 'не найдено' при неудачном поиске")
+@Epic("Главная страница")
+@Feature("Рекламный банер")
+@Story("Проверка видимости главного рекламного банера")
 @Owner("Rodion Shumilov")
 @Severity(SeverityLevel.CRITICAL)
 @Tag("UI")
 @Tag("smoke")
-@Tag("Search")
-public class EmptySearchResultTest extends BaseTest {
+@Tag("Banner")
+public class BannerTest {
+
     private static final MainPage main = new MainPage();
 
     @Test
     @DisplayName("Пользователь видит запись 'не найдено' при неудачном поиске")
-    public void emptySearchResultTest() {
+    public void bannerVisibilityTest() {
         main
                 .open()
                 .checkMainElements()
-                .inputValueSearchField("asdfghjkl")
-                .checkNothingWasFound();
+                .checkBannerVisibility();
     }
 }
