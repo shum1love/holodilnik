@@ -16,8 +16,8 @@ import ru.holodilnik.tests.base.BaseTest;
 @Tag("smoke")
 @Tag("Favorite")
 public class AddToFavoritesTest extends BaseTest {
-
     private static final String REFRIGERATOR = "Двухкамерный холодильник";
+
     private static final MainPage main = new MainPage();
 
     @Test
