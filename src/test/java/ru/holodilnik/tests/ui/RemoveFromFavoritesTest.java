@@ -32,7 +32,7 @@ public class RemoveFromFavoritesTest extends BaseTest {
                 .checkHeaderVisible()
                 .inputValueSearchField(REFRIGERATOR)
                 .checkProductCardsArePresent()
-                .addProductCard(1)
+                .addFavoriteList(1)
                 .favoriteListCountShouldBe(1)
                 .goToFavoriteList()
                 .checkProductNameInCard(REFRIGERATOR)
