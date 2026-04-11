@@ -20,9 +20,9 @@ import ru.holodilnik.tests.base.BaseTest;
 public class RemoveFromFavoritesTest extends BaseTest {
     private static final String REFRIGERATOR = "Двухкамерный холодильник";
 
-    private static final MainPage main = new MainPage();
-    private static final SearchResultsPage searchResultsPage = new SearchResultsPage();
-    private static final FavoriteList favoriteList = new FavoriteList();
+    private final MainPage main = new MainPage();
+    private final SearchResultsPage searchResultsPage = new SearchResultsPage();
+    private final FavoriteList favoriteList = new FavoriteList();
 
     @Test
     @DisplayName("Пользователь может удалить товар из раздела Избранное")

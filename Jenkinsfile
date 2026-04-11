@@ -51,7 +51,9 @@ pipeline {
                             -Dselenide.remote=http://selenoid:4444/wd/hub \
                             -Dselenide.browser=chrome \
                             -Dselenide.browserVersion=128.0 \
-                            -Dselenide.headless=true
+                            -Dselenide.headless=true \
+                            -Dselenide.remoteConnectionTimeout=120000 \
+                            -Dselenide.remoteReadTimeout=120000
                         '''
 
                     } else if (env.TEST_SUITE == 'regression') {
@@ -61,7 +63,9 @@ pipeline {
                             -Dselenide.remote=http://selenoid:4444/wd/hub \
                             -Dselenide.browser=chrome \
                             -Dselenide.browserVersion=128.0 \
-                            -Dselenide.headless=true
+                            -Dselenide.headless=true \
+                            -Dselenide.remoteConnectionTimeout=120000 \
+                            -Dselenide.remoteReadTimeout=120000
                         '''
 
                     } else if (env.TEST_SUITE == 'manual') {
@@ -78,7 +82,9 @@ pipeline {
                             -Dselenide.remote=http://selenoid:4444/wd/hub \
                             -Dselenide.browser=chrome \
                             -Dselenide.browserVersion=128.0 \
-                            -Dselenide.headless=true
+                            -Dselenide.headless=true \
+                            -Dselenide.remoteConnectionTimeout=120000 \
+                            -Dselenide.remoteReadTimeout=120000
                         """
 
                     } else {
