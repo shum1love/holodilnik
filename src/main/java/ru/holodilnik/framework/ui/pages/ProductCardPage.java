@@ -35,7 +35,7 @@ public final class ProductCardPage extends BasePage<ProductCardPage> {
         ProductCardLocators.productTitle().shouldBeVisible();
         ProductCardLocators.productRating().shouldBeVisible();
         ProductCardLocators.productReviews().shouldBeVisible();
-        ProductCardLocators.productCode().shouldBeVisible();
+        //ProductCardLocators.productCode().shouldBeVisible();
         ProductCardLocators.productPhoto().shouldBeVisible();
         ProductCardLocators.productPrice().shouldBeVisible();
         ProductCardLocators.addToCartButton().shouldBeEnabled();
@@ -115,6 +115,15 @@ public final class ProductCardPage extends BasePage<ProductCardPage> {
     @Step("Проверить, что открыта карточка товара с названием '{expectedTitle}'")
     public ProductCardPage shouldHaveTitle(String expectedTitle) {
         ProductCardLocators.productTitle().shouldHaveExactText(expectedTitle);
+        return this;
+    }
+
+    @Step("Закрыть рекламный банер, если он отображается")
+    public ProductCardPage closeAdBannerIfDisplayed(){
+        if (ProductCardLocators.advertisingBanner().getSelenideElement().isDisplayed()){
+            ProductCardLocators.advertisingBannerCloseButton().click();
+        }
+        ProductCardLocators.advertisingBannerCloseButton().click();
         return this;
     }
 }

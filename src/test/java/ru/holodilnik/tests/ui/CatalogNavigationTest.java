@@ -34,6 +34,7 @@ public class CatalogNavigationTest extends BaseTest {
                 .checkTitle(REFRIGERATOR_TITLE)
                 .selectCategory(DOUBLE_CHAMBER_REFRIGERATORS)
                 .openProductCard(1)
+                .closeAdBannerIfDisplayed()
                 .checkMainCardElements()
                 .checkLowerSections()
                 .checkPrintButton()

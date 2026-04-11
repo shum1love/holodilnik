@@ -58,6 +58,14 @@ public final class ProductCardLocators {
         return ui("Вкладка 'Сертификаты'", $("a[aria-controls='item-certificates']"));
     }
 
+    public static UiElement advertisingBanner() {
+        return ui("Рекламный банер", $("div.a-popup"));
+    }
+
+    public static UiElement advertisingBannerCloseButton() {
+        return ui("Кнопка закрыть для рекламного банера", $("div.ap-close"));
+    }
+
     // ─── Helper methods ─────────────────────────────────
     private static UiElement ui(String name, SelenideElement element) {
         return new UiElement(name, element);
