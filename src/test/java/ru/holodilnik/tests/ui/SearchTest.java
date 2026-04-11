@@ -18,7 +18,7 @@ import ru.holodilnik.tests.base.BaseTest;
 public class SearchTest extends BaseTest {
     private static final String REFRIGERATOR_ATLANT = "Двухкамерный холодильник Atlant";
 
-    MainPage main = new MainPage();
+    private final MainPage main = new MainPage();
 
     @Test
     @DisplayName("Пользователь может найти и открыть карточку товара")
@@ -28,7 +28,7 @@ public class SearchTest extends BaseTest {
                 .checkHeaderVisible()
                 .inputValueSearchField(REFRIGERATOR_ATLANT)
                 .checkProductCardsArePresent()
-                .openProductCard(1)
+                .openProductCard(2)
                 .checkMainCardElements()
                 .checkLowerSections()
                 .checkPrintButton()
