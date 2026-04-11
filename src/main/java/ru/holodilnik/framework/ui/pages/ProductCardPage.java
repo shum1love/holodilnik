@@ -54,14 +54,8 @@ public final class ProductCardPage extends BasePage<ProductCardPage> {
     }
 
     @Step("Проверить, что название товара содержит {name}")
-    public ProductCardPage checkCardName(final String name) {
+    public void checkCardName(final String name) {
         ProductCardLocators.productTitle().shouldContainText(name);
-        return this;
-    }
-
-    @Step("Получить название товара")
-    public String getProductTitle() {
-        return ProductCardLocators.productTitle().getText();
     }
 
     @Step("Получить цену товара")
@@ -72,16 +66,6 @@ public final class ProductCardPage extends BasePage<ProductCardPage> {
     @Step("Получить рейтинг товара")
     public String getRating() {
         return ProductCardLocators.productRating().getText();
-    }
-
-    @Step("Получить количество отзывов")
-    public String getReviewsCount() {
-        return ProductCardLocators.productReviews().getText();
-    }
-
-    @Step("Получить артикул/код товара")
-    public String getProductCode() {
-        return ProductCardLocators.productCode().getText();
     }
 
     @Step("Нажать 'В корзину'")
@@ -96,26 +80,8 @@ public final class ProductCardPage extends BasePage<ProductCardPage> {
         return this;
     }
 
-    @Step("Перейти во вкладку 'Характеристики'")
-    public ProductCardPage openSpecificationsTab() {
-        ProductCardLocators.specificationsTab().click();
-        return this;
-    }
-
-    @Step("Перейти во вкладку 'Отзывы'")
-    public ProductCardPage openReviewsTab() {
-        ProductCardLocators.reviewsTab().click();
-        return this;
-    }
-
-    @Step("Проверить, что открыта карточка товара с названием '{expectedTitle}'")
-    public ProductCardPage shouldHaveTitle(String expectedTitle) {
-        ProductCardLocators.productTitle().shouldHaveExactText(expectedTitle);
-        return this;
-    }
-
     @Step("Закрыть рекламный банер, если он отображается")
-    public ProductCardPage closeAdBanner(){
+    public ProductCardPage closeAdBanner() {
         ProductCardLocators.advertisingBannerCloseButton().click();
         return this;
     }

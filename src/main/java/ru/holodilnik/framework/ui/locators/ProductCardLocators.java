@@ -22,10 +22,6 @@ public final class ProductCardLocators {
         return ui("Отзывы", $("span.widget-rating__count"));
     }
 
-    public static UiElement productCode() {
-        return ui("Код товара", $("div[class='widget-copy__value']:last-of-type"));
-    }
-
     public static UiElement productPhoto() {
         return ui("Фото товара", $("div.card-product-img__body"));
     }
@@ -56,10 +52,6 @@ public final class ProductCardLocators {
 
     public static UiElement certificatesTab() {
         return ui("Вкладка 'Сертификаты'", $("a[aria-controls='item-certificates']"));
-    }
-
-    public static UiElement advertisingBanner() {
-        return ui("Рекламный банер", $("div.a-popup"));
     }
 
     public static UiElement advertisingBannerCloseButton() {
