@@ -54,8 +54,9 @@ public final class ProductCardPage extends BasePage<ProductCardPage> {
     }
 
     @Step("Проверить, что название товара содержит {name}")
-    public void checkCardName(final String name) {
+    public ProductCardPage checkCardName(final String name) {
         ProductCardLocators.productTitle().shouldContainText(name);
+        return this;
     }
 
     @Step("Получить цену товара")

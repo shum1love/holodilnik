@@ -38,7 +38,8 @@ public class BreadCrumbsNavigationTest {
                 .selectCategory(DOUBLE_CHAMBER_REFRIGERATORS)
                 .checkProductCardsArePresent()
                 .openProductCard(1)
-                .checkCardName(REFRIGERATOR);
+                .checkCardName(REFRIGERATOR)
+                .closeAdBanner();
 
         searchResultPage
                 .clickBreadcrumb(DOUBLE_CHAMBER_REFRIGERATORS)
