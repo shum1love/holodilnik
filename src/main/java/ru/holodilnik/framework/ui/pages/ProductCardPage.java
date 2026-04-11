@@ -4,9 +4,6 @@ import com.codeborne.selenide.SelenideElement;
 import io.qameta.allure.Step;
 import ru.holodilnik.framework.ui.locators.ProductCardLocators;
 
-import static com.codeborne.selenide.Condition.text;
-import static com.codeborne.selenide.Condition.visible;
-
 /**
  * Класс описывающий страницу "Страница товара".
  */
@@ -35,7 +32,6 @@ public final class ProductCardPage extends BasePage<ProductCardPage> {
         ProductCardLocators.productTitle().shouldBeVisible();
         ProductCardLocators.productRating().shouldBeVisible();
         ProductCardLocators.productReviews().shouldBeVisible();
-        //ProductCardLocators.productCode().shouldBeVisible();
         ProductCardLocators.productPhoto().shouldBeVisible();
         ProductCardLocators.productPrice().shouldBeVisible();
         ProductCardLocators.addToCartButton().shouldBeEnabled();
@@ -119,10 +115,7 @@ public final class ProductCardPage extends BasePage<ProductCardPage> {
     }
 
     @Step("Закрыть рекламный банер, если он отображается")
-    public ProductCardPage closeAdBannerIfDisplayed(){
-        if (ProductCardLocators.advertisingBanner().getSelenideElement().isDisplayed()){
-            ProductCardLocators.advertisingBannerCloseButton().click();
-        }
+    public ProductCardPage closeAdBanner(){
         ProductCardLocators.advertisingBannerCloseButton().click();
         return this;
     }
