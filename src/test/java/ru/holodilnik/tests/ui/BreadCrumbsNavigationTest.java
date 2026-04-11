@@ -4,7 +4,9 @@ import io.qameta.allure.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import ru.holodilnik.framework.ui.pages.CatalogueMenuPage;
 import ru.holodilnik.framework.ui.pages.MainPage;
+import ru.holodilnik.framework.ui.pages.SearchResultsPage;
 
 @Epic("Каталог")
 @Feature("Навигация по каталогу")
@@ -18,7 +20,10 @@ public class BreadCrumbsNavigationTest {
     private static final String REFRIGERATOR = "Двухкамерный холодильник";
     private static final String REFRIGERATOR_TITLE = "Холодильники и морозильники";
     private static final String DOUBLE_CHAMBER_REFRIGERATORS = "Двухкамерные холодильники";
+
     private static final MainPage main = new MainPage();
+    private static final SearchResultsPage searchResultPage = new SearchResultsPage();
+    private static final CatalogueMenuPage catalogueMenuPage= new CatalogueMenuPage();
 
     @Test
     @DisplayName("Пользователь может найти найти товар и добавить его в Избранное")
@@ -34,6 +39,16 @@ public class BreadCrumbsNavigationTest {
                 .checkProductCardsArePresent()
                 .openProductCard(1)
                 .checkCardName(REFRIGERATOR);
-                ;
+
+        searchResultPage
+                .clickBreadcrumb(DOUBLE_CHAMBER_REFRIGERATORS)
+                .checkProductCardsArePresent()
+                .clickBreadcrumb(REFRIGERATOR_TITLE);
+
+        catalogueMenuPage.checkTitle(REFRIGERATOR_TITLE);
+
+        searchResultPage.clickBreadcrumb("Главная");
+
+        main.checkMainElements();
     }
 }

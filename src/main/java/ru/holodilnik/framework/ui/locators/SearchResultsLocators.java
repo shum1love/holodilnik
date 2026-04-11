@@ -70,6 +70,10 @@ public final class SearchResultsLocators {
 
     public static UiElementsCollection sortingFilterParameters(){return uis("Параметры в фильтре сортировки", $$("div[aria-labelledby='dropdownItemSorting'] > a"));}
 
+    public static UiElementsCollection breadcrumbItems() {
+        return uis("Хлебные крошки", $$("li.swiper-slide.breadcrumb-item span"));
+    }
+
     public static UiElementsCollection productCards() {
         return uis("Карточки товаров", $$(".goods-tile.preview-product"));
     }

@@ -1,5 +1,6 @@
 package ru.holodilnik.framework.ui.pages;
 
+import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.SelenideElement;
 import io.qameta.allure.Step;
 import ru.holodilnik.framework.ui.enums.FilterParameters;
@@ -83,6 +84,15 @@ public final class SearchResultsPage extends BasePage<SearchResultsPage> {
     @Step("Проверить, что отображается надпись 'не найдено'")
     public void checkNothingWasFound() {
         SearchResultsLocators.nothingWasFound().shouldContainText("не найдено");
+    }
+
+    @Step("Кликнуть по хлебной крошке с текстом '{breadcrumbText}'")
+    public SearchResultsPage clickBreadcrumb(final String breadcrumbText) {
+        SearchResultsLocators.breadcrumbItems()
+                .findBy(Condition.text(breadcrumbText))
+                .shouldBeVisible()
+                .click();
+        return this;
     }
 
     @Step("Проверить, что отображается несколько карточек товаров")
