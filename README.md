@@ -239,6 +239,27 @@ mvn allure:serve
 
 ---
 
+## 🔎 IntelliJ IDEA: строгий профиль инспекций
+
+Для проекта добавлен готовый профиль инспекций:
+
+`config/intellij/holodilnik-strict-inspections.xml`
+
+Он настроен максимально строго для автоматизации тестирования и, в частности, включает обязательные предупреждения по `final`:
+
+* `LocalCanBeFinal` — подсвечивает локальные переменные, которые должны быть `final`
+* `FieldMayBeFinal` — подсвечивает поля, которые должны быть `final`
+
+### Как подключить профиль
+
+1. Откройте **Settings / Preferences → Editor → Inspections**.
+2. Нажмите на шестерёнку рядом с профилями.
+3. Выберите **Import Profile...**.
+4. Укажите файл `config/intellij/holodilnik-strict-inspections.xml`.
+5. Активируйте профиль **Holodilnik Strict QA**.
+
+---
+
 ## 🤖 CI / Jenkins
 
 Фреймворк полностью готов к CI «из коробки»:
