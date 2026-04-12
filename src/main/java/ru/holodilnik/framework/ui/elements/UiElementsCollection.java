@@ -11,19 +11,20 @@ import static com.codeborne.selenide.Condition.visible;
 /**
  * Обёртка над ElementsCollection с удобными шагами и типобезопасными операциями.
  */
+@SuppressWarnings({"UnusedReturnValue", "unused"})
 public class UiElementsCollection {
 
     private final ElementsCollection elements;
     private final String name;
 
-    public UiElementsCollection(String name, ElementsCollection elements) {
+    public UiElementsCollection(final String name, final ElementsCollection elements) {
         this.name = name;
         this.elements = elements;
     }
 
     @Step("{name} → проверяем условия коллекции")
-    public UiElementsCollection shouldHave(WebElementsCondition... conditions) {
-        for (WebElementsCondition condition : conditions) {
+    public UiElementsCollection shouldHave(final WebElementsCondition... conditions) {
+        for (final WebElementsCondition condition : conditions) {
             elements.shouldHave(condition);
         }
         return this;
@@ -36,8 +37,8 @@ public class UiElementsCollection {
     }
 
     @Step("{name} → все элементы, кроме последних {countToSkip}, видимы")
-    public UiElementsCollection shouldBeVisibleExceptLast(int countToSkip) {
-        int size = elements.size();
+    public UiElementsCollection shouldBeVisibleExceptLast(final int countToSkip) {
+        final int size = elements.size();
 
         for (int i = 0; i < size - countToSkip; i++) {
             elements.get(i).shouldBe(visible);
@@ -53,12 +54,12 @@ public class UiElementsCollection {
     }
 
     @Step("{name} → ищем элемент по условию")
-    public UiElement findBy(WebElementCondition condition) {
+    public UiElement findBy(final WebElementCondition condition) {
         return new UiElement(name + " (found)", elements.findBy(condition));
     }
 
     @Step("{name} → берём элемент с индексом {index}")
-    public UiElement get(int index) {
+    public UiElement get(final int index) {
         return new UiElement(name + "[" + index + "]", elements.get(index));
     }
 
@@ -69,8 +70,8 @@ public class UiElementsCollection {
     }
 
     @Step("{name} → берём первые {count} элементов")
-    public UiElementsCollection first(int count) {
-        int actualSize = elements.size();
+    public UiElementsCollection first(final int count) {
+        final int actualSize = elements.size();
 
         if (actualSize < count) {
             throw new AssertionError(
