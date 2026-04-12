@@ -19,6 +19,7 @@ import static com.codeborne.selenide.Selenide.screenshot;
 /**
  * Обёртка над SelenideElement с шагами в Allure
  */
+@SuppressWarnings({"UnusedReturnValue", "unused"})
 public class UiElement {
 
     private static final Logger log = LoggerFactory.getLogger(UiElement.class);
@@ -28,12 +29,10 @@ public class UiElement {
     private final SelenideElement element;
     private final String name;
 
-    public UiElement(String name, SelenideElement element) {
+    public UiElement(final String name, final SelenideElement element) {
         this.name = name;
         this.element = element;
     }
-
-    // ─── Действия ──────────────────────────────────────────────────────
 
     @Step("{name} → кликаем")
     public UiElement click() {
@@ -47,14 +46,14 @@ public class UiElement {
         return this;
     }
 
-    @Step("{text} → вводим '{text}'")
-    public UiElement type(String text) {
+    @Step("{name} → вводим '{text}'")
+    public UiElement type(final String text) {
         performAction(() -> element.shouldBe(visible, Condition.enabled).setValue(text), "ввод: " + text);
         return this;
     }
 
     @Step("очищаем и вводим '{text}'")
-    public UiElement clearAndType(String text) {
+    public UiElement clearAndType(final String text) {
         performAction(() -> {
             element.shouldBe(visible, Condition.enabled).clear();
             element.setValue(text);
@@ -68,8 +67,6 @@ public class UiElement {
         return this;
     }
 
-    // ─── Проверки ──────────────────────────────────────────────────────
-
     public UiElement shouldBeVisible() {
         element.shouldBe(visible);
         return this;
@@ -80,27 +77,27 @@ public class UiElement {
         return this;
     }
 
-    public UiElement shouldHaveExactText(String expected) {
+    public UiElement shouldHaveExactText(final String expected) {
         element.shouldHave(Condition.exactText(expected));
         return this;
     }
 
-    public UiElement shouldContainText(String substring) {
+    public UiElement shouldContainText(final String substring) {
         element.shouldHave(Condition.text(substring));
         return this;
     }
 
-    public UiElement shouldHaveValue(String expected) {
+    public UiElement shouldHaveValue(final String expected) {
         element.shouldHave(Condition.value(expected));
         return this;
     }
 
-    public UiElement shouldHaveClass(String className) {
+    public UiElement shouldHaveClass(final String className) {
         element.shouldHave(Condition.cssClass(className));
         return this;
     }
 
-    public UiElement shouldHaveAttribute(String attr, String value) {
+    public UiElement shouldHaveAttribute(final String attr, final String value) {
         element.shouldHave(Condition.attribute(attr, value));
         return this;
     }
@@ -114,8 +111,6 @@ public class UiElement {
         element.shouldBe(Condition.disabled);
         return this;
     }
-
-    // ─── Утилиты ───────────────────────────────────────────────────────
 
     public UiElement scrollTo() {
         element.scrollTo();
@@ -135,9 +130,7 @@ public class UiElement {
         return element.shouldBe(visible).getText();
     }
 
-    // ─── Внутренняя логика ─────────────────────────────────────────────
-
-    private void performAction(Runnable action, String actionDesc) {
+    private void performAction(final Runnable action, final String actionDesc) {
         log.debug("{} → {}", name, actionDesc);
 
         if (HIGHLIGHT_ENABLED) highlight();
@@ -148,7 +141,7 @@ public class UiElement {
                 action.run();
                 if (HIGHLIGHT_ENABLED) unhighlight();
                 return;
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 lastError = e;
                 if (attempt < ACTION_RETRY_COUNT && shouldRetry(e)) {
                     log.warn("Попытка {}: {} → {} → {}", attempt, name, actionDesc, e.getClass().getSimpleName());
@@ -156,13 +149,13 @@ public class UiElement {
                     element.shouldBe(visible, Duration.ofMillis(400));
                 } else {
                     handleFailure(actionDesc, e);
-                    throw new RuntimeException("Не удалось выполнить: " + actionDesc, lastError);
+                    throw new IllegalStateException("Не удалось выполнить действие: " + actionDesc, lastError);
                 }
             }
         }
     }
 
-    private boolean shouldRetry(Exception e) {
+    private static boolean shouldRetry(final Exception e) {
         return e instanceof org.openqa.selenium.StaleElementReferenceException ||
                 e instanceof org.openqa.selenium.ElementClickInterceptedException ||
                 e instanceof org.openqa.selenium.ElementNotInteractableException;
@@ -186,10 +179,10 @@ public class UiElement {
         );
     }
 
-    private void handleFailure(String actionDesc, Exception e) {
-        String currentUrl = WebDriverRunner.getWebDriver().getCurrentUrl();
-        String selector = element.getSearchCriteria();
-        String elementText = element.getText().trim();
+    private void handleFailure(final String actionDesc, final Exception e) {
+        final String currentUrl = safeCurrentUrl();
+        final String selector = safeSearchCriteria();
+        String elementText = safeElementText();
         if (elementText.length() > 100) elementText = elementText.substring(0, 100) + "...";
 
         log.error("""
@@ -201,14 +194,38 @@ public class UiElement {
 
         if (SCREENSHOT_ON_FAIL) {
             try {
-                byte[] bytes = screenshot(OutputType.BYTES);
+                final byte[] bytes = screenshot(OutputType.BYTES);
                 Allure.addAttachment(
                         "FAIL: " + name + " → " + actionDesc,
                         new ByteArrayInputStream(bytes)
                 );
-            } catch (Exception ex) {
+            } catch (final Exception ex) {
                 log.warn("Не удалось прикрепить скриншот", ex);
             }
+        }
+    }
+
+    private static String safeCurrentUrl() {
+        try {
+            return WebDriverRunner.getWebDriver().getCurrentUrl();
+        } catch (final Exception ex) {
+            return "<URL недоступен>";
+        }
+    }
+
+    private String safeSearchCriteria() {
+        try {
+            return element.getSearchCriteria();
+        } catch (final Exception ex) {
+            return "<селектор недоступен>";
+        }
+    }
+
+    private String safeElementText() {
+        try {
+            return element.getText().trim();
+        } catch (final Exception ex) {
+            return "<текст недоступен>";
         }
     }
 }
