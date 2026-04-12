@@ -11,6 +11,7 @@ import ru.holodilnik.tests.base.actions.ActionPage;
 import static com.codeborne.selenide.Selenide.closeWebDriver;
 
 public abstract class BaseTest implements ActionPage {
+    private static boolean allureListenerRegistered;
 
     @BeforeAll
     static void setup() {
@@ -18,12 +19,14 @@ public abstract class BaseTest implements ActionPage {
         Configuration.timeout = 12000;
         Configuration.pageLoadTimeout = 30000;
 
-        SelenideLogger.addListener("allure", new AllureSelenide()
-                .screenshots(true)
-                .savePageSource(true)
-                .includeSelenideSteps(false));
+        if (!allureListenerRegistered) {
+            SelenideLogger.addListener("allure", new AllureSelenide()
+                    .screenshots(true)
+                    .savePageSource(true)
+                    .includeSelenideSteps(false));
+            allureListenerRegistered = true;
+        }
     }
-
 
     @AfterEach
     void closeBrowser() {
