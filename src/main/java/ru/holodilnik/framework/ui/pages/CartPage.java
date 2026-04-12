@@ -59,7 +59,7 @@ public class CartPage extends BasePage<CartPage> {
 
     @Step("Получить итоговую цену товара")
     public int getSummaryCost() {
-        String text = ShoppingCartLocators.totalSummeryCosts()
+        final String text = ShoppingCartLocators.totalSummeryCosts()
                 .getText()
                 .replaceAll("[^0-9]", "");
 

@@ -16,7 +16,7 @@ public abstract class BasePage<T extends BasePage<T>> {
 
     private final String url;
 
-    protected BasePage(String relativePath) {
+    protected BasePage(final String relativePath) {
         this.url = getBaseUrl() + relativePath;
     }
 
@@ -67,7 +67,7 @@ public abstract class BasePage<T extends BasePage<T>> {
      * Проверка url.
      */
     @SuppressWarnings("unchecked")
-    public T shouldHaveUrl(String expected) {
+    public T shouldHaveUrl(final String expected) {
         webdriver().shouldHave(WebDriverConditions.url(expected));
         return (T) this;
     }

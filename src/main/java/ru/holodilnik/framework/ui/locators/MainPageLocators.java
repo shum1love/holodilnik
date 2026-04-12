@@ -33,11 +33,11 @@ public final class MainPageLocators {
         return uis("Элементы футера", $$("a[data-ga-event-category='FooterClick']"));
     }
 
-    private static UiElement ui(String name, SelenideElement element) {
+    private static UiElement ui(final String name, final SelenideElement element) {
         return new UiElement(name, element);
     }
 
-    private static UiElementsCollection uis(String name, ElementsCollection elements) {
+    private static UiElementsCollection uis(final String name, final ElementsCollection elements) {
         return new UiElementsCollection(name, elements);
     }
 

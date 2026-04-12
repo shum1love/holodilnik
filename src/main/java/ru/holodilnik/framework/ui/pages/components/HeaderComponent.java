@@ -27,7 +27,7 @@ public class HeaderComponent {
     private final UiElement cartCount;
     private final UiElement favoriteListCount;
 
-    public HeaderComponent(SelenideElement container) {
+    public HeaderComponent(final SelenideElement container) {
         this.self = new UiElement("Шапка сайта", container);
 
         this.logo = new UiElement("Логотип", container.$(".site-header__logo"));

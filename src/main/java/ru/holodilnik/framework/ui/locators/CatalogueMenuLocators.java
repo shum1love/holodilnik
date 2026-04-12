@@ -43,11 +43,11 @@ public class CatalogueMenuLocators {
         return uis("Категории каталога", $$("div.categories__item-list"));
     }
 
-    private static UiElement ui(String name, SelenideElement element) {
+    private static UiElement ui(final String name, final SelenideElement element) {
         return new UiElement(name, element);
     }
 
-    private static UiElementsCollection uis(String name, ElementsCollection elements) {
+    private static UiElementsCollection uis(final String name, final ElementsCollection elements) {
         return new UiElementsCollection(name, elements);
     }
 

@@ -27,7 +27,7 @@ public class ChangeQuantityCardTest extends BaseTest {
     @Test
     @DisplayName("Пользователь может изменить количество товара в корзине")
     public void shouldChangeProductQuantityInCart() {
-        int firstTotalPrice;
+        final int firstTotalPrice;
 
         main
                 .open()

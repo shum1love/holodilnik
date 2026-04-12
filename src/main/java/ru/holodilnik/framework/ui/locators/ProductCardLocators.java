@@ -59,7 +59,7 @@ public final class ProductCardLocators {
     }
 
     // ─── Helper methods ─────────────────────────────────
-    private static UiElement ui(String name, SelenideElement element) {
+    private static UiElement ui(final String name, final SelenideElement element) {
         return new UiElement(name, element);
     }
 
