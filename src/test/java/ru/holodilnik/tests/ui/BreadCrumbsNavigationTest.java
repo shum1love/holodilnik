@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import ru.holodilnik.framework.ui.pages.CatalogueMenuPage;
 import ru.holodilnik.framework.ui.pages.MainPage;
 import ru.holodilnik.framework.ui.pages.SearchResultsPage;
+import ru.holodilnik.tests.base.BaseTest;
 
 @Epic("Каталог")
 @Feature("Навигация по каталогу")
@@ -16,17 +17,17 @@ import ru.holodilnik.framework.ui.pages.SearchResultsPage;
 @Tag("UI")
 @Tag("smoke")
 @Tag("Catalog")
-public class BreadCrumbsNavigationTest {
+public class BreadCrumbsNavigationTest extends BaseTest {
     private static final String REFRIGERATOR = "Двухкамерный холодильник";
     private static final String REFRIGERATOR_TITLE = "Холодильники и морозильники";
     private static final String DOUBLE_CHAMBER_REFRIGERATORS = "Двухкамерные холодильники";
 
     private static final MainPage main = new MainPage();
     private static final SearchResultsPage searchResultPage = new SearchResultsPage();
-    private static final CatalogueMenuPage catalogueMenuPage= new CatalogueMenuPage();
+    private static final CatalogueMenuPage catalogueMenuPage = new CatalogueMenuPage();
 
     @Test
-    @DisplayName("Пользователь может найти найти товар и добавить его в Избранное")
+    @DisplayName("Пользователь может перемещаться по хлебным крошкам каталога")
     public void addToFavoritesTest() {
         main
                 .open()

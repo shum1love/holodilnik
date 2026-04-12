@@ -20,7 +20,7 @@ public class AddToCartTest extends BaseTest {
     private static final MainPage main = new MainPage();
 
     @Test
-    @DisplayName("Пользователь может найти найти товар и добавить его в корзину")
+    @DisplayName("Пользователь может найти товар и добавить его в корзину")
     public void addToCartTest() {
         main
                 .open()

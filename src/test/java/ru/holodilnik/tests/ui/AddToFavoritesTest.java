@@ -21,7 +21,7 @@ public class AddToFavoritesTest extends BaseTest {
     private final MainPage main = new MainPage();
 
     @Test
-    @DisplayName("Пользователь может найти найти товар и добавить его в Избранное")
+    @DisplayName("Пользователь может найти товар и добавить его в Избранное")
     public void addToFavoritesTest() {
         main
                 .open()
