@@ -4,7 +4,6 @@ import io.qameta.allure.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import ru.holodilnik.framework.ui.pages.FavoriteList;
 import ru.holodilnik.framework.ui.pages.MainPage;
 import ru.holodilnik.framework.ui.pages.SearchResultsPage;
 import ru.holodilnik.tests.base.BaseTest;
@@ -22,7 +21,6 @@ public class RemoveFromFavoritesTest extends BaseTest {
 
     private final MainPage main = new MainPage();
     private final SearchResultsPage searchResultsPage = new SearchResultsPage();
-    private final FavoriteList favoriteList = new FavoriteList();
 
     @Test
     @DisplayName("Пользователь может удалить товар из раздела Избранное")
@@ -36,9 +34,7 @@ public class RemoveFromFavoritesTest extends BaseTest {
                 .favoriteListCountShouldBe(1)
                 .goToFavoriteList()
                 .checkProductNameInCard(REFRIGERATOR)
-                .removeProductFromFavorites();
-
-        favoriteList
+                .removeProductFromFavorites()
                 .closeBannerAdvertising()
                 .checkEmptyFavoriteList();
 
