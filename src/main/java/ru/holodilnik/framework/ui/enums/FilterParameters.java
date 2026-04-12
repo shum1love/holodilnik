@@ -10,7 +10,7 @@ public enum FilterParameters {
 
     private final String displayName;
 
-    FilterParameters(String displayName) {
+    FilterParameters(final String displayName) {
         this.displayName = displayName;
     }
 

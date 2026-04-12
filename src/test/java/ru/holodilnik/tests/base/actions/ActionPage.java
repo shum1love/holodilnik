@@ -10,6 +10,7 @@ import static com.codeborne.selenide.WebDriverRunner.getWebDriver;
 /**
  * Интерфейс с обёртками над типовыми browser-actions Selenide.
  */
+@SuppressWarnings({"UnusedReturnValue", "unused"})
 public interface ActionPage {
 
     @Step("Обновить текущую страницу")
@@ -28,14 +29,14 @@ public interface ActionPage {
     }
 
     @Step("Открыть новую вкладку: {url}")
-    default void openNewTab(String url) {
+    default void openNewTab(final String url) {
         Selenide.executeJavaScript("window.open(arguments[0], '_blank');", url);
         switchToLastTab();
     }
 
     @Step("Переключиться на вкладку с индексом {index}")
-    default void switchToTab(int index) {
-        var handles = new ArrayList<>(getWebDriver().getWindowHandles());
+    default void switchToTab(final int index) {
+        final var handles = new ArrayList<>(getWebDriver().getWindowHandles());
         if (index < 0 || index >= handles.size()) {
             throw new IllegalArgumentException("Некорректный индекс вкладки: " + index + ", вкладок всего: " + handles.size());
         }
@@ -44,7 +45,7 @@ public interface ActionPage {
 
     @Step("Переключиться на последнюю вкладку")
     default void switchToLastTab() {
-        var handles = new ArrayList<>(getWebDriver().getWindowHandles());
+        final var handles = new ArrayList<>(getWebDriver().getWindowHandles());
         getWebDriver().switchTo().window(handles.get(handles.size() - 1));
     }
 
