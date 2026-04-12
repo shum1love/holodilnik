@@ -135,7 +135,7 @@ public class UiElement {
 
         if (HIGHLIGHT_ENABLED) highlight();
 
-        Exception lastError = null;
+        Exception lastError;
         for (int attempt = 1; attempt <= ACTION_RETRY_COUNT; attempt++) {
             try {
                 action.run();
@@ -195,10 +195,12 @@ public class UiElement {
         if (SCREENSHOT_ON_FAIL) {
             try {
                 final byte[] bytes = screenshot(OutputType.BYTES);
-                Allure.addAttachment(
-                        "FAIL: " + name + " → " + actionDesc,
-                        new ByteArrayInputStream(bytes)
-                );
+                if (bytes != null) {
+                    Allure.addAttachment(
+                            "FAIL: " + name + " → " + actionDesc,
+                            new ByteArrayInputStream(bytes)
+                    );
+                }
             } catch (final Exception ex) {
                 log.warn("Не удалось прикрепить скриншот", ex);
             }
