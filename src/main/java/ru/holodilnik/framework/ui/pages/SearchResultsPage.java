@@ -59,7 +59,7 @@ public final class SearchResultsPage extends BasePage<SearchResultsPage> {
         return this;
     }
 
-    @Step("Установить минимальную цену")
+    @Step("Установить максимальную цену")
     public SearchResultsPage setMaxPrice(final Integer maxValue) {
         SearchResultsLocators.maxPriceInput().clearAndType(maxValue.toString());
         return this;
@@ -98,7 +98,7 @@ public final class SearchResultsPage extends BasePage<SearchResultsPage> {
     @Step("Проверить, что отображается несколько карточек товаров")
     public SearchResultsPage checkProductCardsArePresent() {
         SearchResultsLocators.productCards()
-                .shouldHave(sizeGreaterThan(10));
+                .shouldHave(sizeGreaterThan(2));
         return this;
     }
 

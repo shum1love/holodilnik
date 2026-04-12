@@ -21,8 +21,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class ChangeQuantityCardTest extends BaseTest {
     private static final String REFRIGERATOR = "Двухкамерный холодильник";
 
-    private static final MainPage main = new MainPage();
-    private static final CartPage cardPage = new CartPage();
+    private final MainPage main = new MainPage();
+    private final CartPage cardPage = new CartPage();
 
     @Test
     @DisplayName("Пользователь может изменить количество товара в корзине")

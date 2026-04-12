@@ -20,7 +20,7 @@ public class CatalogNavigationTest extends BaseTest {
     private static final String REFRIGERATOR_TITLE = "Холодильники и морозильники";
     private static final String DOUBLE_CHAMBER_REFRIGERATORS = "Двухкамерные холодильники";
 
-    private static final MainPage main = new MainPage();
+    private final MainPage main = new MainPage();
 
 
     @Test

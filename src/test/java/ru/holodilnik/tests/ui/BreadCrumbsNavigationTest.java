@@ -22,13 +22,13 @@ public class BreadCrumbsNavigationTest extends BaseTest {
     private static final String REFRIGERATOR_TITLE = "Холодильники и морозильники";
     private static final String DOUBLE_CHAMBER_REFRIGERATORS = "Двухкамерные холодильники";
 
-    private static final MainPage main = new MainPage();
-    private static final SearchResultsPage searchResultPage = new SearchResultsPage();
-    private static final CatalogueMenuPage catalogueMenuPage = new CatalogueMenuPage();
+    private final MainPage main = new MainPage();
+    private final SearchResultsPage searchResultPage = new SearchResultsPage();
+    private final CatalogueMenuPage catalogueMenuPage = new CatalogueMenuPage();
 
     @Test
     @DisplayName("Пользователь может перемещаться по хлебным крошкам каталога")
-    public void addToFavoritesTest() {
+    public void breadCrumbsNavigationTest() {
         main
                 .open()
                 .checkHeaderVisible()

@@ -16,7 +16,7 @@ import ru.holodilnik.tests.base.BaseTest;
 @Tag("smoke")
 @Tag("Main")
 public class OpenMainPageTest extends BaseTest {
-    private static final MainPage main = new MainPage();
+    private final MainPage main = new MainPage();
 
     @Test
     @DisplayName("Пользователь может открыть главную страницу")

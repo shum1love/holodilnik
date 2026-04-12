@@ -16,7 +16,7 @@ import ru.holodilnik.tests.base.BaseTest;
 @Tag("smoke")
 @Tag("Search")
 public class EmptySearchResultTest extends BaseTest {
-    private static final MainPage main = new MainPage();
+    private final MainPage main = new MainPage();
 
     @Test
     @DisplayName("Пользователь видит запись 'не найдено' при неудачном поиске")

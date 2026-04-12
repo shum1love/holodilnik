@@ -16,7 +16,7 @@ import ru.holodilnik.tests.base.BaseTest;
 @Tag("smoke")
 @Tag("Banner")
 public class BannerTest extends BaseTest {
-    private static final MainPage main = new MainPage();
+    private final MainPage main = new MainPage();
 
     @Test
     @DisplayName("Пользователь видит главный баннер на главной странице")

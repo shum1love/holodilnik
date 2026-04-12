@@ -66,9 +66,13 @@ public final class SearchResultsLocators {
         return ui("Очистить фильтры", $("a[id='cfilter_btnclear']"));
     }
 
-    public static UiElement sortingFilterDropdown(){return ui("Фильтр сортировки", $("button#dropdownItemSorting"));}
+    public static UiElement sortingFilterDropdown() {
+        return ui("Фильтр сортировки", $("button#dropdownItemSorting"));
+    }
 
-    public static UiElementsCollection sortingFilterParameters(){return uis("Параметры в фильтре сортировки", $$("div[aria-labelledby='dropdownItemSorting'] > a"));}
+    public static UiElementsCollection sortingFilterParameters() {
+        return uis("Параметры в фильтре сортировки", $$("div[aria-labelledby='dropdownItemSorting'] > a"));
+    }
 
     public static UiElementsCollection breadcrumbItems() {
         return uis("Хлебные крошки", $$("li.swiper-slide.breadcrumb-item span"));

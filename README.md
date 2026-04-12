@@ -1,291 +1,164 @@
-# 🧊 Holodilnik.ru — Фреймворк автоматизированного тестирования
+# Holodilnik UI Automation Framework
 
-> **Best‑in‑class фреймворк автоматизации тестирования на базе Selenide**
->
-> Создан для долгосрочной поддержки, тестов с высоким сигналом и enterprise‑уровня CI/CD.
+Надежный UI-автофреймворк для [holodilnik.ru](https://www.holodilnik.ru) на `Java + Selenide + JUnit 5 + Allure`.
 
----
+Проект рассчитан на долгосрочную поддержку: читаемые Page Object'ы, стабильные селекторы, воспроизводимый запуск в Docker/Selenoid и готовый Jenkins pipeline.
 
-## 🎯 Назначение
+## Содержание
 
-Данный репозиторий содержит **production‑ready фреймворк автоматизации** для **UI, API и интеграционного тестирования**.
+- [Технологический стек](#технологический-стек)
+- [Архитектура](#архитектура)
+- [Структура репозитория](#структура-репозитория)
+- [Быстрый старт](#быстрый-старт)
+- [Запуск тестов](#запуск-тестов)
+- [Docker + Selenoid](#docker--selenoid)
+- [Jenkins CI](#jenkins-ci)
+- [Allure отчеты](#allure-отчеты)
+- [Рекомендации по развитию](#рекомендации-по-развитию)
 
-Основная цель фреймворка — **не писать тесты быстрее**, а:
+## Технологический стек
 
-> **делать тесты читаемыми, стабильными и дешёвыми в поддержке на протяжении многих лет**.
+- Java 17
+- Maven 3
+- Selenide
+- JUnit 5
+- Allure
+- Jenkins
+- Selenoid (удаленный Selenium WebDriver)
 
-Фреймворк спроектирован так же, как внутренние QA‑фреймворки в крупных технологических компаниях.
+## Архитектура
 
----
+Ключевая идея: тест описывает бизнес-поведение, а детали UI-реализации инкапсулированы в Page Object слоях.
 
-## 🧠 Философия дизайна
-
-**Ключевые идеи, на которых построен фреймворк:**
-
-* Selenide — основной UI‑движок, без Selenium‑бойлерплейта
-* Тесты описывают *бизнес‑поведение*, а не реализацию
-* Конфигурация хранится в properties, а не в коде
-* Код фреймворка изолирован от тестового кода
-* Минимум магии, явное поведение
-* Масштабируемость важнее «хитрости»
-
-> Если задачу можно решить конфигурацией — её нельзя решать кодом.
-
----
-
-## 🧰 Технологический стек
-
-| Область            | Технология        |
-| ------------------ | ----------------- |
-| Язык               | Java 17           |
-| Сборка             | Maven             |
-| UI                 | Selenide          |
-| API                | RestAssured       |
-| Test Runner        | JUnit 5           |
-| Отчёты             | Allure            |
-| Удалённый запуск   | Selenoid          |
-| CI/CD              | Jenkins           |
-| Логирование        | SLF4J + Logback   |
-
----
-
-## 🏗 Архитектура высокого уровня
-
-```
+```text
 Tests
-  ↓
-Pages / API Clients
-  ↓
-Framework Core
-  ↓
-Selenide / RestAssured / Infrastructure
+  -> Pages / Components
+    -> Locators / Elements wrappers
+      -> Selenide / Remote WebDriver (Selenoid)
 ```
 
-### Разделение ответственности
+Что это дает:
 
-* **Framework** — как работают тесты
-* **Tests** — что именно тестируется
-* **Pages / Clients** — как происходит доступ к системе
+- меньше дублирования в тестах;
+- проще поддерживать локаторы;
+- легче масштабировать набор сценариев;
+- понятный вход для новых участников команды.
 
-Тесты никогда не:
+## Структура репозитория
 
-* работают с WebDriver напрямую
-* управляют ожиданиями
-* содержат логику окружений
+```text
+src/main/java/ru/holodilnik/framework
+  core/config       # загрузка конфигураций
+  ui/elements       # обертки над элементами и коллекциями
+  ui/locators       # локаторы страниц/компонентов
+  ui/pages          # Page Object'ы
 
----
+src/test/java/ru/holodilnik/tests
+  base              # базовая тестовая инфраструктура
+  ui                # UI-сценарии
 
-## 📁 Структура проекта
+src/test/resources
+  config.properties
+  selenide.properties
+  junit-platform.properties
+  allure.properties
 
-```
-project-root
-├── src
-│   ├── main
-│   │   └── java
-│   │       └── ru/holodilnik/framework
-│   │           ├── core
-│   │           │   └── config        # Загрузка конфигураций и окружений
-│   │           │
-│   │           ├── ui
-│   │           │   ├── pages
-│   │           │   │   ├── BasePage  # Общие Selenide‑действия
-│   │           │   │   ├── components# Переиспользуемые UI‑блоки
-│   │           │   │   ├── locators  # Локаторы страниц
-│   │           │   │   └── *Page     # Конкретные страницы
-│   │           │   └── elements      # Кастомные Selenide‑элементы (опционально)
-│   │           │
-│   │           ├── api
-│   │           │   ├── clients       # RestAssured‑клиенты
-│   │           │   ├── models        # DTO / POJO
-│   │           │   └── utils
-│   │           │
-│   │           └── common
-│   │               ├── models        # Общие доменные модели
-│   │               └── enums
-│   │
-│   └── test
-│       ├── java
-│       │   └── ru/holodilnik/tests
-│       │       ├── base              # Базовая тестовая инфраструктура
-│       │       ├── ui                # UI‑тесты
-│       │       ├── api               # API‑тесты
-│       │       └── integration       # End‑to‑end сценарии
-│       │
-│       └── resources
-│           ├── selenide.properties   # Конфигурация Selenide
-│           ├── config.properties     # Окружения и base URL
-│           ├── allure.properties     # Конфигурация Allure
-│           ├── logback-test.xml      # Логирование для тестов
-│           └── testdata              # Тестовые данные и файлы
-│
-├── pom.xml
-├── docker-compose.yml                # Опционально: локальный Selenoid
-├── README.md
-└── .gitignore
+selenoid/
+  browsers.json     # конфигурация браузеров для Selenoid
+
+Jenkinsfile*        # pipeline сценарии
 ```
 
----
+## Быстрый старт
 
-## ⚙ Конфигурация
+Требования:
 
-### `selenide.properties`
+- JDK 17
+- Maven 3.9+
+- Docker Desktop (Linux containers)
 
-Selenide загружает этот файл автоматически.
-
-```properties
-browser=chrome
-browserSize=1920x1080
-headless=false
-timeout=10000
-remote=http://localhost:4444/wd/hub
-```
-
----
-
-### `config.properties`
-
-Конфигурация, зависящая от окружения.
-
-```properties
-env=stage
-baseUrl=https://www.holodilnik.ru
-```
-
----
-
-## ▶ Запуск тестов
-
-### Запуск всех тестов
+Локальная проверка проекта:
 
 ```bash
 mvn clean test
 ```
 
-### Запуск только UI‑тестов
+Smoke-запуск по тегу:
 
 ```bash
-mvn clean test -Dgroups=ui
+mvn clean test -Djunit.jupiter.tags=smoke
 ```
 
-### Запуск с удалённым Selenoid
+## Запуск тестов
+
+Примеры команд:
+
+- Полный запуск: `mvn clean test`
+- Только smoke: `mvn clean test -Djunit.jupiter.tags=smoke`
+- Конкретный класс: `mvn clean test -Dtest=ru.holodilnik.tests.ui.SearchTest`
+
+## Docker + Selenoid
+
+1. Поднять Selenoid и UI:
 
 ```bash
-mvn clean test -Dselenide.remote=http://selenoid:4444/wd/hub
+docker compose up -d selenoid selenoid-ui
 ```
 
----
+2. Проверить статус:
 
-## 🤖 Jenkins (локальный запуск и триггеры)
+```bash
+curl http://localhost:4444/status
+```
 
-Готовый пайплайн для Jenkins находится в `Jenkinsfile` (в корне репозитория).
+3. При необходимости подтянуть браузерные образы из `selenoid/browsers.json`:
 
-Пошаговая инструкция по локальному поднятию Jenkins, повторному входу в Jenkins, настройке cron/SCM-trigger и разделению тестов на несколько job: `docs/jenkins-local-setup.md`.
+```bash
+docker pull selenoid/vnc:chrome_128.0
+docker pull selenoid/vnc:firefox_120.0
+```
 
----
+4. Пример запуска тестов через удаленный WebDriver:
 
-## 📊 Allure‑отчёты
+```bash
+mvn clean test -Djunit.jupiter.tags=smoke -Dselenide.remote=http://localhost:4444/wd/hub -Dselenide.browser=chrome -Dselenide.browserVersion=128.0
+```
 
-### Генерация отчёта
+UI Selenoid: [http://localhost:8080](http://localhost:8080)
+
+## Jenkins CI
+
+В репозитории есть 3 сценария pipeline:
+
+- `Jenkinsfile-smoke` — smoke прогон;
+- `Jenkinsfile-regression` — полный прогон;
+- `manual` — ручной запуск выбранного класса (`TEST_CLASS`).
+
+Минимальная настройка Jenkins:
+
+1. Установить плагины `Pipeline`, `Git`, `JUnit`, `Allure Jenkins Plugin`.
+2. Добавить tools с именами `jdk17`, `maven3`, `allure`.
+3. Создать Pipeline job из SCM и указать нужный `Script Path`.
+
+Подробный пошаговый сценарий: [docs/jenkins-local-setup.md](docs/jenkins-local-setup.md)
+
+## Allure отчеты
+
+Локально:
 
 ```bash
 mvn allure:report
-```
-
-### Открытие отчёта
-
-```bash
 mvn allure:serve
 ```
 
----
+В Jenkins отчет публикуется из `target/allure-results`.
 
-## 🧪 Правила написания тестов
+## Рекомендации по развитию
 
-### UI‑тесты
-
-✔ Тесты описывают **поведение пользователя**
-
-✔ Page Object‑ы содержат **только UI‑взаимодействия**
-
-✔ Ассерты находятся в тестах (кроме `isOpened()`)
-
-✖ Никаких `sleep`
-
-✖ Никакого прямого WebDriver
-
-✖ Никакой логики окружений
+- Добавлять новые сценарии через Page Object слой, не смешивая бизнес-логику и детали DOM.
+- Для новых тестов использовать JUnit-теги (`smoke`, `UI`, тематические теги), чтобы удобно собирать наборы в CI.
+- Любые изменения инфраструктуры запуска (Docker/Jenkins/Selenoid) фиксировать в `README` и `docs/` одновременно.
 
 ---
 
-### API‑тесты
-
-✔ Клиенты содержат только логику запросов
-
-✔ Ассерты находятся в тестах
-
-✔ DTO по возможности неизменяемые
-
----
-
-## 🚫 Запрещённые практики
-
-* `Thread.sleep`
-* Прямой доступ к WebDriver
-* Захардкоженные URL или креды
-* Логика внутри Page Object‑ов
-* God‑классы (`Utils`, злоупотребление `BasePage`)
-
-Нарушение этих правил *гарантированно* приведёт к нестабильным тестам.
-
----
-
-## 🔎 IntelliJ IDEA: строгий профиль инспекций
-
-Для проекта добавлен готовый профиль инспекций:
-
-`config/intellij/holodilnik-strict-inspections.xml`
-
-Он настроен максимально строго для автоматизации тестирования и, в частности, включает обязательные предупреждения по `final`:
-
-* `LocalCanBeFinal` — подсвечивает локальные переменные, которые должны быть `final`
-* `FieldMayBeFinal` — подсвечивает поля, которые должны быть `final`
-
-### Как подключить профиль
-
-1. Откройте **Settings / Preferences → Editor → Inspections**.
-2. Нажмите на шестерёнку рядом с профилями.
-3. Выберите **Import Profile...**.
-4. Укажите файл `config/intellij/holodilnik-strict-inspections.xml`.
-5. Активируйте профиль **Holodilnik Strict QA**.
-
----
-
-## 🤖 CI / Jenkins
-
-Фреймворк полностью готов к CI «из коробки»:
-
-* Параллельный запуск через Selenoid
-* Генерация Allure‑отчётов
-* Переключение окружений через properties
-
-Типовые шаги Jenkins:
-
-```bash
-mvn clean test
-mvn allure:report
-```
-
----
-
-## 🏆 В заключение
-
-Этот фреймворк построен вокруг одной идеи:
-
-> **Хорошие тесты — скучные, предсказуемые и дешёвые в поддержке.**
-
-Если следовать правилам, описанным выше,
-фреймворк будет масштабироваться вместе с вашей командой, продуктом и амбициями.
-
----
-
-Приятного тестирования 🚀
+Если хочешь, можно быстро начать с `OpenMainPageTest` и `SearchTest` как базовых smoke-сценариев для проверки среды.

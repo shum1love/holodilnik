@@ -74,7 +74,7 @@ public class CartPage extends BasePage<CartPage> {
     // ─── Helper methods ─────────────────────────────────
 
     public CartPage() {
-        super("https://www.holodilnik.ru/basket/");
+        super("/basket/");
     }
 
     private final HeaderComponent header = new HeaderComponent($("header.site-header, header, .b-header"));

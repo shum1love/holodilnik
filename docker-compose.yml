@@ -11,19 +11,28 @@ services:
       - ./selenoid:/etc/selenoid
       - ./selenoid/video:/opt/selenoid/video
       - ./selenoid/logs:/opt/selenoid/logs
+    networks:
+      - test-net
     shm_size: 3gb
     command: >
       -conf /etc/selenoid/browsers.json
       -video-output-dir /opt/selenoid/video
       -log-output-dir /opt/selenoid/logs
-      -container-network holodilnik_default
+      -container-network holodilnik-test-net
     environment:
       - OVERRIDE_VIDEO_OUTPUT_DIR=${PWD}/selenoid/video
 
   selenoid-ui:
     image: aerokube/selenoid-ui:latest
     container_name: selenoid-ui
-    # УБРАТЬ: network_mode: bridge и links
+    depends_on:
+      - selenoid
+    networks:
+      - test-net
     ports:
       - "8080:8080"
     command: ["--selenoid-uri", "http://selenoid:4444"]
+
+networks:
+  test-net:
+    name: holodilnik-test-net

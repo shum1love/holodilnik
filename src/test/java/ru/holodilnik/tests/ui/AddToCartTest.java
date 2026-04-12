@@ -17,7 +17,7 @@ import ru.holodilnik.tests.base.BaseTest;
 @Tag("Cart")
 public class AddToCartTest extends BaseTest {
     private static final String REFRIGERATOR = "Двухкамерный холодильник";
-    private static final MainPage main = new MainPage();
+    private final MainPage main = new MainPage();
 
     @Test
     @DisplayName("Пользователь может найти товар и добавить его в корзину")

@@ -21,3 +21,5 @@ Thumbs.db
 # Selenide / screenshots / allure
 screenshots/
 allure-results/
+.allure/
+build/

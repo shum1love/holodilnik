@@ -20,7 +20,7 @@ public class FilterSearchTest extends BaseTest {
     private static final String REFRIGERATOR = "Холодильник";
     private static final String DOUBLE_CHAMBER_REFRIGERATORS = "Двухкамерные холодильники";
     private static final String LIEBBHERR_FABRIC_NAME = "Liebherr";
-    private static final MainPage main = new MainPage();
+    private final MainPage main = new MainPage();
 
     @Test
     @DisplayName("Пользователь может найти товар с применением фильтров и сортировки")
