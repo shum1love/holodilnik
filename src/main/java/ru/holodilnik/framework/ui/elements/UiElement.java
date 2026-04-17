@@ -8,6 +8,7 @@ import io.qameta.allure.Step;
 import org.openqa.selenium.OutputType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.holodilnik.framework.core.config.ConfigLoader;
 
 import java.io.ByteArrayInputStream;
 import java.time.Duration;
@@ -23,9 +24,9 @@ import static com.codeborne.selenide.Selenide.screenshot;
 public class UiElement {
 
     private static final Logger log = LoggerFactory.getLogger(UiElement.class);
-    private static final boolean HIGHLIGHT_ENABLED = Boolean.parseBoolean(System.getProperty("ui.highlight", "false"));
-    private static final boolean SCREENSHOT_ON_FAIL = Boolean.parseBoolean(System.getProperty("ui.screenshot.on.fail", "true"));
-    private static final int ACTION_RETRY_COUNT = 2;
+    private static final boolean HIGHLIGHT_ENABLED = ConfigLoader.isUiHighlightEnabled();
+    private static final boolean SCREENSHOT_ON_FAIL = ConfigLoader.isScreenshotOnFail();
+    private static final int ACTION_RETRY_COUNT = ConfigLoader.getUiActionRetryCount();
     private final SelenideElement element;
     private final String name;
 
