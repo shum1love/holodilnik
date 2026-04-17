@@ -5,6 +5,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import ru.holodilnik.framework.ui.pages.MainPage;
+import ru.holodilnik.framework.ui.pages.SearchResultsPage;
 import ru.holodilnik.tests.base.BaseTest;
 
 @Epic("Поиск")
@@ -17,6 +18,7 @@ import ru.holodilnik.tests.base.BaseTest;
 @Tag("Search")
 public class EmptySearchResultTest extends BaseTest {
     private final MainPage main = new MainPage();
+    private final SearchResultsPage searchResultsPage = new SearchResultsPage();
 
     @Test
     @DisplayName("Пользователь видит запись 'не найдено' при неудачном поиске")
@@ -24,7 +26,9 @@ public class EmptySearchResultTest extends BaseTest {
         main
                 .open()
                 .checkMainElements()
-                .inputValueSearchField("asdfghjkl")
+                .inputValueSearchField("asdfghjkl");
+
+        searchResultsPage
                 .checkNothingWasFound();
     }
 }

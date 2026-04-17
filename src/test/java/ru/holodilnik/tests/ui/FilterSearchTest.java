@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import ru.holodilnik.framework.ui.enums.FilterParameters;
 import ru.holodilnik.framework.ui.pages.MainPage;
+import ru.holodilnik.framework.ui.pages.SearchResultsPage;
 import ru.holodilnik.tests.base.BaseTest;
 
 @Epic("Поиск")
@@ -21,6 +22,7 @@ public class FilterSearchTest extends BaseTest {
     private static final String DOUBLE_CHAMBER_REFRIGERATORS = "Двухкамерные холодильники";
     private static final String LIEBBHERR_FABRIC_NAME = "Liebherr";
     private final MainPage main = new MainPage();
+    private final SearchResultsPage searchResultsPage = new SearchResultsPage();
 
     @Test
     @DisplayName("Пользователь может найти товар с применением фильтров и сортировки")
@@ -28,7 +30,9 @@ public class FilterSearchTest extends BaseTest {
         main
                 .open()
                 .checkMainElements()
-                .inputValueSearchField(REFRIGERATOR)
+                .inputValueSearchField(REFRIGERATOR);
+
+        searchResultsPage
                 .checkProductCardsArePresent()
                 .checkParameterBlock()
                 .selectCategory(DOUBLE_CHAMBER_REFRIGERATORS)

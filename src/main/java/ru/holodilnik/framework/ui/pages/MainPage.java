@@ -54,8 +54,8 @@ public final class MainPage extends BasePage<MainPage> {
     }
 
     @Step("Ввести значение {value} в поле 'Поиск по каталогу'")
-    public SearchResultsPage inputValueSearchField(final String value) {
-        return header.inputValueSearchField(value);
+    public void inputValueSearchField(final String value) {
+        header.inputValueSearchField(value);
     }
 
     @Step("Нажать на кнопку 'Каталог'")

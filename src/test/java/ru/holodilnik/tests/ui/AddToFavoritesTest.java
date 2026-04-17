@@ -5,6 +5,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import ru.holodilnik.framework.ui.pages.MainPage;
+import ru.holodilnik.framework.ui.pages.SearchResultsPage;
 import ru.holodilnik.tests.base.BaseTest;
 
 @Epic("Избранное")
@@ -19,6 +20,7 @@ public class AddToFavoritesTest extends BaseTest {
     private static final String REFRIGERATOR = "Двухкамерный холодильник";
 
     private final MainPage main = new MainPage();
+    private final SearchResultsPage searchResultsPage = new SearchResultsPage();
 
     @Test
     @DisplayName("Пользователь может найти товар и добавить его в Избранное")
@@ -26,7 +28,9 @@ public class AddToFavoritesTest extends BaseTest {
         main
                 .open()
                 .checkHeaderVisible()
-                .inputValueSearchField(REFRIGERATOR)
+                .inputValueSearchField(REFRIGERATOR);
+
+        searchResultsPage
                 .checkProductCardsArePresent()
                 .addFavoriteList(1)
                 .favoriteListCountShouldBe(1)

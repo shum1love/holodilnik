@@ -5,6 +5,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import ru.holodilnik.framework.ui.pages.MainPage;
+import ru.holodilnik.framework.ui.pages.SearchResultsPage;
 import ru.holodilnik.tests.base.BaseTest;
 
 @Epic("Каталог")
@@ -19,6 +20,7 @@ public class SearchTest extends BaseTest {
     private static final String REFRIGERATOR_ATLANT = "Двухкамерный холодильник Atlant";
 
     private final MainPage main = new MainPage();
+    private final SearchResultsPage searchResultsPage = new SearchResultsPage();
 
     @Test
     @DisplayName("Пользователь может найти и открыть карточку товара")
@@ -26,7 +28,9 @@ public class SearchTest extends BaseTest {
         main
                 .open()
                 .checkHeaderVisible()
-                .inputValueSearchField(REFRIGERATOR_ATLANT)
+                .inputValueSearchField(REFRIGERATOR_ATLANT);
+
+        searchResultsPage
                 .checkProductCardsArePresent()
                 .openProductCard(2)
                 .checkMainCardElements()

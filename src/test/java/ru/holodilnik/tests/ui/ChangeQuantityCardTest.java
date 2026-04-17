@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import ru.holodilnik.framework.ui.pages.CartPage;
 import ru.holodilnik.framework.ui.pages.MainPage;
+import ru.holodilnik.framework.ui.pages.SearchResultsPage;
 import ru.holodilnik.tests.base.BaseTest;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -23,6 +24,7 @@ public class ChangeQuantityCardTest extends BaseTest {
 
     private final MainPage main = new MainPage();
     private final CartPage cardPage = new CartPage();
+    private final SearchResultsPage searchResultsPage = new SearchResultsPage();
 
     @Test
     @DisplayName("Пользователь может изменить количество товара в корзине")
@@ -32,7 +34,9 @@ public class ChangeQuantityCardTest extends BaseTest {
         main
                 .open()
                 .checkHeaderVisible()
-                .inputValueSearchField(REFRIGERATOR)
+                .inputValueSearchField(REFRIGERATOR);
+
+        searchResultsPage
                 .checkProductCardsArePresent()
                 .addProductCard(1)
                 .cartCountShouldBe(1)

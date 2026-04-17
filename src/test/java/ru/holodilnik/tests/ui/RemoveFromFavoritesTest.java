@@ -28,7 +28,9 @@ public class RemoveFromFavoritesTest extends BaseTest {
         main
                 .open()
                 .checkHeaderVisible()
-                .inputValueSearchField(REFRIGERATOR)
+                .inputValueSearchField(REFRIGERATOR);
+
+        searchResultsPage
                 .checkProductCardsArePresent()
                 .addFavoriteList(1)
                 .favoriteListCountShouldBe(1)

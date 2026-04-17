@@ -5,6 +5,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import ru.holodilnik.framework.ui.pages.MainPage;
+import ru.holodilnik.framework.ui.pages.SearchResultsPage;
 import ru.holodilnik.tests.base.BaseTest;
 
 @Epic("Корзина")
@@ -18,6 +19,7 @@ import ru.holodilnik.tests.base.BaseTest;
 public class RemoveFromCartTest extends BaseTest {
     private static final String REFRIGERATOR = "Двухкамерный холодильник";
     private final MainPage main = new MainPage();
+    private final SearchResultsPage searchResultsPage = new SearchResultsPage();
 
     @Test
     @DisplayName("Пользователь может удалить товар из корзины")
@@ -25,7 +27,9 @@ public class RemoveFromCartTest extends BaseTest {
         main
                 .open()
                 .checkHeaderVisible()
-                .inputValueSearchField(REFRIGERATOR)
+                .inputValueSearchField(REFRIGERATOR);
+
+        searchResultsPage
                 .checkProductCardsArePresent()
                 .addProductCard(1)
                 .cartCountShouldBe(1)
