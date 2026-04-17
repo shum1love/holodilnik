@@ -16,8 +16,8 @@ public abstract class BaseTest implements ActionPage {
     @BeforeAll
     static void setup() {
         Configuration.baseUrl = ConfigLoader.getBaseUrl();
-        Configuration.timeout = 12000;
-        Configuration.pageLoadTimeout = 30000;
+        Configuration.timeout = ConfigLoader.getSelenideTimeout();
+        Configuration.pageLoadTimeout = ConfigLoader.getPageLoadTimeout();
 
         if (!allureListenerRegistered) {
             SelenideLogger.addListener("allure", new AllureSelenide()

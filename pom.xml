@@ -19,6 +19,7 @@
         <junit.version>5.10.1</junit.version>
         <allure.version>2.32.0</allure.version>
         <logback.version>1.4.14</logback.version>
+        <typesafe.config.version>1.4.5</typesafe.config.version>
 
         <maven.compiler.version>3.11.0</maven.compiler.version>
         <maven.surefire.version>3.2.5</maven.surefire.version>
@@ -94,6 +95,12 @@
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
             <version>${logback.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.typesafe</groupId>
+            <artifactId>config</artifactId>
+            <version>${typesafe.config.version}</version>
         </dependency>
 
     </dependencies>
