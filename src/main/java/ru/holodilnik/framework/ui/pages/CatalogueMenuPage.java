@@ -9,7 +9,7 @@ import static com.codeborne.selenide.Condition.text;
 /**
  * Класс описывающий меню каталога
  */
-public class CatalogueMenuPage extends BasePage<CatalogueMenuPage> {
+public final class CatalogueMenuPage extends BasePage<CatalogueMenuPage> {
     public CatalogueMenuPage() {
         super("");
     }

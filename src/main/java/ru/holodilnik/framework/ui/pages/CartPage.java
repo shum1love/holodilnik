@@ -10,7 +10,7 @@ import static com.codeborne.selenide.Selenide.$;
 /**
  * Класс описывающий страницу "Корзина".
  */
-public class CartPage extends BasePage<CartPage> {
+public final class CartPage extends BasePage<CartPage> {
 
     @Step("Проверить, что отображается товар с наименованием {name}")
     public CartPage checkItemInCard(final String name) {

@@ -9,7 +9,7 @@ import static com.codeborne.selenide.Condition.text;
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.$$;
 
-public class CatalogueMenuLocators {
+public final class CatalogueMenuLocators {
 
     public static UiElement mobileAppSelection() {
         return ui("Раздел мобильное приложение", $$("a").findBy(text("Мобильное приложение")));

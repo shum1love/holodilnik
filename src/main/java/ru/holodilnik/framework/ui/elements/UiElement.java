@@ -21,7 +21,7 @@ import static com.codeborne.selenide.Selenide.screenshot;
  * Обёртка над SelenideElement с шагами в Allure
  */
 @SuppressWarnings({"UnusedReturnValue", "unused"})
-public class UiElement {
+public final class UiElement {
 
     private static final Logger log = LoggerFactory.getLogger(UiElement.class);
     private static final boolean HIGHLIGHT_ENABLED = ConfigLoader.isUiHighlightEnabled();

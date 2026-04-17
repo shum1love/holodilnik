@@ -13,7 +13,7 @@ import static com.codeborne.selenide.Selectors.withText;
  * Компонент шапки сайта (header).
  * Используется на большинстве страниц.
  */
-public class HeaderComponent {
+public final class HeaderComponent {
 
     private final UiElement self;
     private final UiElement logo;

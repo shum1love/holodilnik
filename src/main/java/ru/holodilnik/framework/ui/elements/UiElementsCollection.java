@@ -12,7 +12,7 @@ import static com.codeborne.selenide.Condition.visible;
  * Обёртка над ElementsCollection с удобными шагами и типобезопасными операциями.
  */
 @SuppressWarnings({"UnusedReturnValue", "unused"})
-public class UiElementsCollection {
+public final class UiElementsCollection {
 
     private final ElementsCollection elements;
     private final String name;

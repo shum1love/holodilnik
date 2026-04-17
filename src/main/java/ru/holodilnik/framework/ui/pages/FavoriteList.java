@@ -8,7 +8,7 @@ import ru.holodilnik.framework.ui.locators.FavoriteListLocators;
 /**
  * Класс описывающий страницу "Лист желаний".
  */
-public class FavoriteList extends BasePage<FavoriteList> {
+public final class FavoriteList extends BasePage<FavoriteList> {
 
     @Step("Проверить, что название карточки товара содержит текст '{productName}'")
     public FavoriteList checkProductNameInCard(final String productName) {

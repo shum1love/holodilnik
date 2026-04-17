@@ -9,7 +9,7 @@ import static com.codeborne.selenide.Selenide.$x;
 /**
  * Локаторы страницы "Корзина".
  */
-public class ShoppingCartLocators {
+public final class ShoppingCartLocators {
 
     public static UiElement title() {
         return ui("Заголовок раздела 'Корзина'", $("div.basket__header-title"));
