@@ -1,6 +1,5 @@
 package ru.holodilnik.framework.ui.pages;
 
-import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.SelenideElement;
 import io.qameta.allure.Step;
 import ru.holodilnik.framework.ui.locators.FavoriteListLocators;
@@ -17,12 +16,8 @@ public final class FavoriteList extends BasePage<FavoriteList> {
     }
 
     @Step("Нажать на кнопку сердца и удалить товар из избранного")
-    public FavoriteList removeProductFromFavorites() {
+    public void removeProductFromFavorites() {
         FavoriteListLocators.removeFavoriteButton().click();
-        //FavoriteListLocators.favoriteEmptyInfo().shouldBeVisible();
-        Selenide.sleep(2000);
-        refreshPage();
-        return this;
     }
 
     @SuppressWarnings("MethodMayBeStatic")
@@ -33,9 +28,8 @@ public final class FavoriteList extends BasePage<FavoriteList> {
 
     @Step("Закрыть рекламный банер")
     public FavoriteList closeBannerAdvertising() {
-        if (FavoriteListLocators.advertisingBannerClose().getSelenideElement().exists()) {
-            FavoriteListLocators.advertisingBannerClose().click();
-        }
+        FavoriteListLocators.advertisingBannerClose().click();
+        refreshPage();
         return this;
     }
 

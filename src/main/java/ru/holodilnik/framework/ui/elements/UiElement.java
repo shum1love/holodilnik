@@ -3,6 +3,7 @@ package ru.holodilnik.framework.ui.elements;
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.SelenideElement;
 import com.codeborne.selenide.WebDriverRunner;
+import com.codeborne.selenide.WebElementCondition;
 import io.qameta.allure.Allure;
 import io.qameta.allure.Step;
 import org.openqa.selenium.OutputType;
@@ -113,6 +114,14 @@ public final class UiElement {
         return this;
     }
 
+    public boolean is(final WebElementCondition condition) {
+        try {
+            return element.is(condition);
+        } catch (final Exception e) {
+            return false;
+        }
+    }
+
     public UiElement scrollTo() {
         element.scrollTo();
         return this;
@@ -146,7 +155,6 @@ public final class UiElement {
                 lastError = e;
                 if (attempt < ACTION_RETRY_COUNT && shouldRetry(e)) {
                     log.warn("Попытка {}: {} → {} → {}", attempt, name, actionDesc, e.getClass().getSimpleName());
-                    // polling вместо sleep
                     element.shouldBe(visible, Duration.ofMillis(400));
                 } else {
                     handleFailure(actionDesc, e);
