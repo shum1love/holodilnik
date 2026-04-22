@@ -33,7 +33,7 @@ class ArchitectureRulesTest {
                 )
                 .and().haveSimpleNameEndingWith("Test")
                 .should().beAssignableTo(BaseTest.class)
-                .because("business tests should use one shared setup and teardown contract");
+                .because("Бизнес-тесты должны использовать единый контракт настройки (setup) и очистки (teardown)");
 
         rule.check(IMPORTED_CLASSES);
     }
@@ -53,7 +53,7 @@ class ArchitectureRulesTest {
                         "com.codeborne.selenide..",
                         "org.openqa.selenium.."
                 )
-                .because("business tests should stay at scenario level");
+                .because("Бизнес-тесты должны оставаться на уровне описания сценариев, не опускаясь до деталей реализации драйвера");
 
         rule.check(IMPORTED_CLASSES);
     }
@@ -76,7 +76,7 @@ class ArchitectureRulesTest {
                         "ru.holodilnik.framework.ui.elements..",
                         "ru.holodilnik.framework.core.."
                 )
-                .because("tests should work through the interaction layer only");
+                .because("Тесты должны взаимодействовать с приложением только через слой взаимодействия (Page Objects/Clients)");
 
         rule.check(IMPORTED_CLASSES);
     }
@@ -92,7 +92,7 @@ class ArchitectureRulesTest {
                         "ru.holodilnik.framework.api.clients.."
                 )
                 .should().dependOnClassesThat().resideInAnyPackage("ru.holodilnik.tests..")
-                .because("framework interaction classes should not know about test scenarios");
+                .because("Классы слоя взаимодействия не должны иметь зависимостей от конкретных тестовых сценариев");
 
         rule.check(IMPORTED_CLASSES);
     }
@@ -112,7 +112,7 @@ class ArchitectureRulesTest {
                         "org.assertj..",
                         "org.hamcrest.."
                 )
-                .because("assertions belong to tests, not to technical interaction classes");
+                .because("Проверки (assertions) — это зона ответственности тестов, а не технических классов взаимодействия");
 
         rule.check(IMPORTED_CLASSES);
     }
@@ -129,7 +129,7 @@ class ArchitectureRulesTest {
                 )
                 .should().callMethod(Thread.class, "sleep", long.class)
                 .orShould().callMethod(Selenide.class, "sleep", long.class)
-                .because("waits should be condition-based, not time-based");
+                .because("Ожидания должны базироваться на состояниях объектов (условиях), а не на фиксированном времени");
 
         rule.check(IMPORTED_CLASSES);
     }
@@ -145,7 +145,7 @@ class ArchitectureRulesTest {
                         "ru.holodilnik.framework.ui..",
                         "ru.holodilnik.tests.."
                 )
-                .because("core should stay independent from UI and test layers");
+                .because("Ядро фреймворка (core) должно быть независимым от UI-реализации и тестовых слоев");
 
         rule.check(IMPORTED_CLASSES);
     }

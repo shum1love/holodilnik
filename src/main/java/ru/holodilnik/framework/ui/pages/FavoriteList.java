@@ -21,7 +21,7 @@ public final class FavoriteList extends BasePage<FavoriteList> {
         FavoriteListLocators.removeFavoriteButton().click();
         //FavoriteListLocators.favoriteEmptyInfo().shouldBeVisible();
         Selenide.sleep(2000);
-        Selenide.refresh();
+        refreshPage();
         return this;
     }
 
