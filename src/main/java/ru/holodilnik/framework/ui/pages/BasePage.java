@@ -12,7 +12,7 @@ import static ru.holodilnik.framework.core.config.ConfigLoader.getBaseUrl;
 /**
  * Базовый контракт для Page Objects.
  */
-public abstract class BasePage<T extends BasePage<T>> {
+public abstract class BasePage<T extends BasePage<T>> implements ActionPage {
 
     private final String url;
 

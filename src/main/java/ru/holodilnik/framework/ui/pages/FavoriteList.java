@@ -19,6 +19,7 @@ public final class FavoriteList extends BasePage<FavoriteList> {
     @Step("Нажать на кнопку сердца и удалить товар из избранного")
     public FavoriteList removeProductFromFavorites() {
         FavoriteListLocators.removeFavoriteButton().click();
+        //FavoriteListLocators.favoriteEmptyInfo().shouldBeVisible();
         Selenide.sleep(2000);
         Selenide.refresh();
         return this;
