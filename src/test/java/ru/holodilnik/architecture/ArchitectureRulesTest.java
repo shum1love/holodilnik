@@ -11,6 +11,9 @@ import ru.holodilnik.tests.base.BaseTest;
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes;
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses;
 
+/**
+ * Тесты для проверки архитектуры проекта.
+ */
 class ArchitectureRulesTest {
 
     private static final JavaClasses IMPORTED_CLASSES = new ClassFileImporter()

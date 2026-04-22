@@ -1,4 +1,4 @@
-package ru.holodilnik.tests.base.actions;
+package ru.holodilnik.framework.ui.pages;
 
 import com.codeborne.selenide.Selenide;
 import io.qameta.allure.Step;
