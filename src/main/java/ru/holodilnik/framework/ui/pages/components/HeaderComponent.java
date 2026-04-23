@@ -7,7 +7,7 @@ import ru.holodilnik.framework.ui.pages.CartPage;
 import ru.holodilnik.framework.ui.pages.FavoriteList;
 import ru.holodilnik.framework.ui.pages.SearchResultsPage;
 
-import static com.codeborne.selenide.Selectors.withText;
+import static com.codeborne.selenide.Selectors.byText;
 
 /**
  * Компонент шапки сайта (header).
@@ -35,7 +35,7 @@ public final class HeaderComponent {
         this.searchField = new UiElement("Поле поиска", container.$("input[id='top_search']"));
         this.searchSubmitButton = new UiElement("Кнопка поиска", container.$("button[data-smoke='GoSearchBtn']"));
         this.personalAccount = new UiElement("Личный кабинет", container.$("div[data-user-block]"));
-        this.myOrders = new UiElement("Мои заказы", container.$(withText("Мои заказы")));
+        this.myOrders = new UiElement("Мои заказы", container.$(byText("Мои заказы")));
         this.favorites = new UiElement("Избранное", container.$("a[data-ga-event-category='HeaderFavoriteClick'] > span:first-child"));
         this.shoppingCart = new UiElement("Корзина", container.$("a[data-ga-event-category='HeaderBasketClick'] > span:first-child"));
         this.cartCount = new UiElement("Счётчик товаров в корзине", container.$("#numInCart"));

@@ -14,6 +14,7 @@
     <properties>
 
         <java.version>17</java.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <selenide.version>7.13.0</selenide.version>
         <junit.version>5.10.1</junit.version>
@@ -23,6 +24,8 @@
 
         <maven.compiler.version>3.11.0</maven.compiler.version>
         <maven.surefire.version>3.2.5</maven.surefire.version>
+        <maven.checkstyle.version>3.6.0</maven.checkstyle.version>
+        <spotbugs.maven.plugin.version>4.9.8.3</spotbugs.maven.plugin.version>
         <allure.maven.version>2.12.0</allure.maven.version>
         <aspectj.version>1.9.22.1</aspectj.version>
 
@@ -143,6 +146,56 @@
                     </systemPropertyVariables>
 
                 </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <version>${maven.checkstyle.version}</version>
+                <configuration>
+                    <configLocation>${project.basedir}/checkstyle/checkstyle.xml</configLocation>
+                    <inputEncoding>${project.build.sourceEncoding}</inputEncoding>
+                    <consoleOutput>true</consoleOutput>
+                    <logViolationsToConsole>true</logViolationsToConsole>
+                    <failsOnError>true</failsOnError>
+                    <includeTestSourceDirectory>false</includeTestSourceDirectory>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>checkstyle-verify</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Spotbugs -->
+            <plugin>
+                <groupId>com.github.spotbugs</groupId>
+                <artifactId>spotbugs-maven-plugin</artifactId>
+                <version>${spotbugs.maven.plugin.version}</version>
+                <configuration>
+                    <failOnError>true</failOnError>
+                    <xmlOutput>true</xmlOutput>
+                    <htmlOutput>true</htmlOutput>
+                    <includeTests>false</includeTests>
+                    <excludeFilterFile>${project.basedir}/config/spotbugs/spotbugs-exclude.xml</excludeFilterFile>
+                    <spotbugsXmlOutputDirectory>${project.build.directory}</spotbugsXmlOutputDirectory>
+                    <spotbugsXmlOutputFilename>spotbugsXml.xml</spotbugsXmlOutputFilename>
+                    <xmlOutputDirectory>${project.build.directory}</xmlOutputDirectory>
+                    <outputDirectory>${project.build.directory}/site</outputDirectory>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>spotbugs-check</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
 
             <plugin>

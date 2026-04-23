@@ -1,0 +1,56 @@
+<?xml version="1.0"?>
+<!DOCTYPE module PUBLIC
+        "-//Checkstyle//DTD Checkstyle Configuration 1.3//EN"
+        "https://checkstyle.org/dtds/configuration_1_3.dtd">
+
+<module name="Checker">
+
+    <!-- Общая кодировка файлов -->
+    <property name="charset" value="UTF-8"/>
+
+    <!-- Уровень строгости: error = билд падает -->
+    <property name="severity" value="error"/>
+
+    <!-- 📏 Ограничение длины строки -->
+    <!-- 140 — подходит для тестов (локаторы, URL и т.д.) -->
+    <!-- Игнорируем package/import/URL -->
+    <module name="LineLength">
+        <property name="max" value="140"/>
+        <property name="ignorePattern" value="^package .*|^import .*|https?://"/>
+    </module>
+
+    <module name="TreeWalker">
+
+        <!-- Имя пакета -->
+        <module name="PackageName"/>
+
+        <!-- Имя класса -->
+        <module name="TypeName"/>
+
+        <!-- Имя метода -->
+        <module name="MethodName"/>
+
+        <!-- Поля -->
+        <module name="MemberName"/>
+
+        <!-- Параметры -->
+        <module name="ParameterName"/>
+
+        <!-- Локальные переменные -->
+        <module name="LocalVariableName"/>
+
+        <!-- Запрет System.out.println -->
+        <module name="RegexpSinglelineJava">
+            <property name="format" value="System\.out\.println\s*\("/>
+            <property name="message" value="Use logger instead of System.out.println"/>
+            <property name="ignoreComments" value="true"/>
+        </module>
+
+        <!-- Пробел после -->
+        <module name="WhitespaceAfter"/>
+
+        <!-- Пробел перед -->
+        <module name="NoWhitespaceBefore"/>
+
+    </module>
+</module>
