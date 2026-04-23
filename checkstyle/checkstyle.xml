@@ -39,6 +39,19 @@
         <!-- Локальные переменные -->
         <module name="LocalVariableName"/>
 
+        <!-- Локальные переменные должны быть final -->
+        <module name="FinalLocalVariable"/>
+
+        <!-- Неиспользуемые импорты -->
+        <module name="UnusedImports"/>
+
+        <!-- Магические числа -->
+        <!-- Разрешаем 0,1,-1 (часто используются в тестах) -->
+        <module name="MagicNumber">
+            <property name="ignoreNumbers" value="-1,0,1"/>
+            <property name="ignoreHashCodeMethod" value="true"/>
+        </module>
+
         <!-- Запрет System.out.println -->
         <module name="RegexpSinglelineJava">
             <property name="format" value="System\.out\.println\s*\("/>
