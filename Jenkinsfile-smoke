@@ -1,4 +1,5 @@
 node {
+    checkout scm
     env.TEST_SUITE = "smoke"
     load "Jenkinsfile"
 }
