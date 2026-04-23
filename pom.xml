@@ -126,6 +126,7 @@
                 <version>${maven.compiler.version}</version>
                 <configuration>
                     <release>${java.version}</release>
+                    <encoding>${project.build.sourceEncoding}</encoding>
                 </configuration>
             </plugin>
 
@@ -135,7 +136,7 @@
                 <version>${maven.surefire.version}</version>
                 <configuration>
                     <useModulePath>false</useModulePath>
-                    <argLine>-javaagent:${settings.localRepository}/org/aspectj/aspectjweaver/${aspectj.version}/aspectjweaver-${aspectj.version}.jar</argLine>
+                    <argLine>-Dfile.encoding=${project.build.sourceEncoding} -javaagent:${settings.localRepository}/org/aspectj/aspectjweaver/${aspectj.version}/aspectjweaver-${aspectj.version}.jar</argLine>
 
                     <systemPropertyVariables>
 
