@@ -1,9 +1,13 @@
 node {
 
+    properties([
+        parameters([
+            string(name: 'TEST_CLASS', defaultValue: '', description: 'Test classes for manual run (comma-separated)')
+        ])
+    ])
+
     checkout scm
-
     env.TEST_SUITE = "manual"
-
     load "Jenkinsfile"
 
 }

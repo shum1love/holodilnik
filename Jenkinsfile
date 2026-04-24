@@ -8,9 +8,6 @@ pipeline {
         allure 'allure'
     }
 
-    parameters {
-        string(name: 'TEST_CLASS', defaultValue: '', description: 'Тестовый класс(ы) для manual запуска (через запятую)')
-    }
 
     stages {
 

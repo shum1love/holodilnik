@@ -1,4 +1,8 @@
 node {
+    properties([
+        parameters([])
+    ])
+
     checkout scm
     env.TEST_SUITE = "regression"
     load "Jenkinsfile"
