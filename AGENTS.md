@@ -26,7 +26,7 @@ Tests
 Pages / API Clients
 ↓
 Framework Core
-text**Жёсткое разделение:**
+**Жёсткое разделение:**
 
 - **Tests** → что проверяем (бизнес-сценарий)
 - **Pages/Clients** → как взаимодействуем
@@ -65,7 +65,8 @@ void пользователь_может_добавить_товар_в_корз
     cartPage.shouldContainProduct(productName);
 }
 ```
-🧱 Page Objects
+## 🧱 Page Objects
+
 Только:
 
 действия (click, type, select, addToCart и т.д.)
@@ -82,7 +83,7 @@ if / условия
 Плохо:
 if (price > 1000) clickDiscount();
 Нормально:
-JavaapplyDiscountIfNeeded(); // логика — в тесте
+applyDiscountIfNeeded(); // логика — в тесте
 
 🔧 Конфигурация
 Всё в properties-файлах.
@@ -122,10 +123,10 @@ God-классы (Utils, BasePage на 100500 методов)
 
 Категорически запрещено:
 
-Предлагать UiElement / retry-обёртки / automatic Allure steps
-Вводить Typesafe Config / HOCON
+Предлагать новые универсальные UI-обёртки/ретраи/automatic Allure steps "на будущее"
+Вводить новый конфиг-стек поверх текущего (оставаться в `application.conf` + `*.properties`)
 Делать BasePage<T> с fluent interface
-Выносить локаторы в отдельный пакет
+Выносить локаторы в дополнительные пакеты/слои без необходимости
 Добавлять «полезные» утилиты «на будущее»
 
 

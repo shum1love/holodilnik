@@ -4,6 +4,8 @@
 
 Проект рассчитан на долгосрочную поддержку: читаемые Page Object'ы, стабильные селекторы, воспроизводимый запуск в Docker/Selenoid и готовый Jenkins pipeline.
 
+Правила разработки и архитектурные ограничения: [AGENTS.md](AGENTS.md)
+
 ## Содержание
 
 - [Технологический стек](#технологический-стек)
@@ -11,6 +13,7 @@
 - [Структура репозитория](#структура-репозитория)
 - [Быстрый старт](#быстрый-старт)
 - [Запуск тестов](#запуск-тестов)
+- [Quality Gates (ArchUnit / Checkstyle / SpotBugs)](#quality-gates-archunit--checkstyle--spotbugs)
 - [Docker + Selenoid](#docker--selenoid)
 - [Jenkins CI](#jenkins-ci)
 - [Allure отчеты](#allure-отчеты)
@@ -96,6 +99,29 @@ mvn clean test -Djunit.jupiter.tags=smoke
 - Полный запуск: `mvn clean test`
 - Только smoke: `mvn clean test -Djunit.jupiter.tags=smoke`
 - Конкретный класс: `mvn clean test -Dtest=ru.holodilnik.tests.ui.SearchTest`
+
+## Quality Gates (ArchUnit / Checkstyle / SpotBugs)
+
+Единый минимальный набор проверок качества перед merge:
+
+```bash
+# 1) Архитектурные правила
+mvn "-Dtest=ru.holodilnik.architecture.ArchitectureRulesTest" test
+
+# 2) Статический стиль кода (src/main/java)
+mvn checkstyle:check -DskipTests
+
+# 3) Статический анализ байткода (src/main/java)
+mvn spotbugs:check -DskipTests
+```
+
+Как интерпретировать результат:
+
+- `BUILD SUCCESS` у всех трёх команд — quality gates пройдены.
+- `checkstyle:check` падает — правим нарушения из консоли (`[MagicNumber]`, формат, naming и т.д.).
+- `spotbugs:check` падает — устраняем баг-риски (`EI_EXPOSE_REP`, `NP_*`, `DLS_*` и т.д.) или добавляем обоснованный `excludeFilter`.
+
+Примечание: в текущей конфигурации `checkstyle` и `spotbugs` проверяют только `src/main/java` (тестовые исходники исключены).
 
 ## Docker + Selenoid
 
