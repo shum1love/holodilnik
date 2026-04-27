@@ -13,7 +13,6 @@ curl http://localhost:4444/status
 
 ```bash
 docker pull selenoid/vnc:chrome_128.0
-docker pull selenoid/vnc:firefox_120.0
 ```
 
 ## 2) Поднять Jenkins
