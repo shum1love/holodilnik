@@ -1,0 +1,9 @@
+node {
+    properties([
+        parameters([])
+    ])
+
+    checkout scm
+    env.TEST_SUITE = "smoke"
+    load "Jenkinsfile"
+}
