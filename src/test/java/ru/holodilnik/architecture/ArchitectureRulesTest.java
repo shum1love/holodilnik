@@ -118,7 +118,7 @@ class ArchitectureRulesTest {
     }
 
     /**
-     * Проверяет, что Page Object и API-клиенты не используют явные sleep.
+     * Проверяет, что Page Object и API-клиенты не используют sleep.
      */
     @Test
     void interaction_layer_should_not_use_explicit_sleep() {
