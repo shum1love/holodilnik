@@ -17,7 +17,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @Owner("Rodion Shumilov")
 @Severity(SeverityLevel.CRITICAL)
 @Tag("UI")
-@Tag("smoke")
 @Tag("Cart")
 public class ChangeQuantityCardTest extends BaseTest {
     private static final String REFRIGERATOR = "Двухкамерный холодильник";

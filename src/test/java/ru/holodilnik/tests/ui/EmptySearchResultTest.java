@@ -14,7 +14,6 @@ import ru.holodilnik.tests.base.BaseTest;
 @Owner("Rodion Shumilov")
 @Severity(SeverityLevel.CRITICAL)
 @Tag("UI")
-@Tag("smoke")
 @Tag("Search")
 public class EmptySearchResultTest extends BaseTest {
     private final MainPage main = new MainPage();

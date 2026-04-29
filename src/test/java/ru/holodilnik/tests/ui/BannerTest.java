@@ -13,7 +13,6 @@ import ru.holodilnik.tests.base.BaseTest;
 @Owner("Rodion Shumilov")
 @Severity(SeverityLevel.CRITICAL)
 @Tag("UI")
-@Tag("smoke")
 @Tag("Banner")
 public class BannerTest extends BaseTest {
     private final MainPage main = new MainPage();

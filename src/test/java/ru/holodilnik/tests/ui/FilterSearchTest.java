@@ -15,7 +15,6 @@ import ru.holodilnik.tests.base.BaseTest;
 @Owner("Rodion Shumilov")
 @Severity(SeverityLevel.CRITICAL)
 @Tag("UI")
-@Tag("smoke")
 @Tag("Search")
 public class FilterSearchTest extends BaseTest {
     private static final String REFRIGERATOR = "Холодильник";
