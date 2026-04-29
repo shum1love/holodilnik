@@ -23,7 +23,8 @@ pipeline {
                 echo "Running TEST_SUITE=${env.TEST_SUITE}"
 
                 script {
-                    if (env.TEST_SUITE == 'manual') {
+                    def testSuite = env.TEST_SUITE?.trim()?.toLowerCase()
+                    if (testSuite == 'manual') {
                         echo "Selected classes: ${params.TEST_CLASS ?: 'не указан — упадёт ниже'}"
                     }
                 }
@@ -35,16 +36,17 @@ pipeline {
             steps {
 
                 script {
+                    def testSuite = env.TEST_SUITE?.trim()?.toLowerCase()
 
-                    if (!env.TEST_SUITE?.trim()) {
+                    if (!testSuite) {
                         error('TEST_SUITE не задан. Допустимые: smoke, regression, manual')
                     }
 
-                    if (env.TEST_SUITE == 'smoke') {
+                    if (testSuite == 'smoke') {
 
                         sh '''
                             mvn clean test \
-                            -Djunit.jupiter.tags=smoke \
+                            -Dgroups=smoke \
                             -Dselenide.remote=http://selenoid:4444/wd/hub \
                             -Dselenide.browser=chrome \
                             -Dselenide.browserVersion=128.0 \
@@ -53,7 +55,7 @@ pipeline {
                             -Dselenide.remoteReadTimeout=120000
                         '''
 
-                    } else if (env.TEST_SUITE == 'regression') {
+                    } else if (testSuite == 'regression') {
 
                         sh '''
                             mvn clean test \
@@ -65,7 +67,7 @@ pipeline {
                             -Dselenide.remoteReadTimeout=120000
                         '''
 
-                    } else if (env.TEST_SUITE == 'manual') {
+                    } else if (testSuite == 'manual') {
 
                         if (!params.TEST_CLASS?.trim()) {
                             error('Для manual режима ОБЯЗАТЕЛЬНО укажи параметр TEST_CLASS!')
