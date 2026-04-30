@@ -28,6 +28,8 @@ public final class UiElement {
     private static final boolean HIGHLIGHT_ENABLED = ConfigLoader.isUiHighlightEnabled();
     private static final boolean SCREENSHOT_ON_FAIL = ConfigLoader.isScreenshotOnFail();
     private static final int ACTION_RETRY_COUNT = ConfigLoader.getUiActionRetryCount();
+    private static final int MILLISECONDS_500 = 500;
+    private static final int TEXT_LENGTH = 100;
     private final SelenideElement element;
     private final String name;
 
@@ -155,7 +157,7 @@ public final class UiElement {
                 lastError = e;
                 if (attempt < ACTION_RETRY_COUNT && shouldRetry(e)) {
                     log.warn("Попытка {}: {} → {} → {}", attempt, name, actionDesc, e.getClass().getSimpleName());
-                    element.shouldBe(visible, Duration.ofMillis(400));
+                    element.shouldBe(visible, Duration.ofMillis(MILLISECONDS_500));
                 } else {
                     handleFailure(actionDesc, e);
                     throw new IllegalStateException("Не удалось выполнить действие: " + actionDesc, lastError);
@@ -192,7 +194,7 @@ public final class UiElement {
         final String currentUrl = safeCurrentUrl();
         final String selector = safeSearchCriteria();
         String elementText = safeElementText();
-        if (elementText.length() > 100) elementText = elementText.substring(0, 100) + "...";
+        if (elementText.length() > TEXT_LENGTH) elementText = elementText.substring(0, TEXT_LENGTH) + "...";
 
         log.error("""
                 Ошибка при действии "{}" на элементе "{}"

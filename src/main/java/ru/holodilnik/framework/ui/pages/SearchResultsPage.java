@@ -17,18 +17,20 @@ import static com.codeborne.selenide.Selenide.$;
  */
 public final class SearchResultsPage extends BasePage<SearchResultsPage> {
 
+    private static final int ELEMENT_COUNT = 5;
+
     @Step("Проверить, что отображается блок фильтров и его элементы")
     public SearchResultsPage checkParameterBlock() {
         SearchResultsLocators.parameterBlock().shouldBeVisible();
         SearchResultsLocators.categorySectionTitle().shouldBeVisible();
         SearchResultsLocators.categoryQuickSearch().shouldBeVisible();
-        SearchResultsLocators.categoryItems().first(5).shouldAllBeVisible();
+        SearchResultsLocators.categoryItems().first(ELEMENT_COUNT).shouldAllBeVisible();
         SearchResultsLocators.priceSectionTitle().shouldBeVisible();
         SearchResultsLocators.minPriceInput().shouldBeVisible();
         SearchResultsLocators.maxPriceInput().shouldBeVisible();
         SearchResultsLocators.priceSliderValue().shouldBeVisible();
         SearchResultsLocators.manufacturerQuickSearch().shouldBeVisible();
-        SearchResultsLocators.manufacturerItems().first(5).shouldAllBeVisible();
+        SearchResultsLocators.manufacturerItems().first(ELEMENT_COUNT).shouldAllBeVisible();
         SearchResultsLocators.showButton().shouldBeVisible();
         SearchResultsLocators.clearFiltersButton().shouldBeVisible();
         return this;
@@ -98,7 +100,7 @@ public final class SearchResultsPage extends BasePage<SearchResultsPage> {
     @Step("Проверить, что отображается несколько карточек товаров")
     public SearchResultsPage checkProductCardsArePresent() {
         SearchResultsLocators.productCards()
-                .shouldHave(sizeGreaterThan(2));
+                .shouldHave(sizeGreaterThan(ELEMENT_COUNT));
         return this;
     }
 

@@ -11,6 +11,8 @@ import static com.codeborne.selenide.Selenide.$;
  * Главная страница сайта holodilnik.ru
  */
 public final class MainPage extends BasePage<MainPage> {
+
+    private static final int ELEMENT_COUNT = 2;
     private final HeaderComponent header;
 
     public MainPage() {
@@ -50,7 +52,7 @@ public final class MainPage extends BasePage<MainPage> {
 
     @Step("Скролл до элементов футера и их проверка")
     public void scrollAndCheckFooterItems() {
-        MainPageLocators.footerElements().scrollToAll().shouldBeVisibleExceptLast(2);
+        MainPageLocators.footerElements().scrollToAll().shouldBeVisibleExceptLast(ELEMENT_COUNT);
     }
 
     @Step("Ввести значение {value} в поле 'Поиск по каталогу'")
